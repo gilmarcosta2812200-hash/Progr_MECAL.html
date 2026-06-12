@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCP Moreno — War Room</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --moreno-red: #E30613;
+            --moreno-black: #1A1A1B;
+            --bg-body: #F4F5F7;
+            --bg-card: #FFFFFF;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --border-color: #E2E8F0;
+        }
+
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
+        
+        /* CABEÇALHO ESTILO WAR ROOM */
+        header { 
+            background-color: var(--moreno-black); 
+            color: white; 
+            padding: 20px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 5px solid var(--moreno-red); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            gap: 20px; 
+        }
+        .header-left h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .header-left p { margin: 6px 0 0 0; font-size: 13px; color: #A0AEC0; }
+        
+        /* GRUPO DE KPIS SUPERIOR DIREITO */
+        .kpi-group { display: flex; gap: 15px; flex-wrap: wrap; }
+        .kpi-box { background-color: #2D3748; border-left: 4px solid var(--moreno-red); padding: 10px 20px; border-radius: 4px; min-width: 140px; }
+        .kpi-box-label { font-size: 10px; text-transform: uppercase; color: #A0AEC0; font-weight: 700; letter-spacing: 0.5px; }
+        .kpi-box-value { font-size: 24px; font-weight: bold; margin-top: 2px; color: white; }
+
+        /* PAINEL DO GRÁFICO (DASHBOARD SUMMARY) */
+        .dashboard-summary-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin: 25px 40px 5px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .summary-text-side { display: flex; flex-direction: column; gap: 10px; }
+        .summary-text-side h2 { margin: 0 0 5px 0; font-size: 32px; font-weight: 800; color: var(--moreno-black); }
+        .summary-legend-item { font-size: 14px; color: #4A5568; display: flex; align-items: center; gap: 10px; font-weight: 600; }
+        .dot-green { width: 12px; height: 12px; background-color: #31C48D; border-radius: 50%; display: inline-block; }
+        .dot-gray { width: 12px; height: 12px; background-color: #E2E8F0; border-radius: 50%; display: inline-block; }
+        .summary-chart-wrapper { width: 150px; height: 150px; position: relative; }
+
+        /* CONTROLES E ABAS */
+        .control-panel { background-color: white; padding: 15px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .selector-wrapper { display: flex; align-items: center; gap: 10px; }
+        .dropdown-semana { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-weight: 600; outline: none; background-color: white; }
+        .btn { padding: 10px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: none; }
+        .btn-import { background-color: var(--moreno-red); color: white; }
+        .btn-clear { background-color: #718096; color: white; }
+        .btn-pdf { background-color: #2B6CB0; color: white; }
+
+        .navigation-tabs { background-color: #E2E8F0; padding: 10px 40px 0 40px; display: flex; flex-wrap: wrap; gap: 4px; }
+        .nav-btn { background: #CBD5E0; color: var(--text-main); border: none; padding: 12px 18px; font-size: 12px; font-weight: 700; border-radius: 6px 6px 0 0; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: -1px; }
+        .nav-btn.active { background: var(--bg-body); color: var(--moreno-red); border-bottom: 1px solid var(--bg-body); }
+
+        .search-area { background-color: white; padding: 10px 40px; border-bottom: 1px solid var(--border-color); }
+        .search-field { padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13px; width: 100%; max-width: 450px; outline: none; }
+
+        .filters-carteira-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: white; padding: 15px 40px; border-bottom: 1px solid var(--border-color); }
+        .filter-field-group { display: flex; flex-direction: column; gap: 4px; }
+        .filter-field-group label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+        main { padding: 20px 40px 40px 40px; }
+
+        /* GRID / BLOCOS DE RECURSO (KANBAN) */
+        .content-wrapper { background: white; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.01); overflow-x: auto; }
+        .tabela-base { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        .tabela-base th { background-color: #EDF2F7; color: #4A5568; font-weight: 700; padding: 12px; text-transform: uppercase; font-size: 11px; border-bottom: 2px solid var(--border-color); }
+        .tabela-base td { padding: 12px; border-bottom: 1px solid var(--border-color); }
+
+        .row-finalizado { background-color: #DEF7EC !important; color: #03543F !important; font-weight: 600; }
+        .cell-relative { position: relative; }
+        .green-dot-table { position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background-color: #31C48D; border-radius: 50%; box-shadow: 0 0 6px #31C48D; }
+
+        .recurso-bloco { background: white; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; page-break-inside: avoid; margin-bottom: 20px; }
+        .recurso-tarja { background-color: var(--moreno-black); color: white; padding: 10px 15px; font-size: 13px; font-weight: 700; border-left: 5px solid var(--moreno-red); display: flex; justify-content: space-between; align-items: center; }
+        
+        .recurso-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; padding: 15px; background-color: #F8FAFC; }
+        .kanban-card { background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 8px; }
+        .kanban-card.status-finalizado { background-color: #DEF7EC !important; color: #03543F !important; border-left: 4px solid #31C48D; }
+        .card-header-code { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); font-weight: 700; }
+        .kanban-card.status-finalizado .card-header-code { color: #03543F; }
+        .card-body-desc { font-size: 13px; font-weight: 600; min-height: 36px; line-height: 1.3; }
+        .card-footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-top: 4px; border-top: 1px dashed var(--border-color); padding-top: 6px; }
+        .kanban-card.status-finalizado .card-footer-info { border-top-color: rgba(3, 84, 63, 0.2); }
+
+        .badge-client { font-weight: 800; color: white; background-color: var(--moreno-black); padding: 3px 6px; border-radius: 4px; font-size: 10px; text-transform: uppercase; display: inline-block; }
+        .status-finalizado .badge-client { background-color: #03543F; }
+        .badge-week { font-weight: 600; color: #4A5568; background-color: #E2E8F0; padding: 3px 6px; border-radius: 4px; font-size: 11px; }
+
+        /* MATRIZ */
+        .matriz-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .matriz-table th { background-color: white; color: #718096; padding: 12px 5px; font-weight: 600; text-align: center; border-bottom: 2px solid #EDF2F7; }
+        .matriz-table th:first-child { text-align: left; padding-left: 15px; }
+        .matriz-table td { padding: 10px 5px; text-align: center; font-weight: 700; border: 2px solid white; }
+        .matriz-table td:first-child { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; }
+        
+        .cell-livre { background-color: #F8F9FA; color: #A0AEC0; }
+        .cell-ok { background-color: #C6F6D5; color: #22543D; }
+        .cell-alert { background-color: #FEEBC8; color: #C05621; }
+        .cell-danger { background-color: #FED7D7; color: #9B2C2C; }
+
+        .state-empty { text-align: center; padding: 60px; color: var(--text-muted); }
+        input[type="file"] { display: none; }
+
+        /* IMPRESSÃO CONFIGURADA PAISAGEM */
+        @page { size: landscape; margin: 10mm; }
+        @media print {
+            body { background-color: #FFFFFF !important; color: #000000 !important; font-size: 11px; }
+            header { 
+                display: flex !important; 
+                background-color: #1A1A1B !important; 
+                color: white !important;
+                border-bottom: 5px solid var(--moreno-red) !important;
+                padding: 15px 30px !important;
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            .kpi-box {
+                background-color: #2D3748 !important;
+                border-left: 4px solid var(--moreno-red) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .kpi-box-value { color: white !important; }
+            
+            .dashboard-summary-card {
+                display: flex !important;
+                background: white !important;
+                border: 1px solid #CBD5E0 !important;
+                margin: 15px 0 !important;
+                padding: 20px !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .control-panel, .navigation-tabs, .search-area, #containerFiltrosCarteira, .btn-clear, label[for="uploadExcel"] { 
+                display: none !important; 
+            }
+            main { padding: 10px 0 !important; margin: 0 !important; }
+            .content-wrapper { border: none !important; box-shadow: none !important; }
+            .recurso-bloco { border: 1px solid #CBD5E0 !important; page-break-inside: avoid; }
+            .recurso-tarja { background-color: #1A1A1B !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            
+            .kanban-card.status-finalizado { 
+                background-color: #DEF7EC !important; 
+                color: #03543F !important; 
+                border-left: 4px solid #31C48D !important;
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            .tabela-base th { background-color: #EDF2F7 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .row-finalizado { background-color: #DEF7EC !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <h1>PCP Moreno — War Room</h1>
+            <p>Controle Mestre: Carga, Capacidade, Gargalos e Aderência de Programação &nbsp;|&nbsp; <b style="color: #31C48D;">SEMANA: <span id="headerSemana">CARREGANDO...</span></b></p>
+        </div>
+
+        <div class="kpi-group">
+            <div class="kpi-box" style="border-color: #3182ce;"><div class="kpi-box-label">Ordens Ativas</div><div class="kpi-box-value" id="kpiOrdens">0</div></div>
+            <div class="kpi-box" style="border-color: #319795;"><div class="kpi-box-label">Aderência Global</div><div class="kpi-box-value" id="kpiAderencia">0%</div></div>
+            <div class="kpi-box" style="border-color: #e53e3e;"><div class="kpi-box-label">Máqs Gargalo (&gt;100%)</div><div class="kpi-box-value" id="kpiGargalo">0</div></div>
+        </div>
+    </header>
+
+    <div class="control-panel">
+        <div class="selector-wrapper" id="wrapFiltroGeral">
+            <label style="font-weight: 700; font-size: 13px;"><i class="fa-solid fa-filter"></i> Semana Prog.:</label>
+            <select id="filtroSemanaGeral" class="dropdown-semana" onchange="AtualizarVisaoGeral()">
+                <option value="TODAS">📋 Visão Completa</option>
+            </select>
+        </div>
+
+        <div class="selector-wrapper" id="wrapFiltroMatriz" style="display: none; background: #EDF2F7; padding: 5px 15px; border-radius: 6px;">
+            <label style="font-weight: 700; font-size: 13px; color: var(--moreno-red);"><i class="fa-solid fa-arrows-left-right"></i> Período da Matriz:</label>
+            <select id="filtroMatrizInicio" class="dropdown-semana" onchange="RenderizarAtual()"></select>
+            <span style="font-weight:bold;">até</span>
+            <select id="filtroMatrizFim" class="dropdown-semana" onchange="RenderizarAtual()"></select>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-pdf" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir / PDF</button>
+            <button class="btn btn-clear" onclick="LimparBase()"><i class="fa-solid fa-trash"></i> Resetar</button>
+            <label for="uploadExcel" class="btn btn-import"><i class="fa-solid fa-file-excel"></i> Importar Excel</label>
+            <input type="file" id="uploadExcel" accept=".xlsm, .xlsx">
+        </div>
+    </div>
+
+    <div id="containerFiltrosCarteira" class="filters-carteira-grid" style="display: none;"></div>
+
+    <div class="navigation-tabs">
+        <button id="navKanban" class="nav-btn active" onclick="TrocarAba('KANBAN')"><i class="fa-solid fa-table-columns"></i> 1. Painel Kanban (Dashboard)</button>
+        <button id="navMatriz" class="nav-btn" onclick="TrocarAba('MATRIZ')"><i class="fa-solid fa-table-cells"></i> 2. Matriz Disp.</button>
+        <button id="navTabela" class="nav-btn" onclick="TrocarAba('TABELA')"><i class="fa-solid fa-database"></i> 3. CARTEIRA GERAL (USI)</button>
+    </div>
+
+    <div class="dashboard-summary-card" id="blocoAderenciaDashboard">
+        <div class="summary-text-side">
+            <h2 id="summaryAderenciaTxt">Aderência: 0%</h2>
+            <div class="summary-legend-item"><span class="dot-green"></span> Operações Executadas: <b id="summaryExecutadas">0</b></div>
+            <div class="summary-legend-item"><span class="dot-gray"></span> Operações Planejadas: <b id="summaryPlanejadas">0</b></div>
+        </div>
+        <div class="summary-chart-wrapper">
+            <canvas id="aderenciaHeaderChart"></canvas>
+        </div>
+    </div>
+
+    <div class="search-area" id="wrapperBusca">
+        <input type="text" id="campoBusca" class="search-field" placeholder="🔍 Buscar por palavra-chave nesta aba...">
+    </div>
+
+    <main id="renderTarget">
+        <div class="state-empty"><i class="fa-solid fa-microchip" style="font-size:48px;color:#CBD5E0"></i><p>Aguardando importação da planilha com abas PROGRAMAÇÃO, PLANEJ e CARTEIRA GERAL - USI.</p></div>
+    </main>
+
+    <script>
+        let BASE_PROD = JSON.parse(localStorage.getItem("MORENO_EX_BASE")) || [];
+        let MATRIZ_CARGA = JSON.parse(localStorage.getItem("MORENO_EX_CARGA")) || {};
+        let CARTEIRA_DATA = JSON.parse(localStorage.getItem("MORENO_EX_CARTEIRA")) || [];
+        let SEMANA_TRAVADA_I2 = localStorage.getItem("MORENO_EX_I2") || 'NÃO IDENTIFICADA';
+        let EXEC_N2 = parseInt(localStorage.getItem("MORENO_EX_N2")) || 0;
+        let PLAN_N3 = parseInt(localStorage.getItem("MORENO_EX_N3")) || 0;
+        
+        let layout = "KANBAN";
+        let graficoAderencia = null;
+
+        function normalizarTexto(str) {
+            return String(str || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z0-9]/g, ""); 
+        }
+
+        window.onload = () => {
+            document.getElementById('headerSemana').textContent = SEMANA_TRAVADA_I2;
+            if(BASE_PROD.length > 0 || Object.keys(MATRIZ_CARGA).length > 0 || CARTEIRA_DATA.length > 0) {
+                PrepararInterface();
+            } else {
+                TrocarAba('KANBAN');
+            }
+            document.getElementById('campoBusca').addEventListener('input', RenderizarAtual);
+        };
+
+        document.getElementById('uploadExcel').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const wb = XLSX.read(evt.target.result, { type: 'binary' });
+                    let sBase, sPlan, sCap, sCarteira;
+                    
+                    wb.SheetNames.forEach(n => {
+                        let normName = normalizarTexto(n);
+                        if(normName.includes("PROGRAMACAO")) sBase = wb.Sheets[n]; 
+                        if(normName.includes("PLANEJ")) sPlan = wb.Sheets[n];
+                        if(normName.includes("CAPINST")) sCap = wb.Sheets[n];
+                        if(normName.includes("CARTEIRAGERAL") || normName.includes("USI")) sCarteira = wb.Sheets[n];
+                    });
+                    
+                    if(!sBase) sBase = wb.Sheets[wb.SheetNames[0]];
+
+                    // CAPTURA RIGOROSA E FIXA DA CÉLULA I2 DA ABA PROGRAMAÇÃO
+                    SEMANA_TRAVADA_I2 = sBase['I2'] ? String(sBase['I2'].v).trim() : 'NÃO IDENTIFICADA';
+                    document.getElementById('headerSemana').textContent = SEMANA_TRAVADA_I2;
+                    localStorage.setItem("MORENO_EX_I2", SEMANA_TRAVADA_I2);
+
+                    EXEC_N2 = sBase['N2'] ? (parseInt(sBase['N2'].v) || 0) : 0;
+                    PLAN_N3 = sBase['N3'] ? (parseInt(sBase['N3'].v) || 0) : 0;
+
+                    let mBase = XLSX.utils.sheet_to_json(sBase, { header: 1, defval: "" });
+                    let idH = 0;
+                    for (let i=0; i<15; i++) { 
+                        if(mBase[i] && mBase[i].map(c=>normalizarTexto(c)).join('').includes("CLIENTE")) { idH=i; break; } 
+                    }
+                    
+                    BASE_PROD = [];
+                    for(let r=idH+1; r<mBase.length; r++) {
+                        if(!mBase[r][0] && !mBase[r][2]) continue;
+                        let obj = { RECURSO:"", DESCR_RECURSO:"", COD:"", DESCRICAO:"", CLIENTE:"", OPERACAO:"", SEMANA:"", REALIZADO:"" };
+                        
+                        mBase[idH].forEach((rawCol, idx) => {
+                            let col = normalizarTexto(rawCol);
+                            let val = String(mBase[r][idx] || '').trim();
+                            if(col.includes("RECURSO")) obj.RECURSO = val;
+                            if(col.includes("DESCRRECURSO")) obj.DESCR_RECURSO = val;
+                            if(col.includes("COD") && !col.includes("PC")) obj.COD = val;
+                            if(col.includes("DESCRICAO")) obj.DESCRICAO = val;
+                            if(col.includes("CLIENTE")) obj.CLIENTE = val;
+                            if(col.includes("OPERACAO")) obj.OPERACAO = val;
+                            if(col.includes("SEMANA") || col === "SEM") obj.SEMANA = (!isNaN(val) && val) ? `SEM ${val}` : val.toUpperCase();
+                            if(col.includes("FINALIZADO") || col === "M") obj.REALIZADO = val;
+                        });
+                        if(obj.COD || obj.DESCRICAO || obj.RECURSO) BASE_PROD.push(obj);
+                    }
+
+                    CARTEIRA_DATA = [];
+                    if(sCarteira) {
+                        let mCart = XLSX.utils.sheet_to_json(sCarteira, { header: 1, defval: "" });
+                        let idHCart = 0;
+                        for(let i=0; i<15; i++) {
+                            if(mCart[i] && mCart[i].map(c=>normalizarTexto(c)).join('').includes("CLIENTE")) { idHCart = i; break; }
+                        }
+                        
+                        let cCols = mCart[idHCart].map(c => normalizarTexto(c));
+                        for(let r=idHCart+1; r<mCart.length; r++) {
+                            if(!mCart[r].join('')) continue;
+                            let obj = { CLIENTES:"", DESCRICAO:"", UNID:"", COD_PC:"", QTD:"", SUB_GRUPO:"", SETOR_VENDA:"", PRAZO_FUNDIDO:"", PRAZO_ENTREGA:"", REPROG:"", MES:"", STATUS:"" };
+                            
+                            cCols.forEach((col, idx) => {
+                                let val = String(mCart[r][idx] || '').trim();
+                                if(col.includes("CLIENTE")) obj.CLIENTES = val;
+                                if(col.includes("DESCRICAO")) obj.DESCRICAO = val;
+                                if(col.includes("UNID")) obj.UNID = val;
+                                if(col.includes("CODPC")) obj.COD_PC = val;
+                                if(col.includes("QTD")) obj.QTD = val;
+                                if(col.includes("SUBGRUPO")) obj.SUB_GRUPO = val;
+                                if(col.includes("SETORVENDA")) obj.SETOR_VENDA = val;
+                                if(col.includes("FUNDIDO")) obj.PRAZO_FUNDIDO = val;
+                                if(col.includes("ENTREGA") && !col.includes("REPROGRAMACAO")) obj.PRAZO_ENTREGA = val;
+                                if(col.includes("REPROGRAMACAO") || col.includes("REPROG")) obj.REPROG = val;
+                                if(col.includes("MES")) obj.MES = val;
+                                if(col === "STATUS") obj.STATUS = val;
+                            });
+                            if(obj.CLIENTES || obj.DESCRICAO || obj.COD_PC || obj.SUB_GRUPO) CARTEIRA_DATA.push(obj);
+                        }
+                    }
+
+                    let limitCap = {};
+                    if(sCap) {
+                        let mCap = XLSX.utils.sheet_to_json(sCap, { header: 1, defval: "" });
+                        if(mCap.length > 3) {
+                            let capCols = mCap[3].map(c=>String(c||'').trim().toUpperCase());
+                            for(let r=4; r<mCap.length; r++) {
+                                let cc = String(mCap[r][0]).trim();
+                                if(!cc) continue;
+                                limitCap[cc] = {};
+                                capCols.forEach((sem, colIdx) => {
+                                    if(colIdx>=6 && sem) limitCap[cc][sem] = parseFloat(String(mCap[r][colIdx]||'88').replace(',','.')) || 88;
+                                });
+                            }
+                        }
+                    }
+
+                    MATRIZ_CARGA = {};
+                    if(sPlan) {
+                        let mPlan = XLSX.utils.sheet_to_json(sPlan, { header: 1, defval: "" });
+                        let idP = -1;
+                        for(let i=0; i<10; i++) { 
+                            if(mPlan[i] && (mPlan[i].map(c=>normalizarTexto(c)).join('').includes("SEM") || mPlan[i].map(c=>normalizarTexto(c)).join('').includes("ANO"))) { idP=i; break; } 
+                        }
+                        if(idP !== -1) {
+                            let pCols = mPlan[idP].map(c=>String(c||'').trim());
+                            for(let r=idP+1; r<mPlan.length; r++) {
+                                let cc = String(mPlan[r][0]).trim();
+                                let nm = String(mPlan[r][1]).trim();
+                                if(!cc || !nm) continue;
+                                
+                                let semL=[], cL=[], cpL=[];
+                                pCols.forEach((col, idx) => {
+                                    if(idx>=2 && col && col!=="—") {
+                                        let fs = col.toUpperCase().includes("SEM") ? col.toUpperCase() : `SEM ${col}`;
+                                        semL.push(fs);
+                                        cL.push(parseFloat(String(mPlan[r][idx]||'0').replace(',','.')) || 0);
+                                        let baseCap = (nm.toUpperCase().includes("ZERBST") || nm.toUpperCase().includes("POREBA")) ? 44 : 88;
+                                        cpL.push((limitCap[cc] && limitCap[cc][col.toUpperCase()]) ? limitCap[cc][col.toUpperCase()] : baseCap);
+                                    }
+                                });
+                                MATRIZ_CARGA[cc] = { cc:cc, nome:nm, semanas:semL, carga:cL, capacidade:cpL };
+                            }
+                        }
+                    }
+
+                    localStorage.setItem("MORENO_EX_BASE", JSON.stringify(BASE_PROD));
+                    localStorage.setItem("MORENO_EX_CARGA", JSON.stringify(MATRIZ_CARGA));
+                    localStorage.setItem("MORENO_EX_CARTEIRA", JSON.stringify(CARTEIRA_DATA));
+                    localStorage.setItem("MORENO_EX_N2", EXEC_N2);
+                    localStorage.setItem("MORENO_EX_N3", PLAN_N3);
+                    
+                    alert("Sucesso absoluto! Dados sincronizados.");
+                    PrepararInterface();
+
+                } catch (err) { alert("Erro ao processar a planilha: " + err.message); }
+            };
+            reader.readAsBinaryString(file);
+        });
+
+        function PrepararInterface() {
+            let sel = document.getElementById('filtroSemanaGeral');
+            sel.innerHTML = '<option value="TODAS">📋 Visão Completa</option>';
+            let semsProd = [...new Set(BASE_PROD.map(x=>x.SEMANA))].filter(Boolean).sort();
+            semsProd.forEach(s => sel.innerHTML += `<option value="${s}">📆 ${s}</option>`);
+
+            let selIni = document.getElementById('filtroMatrizInicio');
+            let selFim = document.getElementById('filtroMatrizFim');
+            selIni.innerHTML = ''; selFim.innerHTML = '';
+            if(Object.keys(MATRIZ_CARGA).length > 0) {
+                let semsMatriz = MATRIZ_CARGA[Object.keys(MATRIZ_CARGA)[0]].semanas;
+                semsMatriz.forEach(s => {
+                    let text = s.replace('/2026', '');
+                    selIni.innerHTML += `<option value="${s}">${text}</option>`;
+                    selFim.innerHTML += `<option value="${s}">${text}</option>`;
+                });
+                selFim.value = semsMatriz[semsMatriz.length - 1];
+            }
+
+            ConstruirFiltrosCarteiraUI();
+            AtualizarVisaoGeral();
+        }
+
+        function ConstruirFiltrosCarteiraUI() {
+            const container = document.getElementById('containerFiltrosCarteira');
+            if(!container || CARTEIRA_DATA.length === 0) return;
+
+            const configuracaoFiltros = [
+                { id: 'fCartCliente', label: 'Clientes', key: 'CLIENTES' },
+                { id: 'fCartSubGrupo', label: 'Sub_Grupo', key: 'SUB_GRUPO' },
+                { id: 'fCartSetor', label: 'Setor Venda', key: 'SETOR_VENDA' },
+                { id: 'fCartMes', label: 'Mês', key: 'MES' },
+                { id: 'fCartStatus', label: 'Status', key: 'STATUS' }
+            ];
+
+            let html = '';
+            configuracaoFiltros.forEach(f => {
+                let valoresUnicos = [...new Set(CARTEIRA_DATA.map(x => x[f.key]))].filter(v => v && v !== "-").sort();
+                html += `
+                <div class="filter-field-group">
+                    <label>${f.label}</label>
+                    <select id="${f.id}" class="dropdown-semana" onchange="RenderizarAtual()" style="font-size:12px; padding:6px 10px;">
+                        <option value="TODOS">-- Todos --</option>
+                        ${valoresUnicos.map(v => `<option value="${v}">${v}</option>`).join('')}
+                    </select>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function AtualizarVisaoGeral() {
+            const sem = document.getElementById('filtroSemanaGeral').value;
+            let d = BASE_PROD;
+            if(sem !== "TODAS") d = d.filter(x => x.SEMANA === sem);
+            
+            document.getElementById('kpiOrdens').textContent = d.length;
+            
+            let pctGlobal = PLAN_N3 > 0 ? Math.round((EXEC_N2 / PLAN_N3) * 100) : 0;
+            document.getElementById('kpiAderencia').textContent = `${pctGlobal}%`;
+            
+            document.getElementById('summaryAderenciaTxt').textContent = `Aderência: ${pctGlobal}%`;
+            document.getElementById('summaryExecutadas').textContent = EXEC_N2;
+            document.getElementById('summaryPlanejadas').textContent = PLAN_N3;
+
+            let gargalos = 0;
+            Object.keys(MATRIZ_CARGA).forEach(cc => {
+                let m = MATRIZ_CARGA[cc];
+                let cg = 0, cp = 0;
+                if(sem==="TODAS") { cg = m.carga.reduce((a,b)=>a+b,0); cp = m.capacidade.reduce((a,b)=>a+b,0); }
+                else { let i = m.semanas.indexOf(sem); if(i>-1) { cg = m.carga[i]; cp = m.capacidade[i]; } }
+                if(cp>0 && (cg/cp)*100 > 100) gargalos++;
+            });
+            document.getElementById('kpiGargalo').textContent = gargalos;
+
+            let ctx = document.getElementById('aderenciaHeaderChart');
+            if (ctx) {
+                if(graficoAderencia) graficoAderencia.destroy();
+                let pendentes = Math.max(0, PLAN_N3 - EXEC_N2);
+                graficoAderencia = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: { 
+                        labels: ['Executadas', 'Pendentes'], 
+                        datasets: [{ data: [EXEC_N2, pendentes], backgroundColor: ['#31C48D', '#E2E8F0'], borderWidth: 0 }] 
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        cutout: '75%', 
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } } 
+                    }
+                });
+            }
+
+            RenderizarAtual();
+        }
+
+        function TrocarAba(tipo) {
+            layout = tipo;
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            let btnId = {'KANBAN':'navKanban', 'TABELA':'navTabela', 'MATRIZ':'navMatriz'}[tipo];
+            if(document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
+            
+            document.getElementById('wrapperBusca').style.display = ['KANBAN','TABELA'].includes(tipo) ? 'block' : 'none';
+            document.getElementById('wrapFiltroGeral').style.display = ['KANBAN','MATRIZ'].includes(tipo) ? 'flex' : 'none';
+            document.getElementById('wrapFiltroMatriz').style.display = tipo === 'MATRIZ' ? 'flex' : 'none';
+            document.getElementById('containerFiltrosCarteira').style.display = tipo === 'TABELA' ? 'grid' : 'none';
+            
+            document.getElementById('blocoAderenciaDashboard').style.display = tipo === 'TABELA' ? 'none' : 'flex';
+
+            RenderizarAtual();
+        }
+
+        function RenderizarAtual() {
+            let trg = document.getElementById('renderTarget');
+            if(!trg) return;
+            let busca = document.getElementById('campoBusca').value.toLowerCase();
+
+            if(layout === "KANBAN") {
+                let sem = document.getElementById('filtroSemanaGeral').value;
+                let d = BASE_PROD;
+                if(sem !== "TODAS") d = d.filter(x => x.SEMANA === sem);
+                if(busca) {
+                    d = d.filter(x => String(x.DESCRICAO).toLowerCase().includes(busca) || String(x.COD).toLowerCase().includes(busca) || String(x.CLIENTE).toLowerCase().includes(busca));
+                }
+                TabKanbanOperacoes(trg, d);
+            }
+            
+            if(layout === "TABELA") {
+                let dCart = CARTEIRA_DATA;
+                const fCliente = document.getElementById('fCartCliente')?.value;
+                const fSubGrupo = document.getElementById('fCartSubGrupo')?.value;
+                const fSetor = document.getElementById('fCartSetor')?.value;
+                const fMes = document.getElementById('fCartMes')?.value;
+                const fStatus = document.getElementById('fCartStatus')?.value;
+
+                if(fCliente && fCliente !== "TODOS") dCart = dCart.filter(x => x.CLIENTES === fCliente);
+                if(fSubGrupo && fSubGrupo !== "TODOS") dCart = dCart.filter(x => x.SUB_GRUPO === fSubGrupo);
+                if(fSetor && fSetor !== "TODOS") dCart = dCart.filter(x => x.SETOR_VENDA === fSetor);
+                if(fMes && fMes !== "TODOS") dCart = dCart.filter(x => x.MES === fMes);
+                if(fStatus && fStatus !== "TODOS") dCart = dCart.filter(x => x.STATUS === fStatus);
+
+                if(busca) {
+                    dCart = dCart.filter(x => String(x.CLIENTES).toLowerCase().includes(busca) || String(x.DESCRICAO).toLowerCase().includes(busca) || String(x.COD_PC).toLowerCase().includes(busca) || String(x.SUB_GRUPO).toLowerCase().includes(busca));
+                }
+                TabCarteiraGeral(trg, dCart);
+            }
+            
+            if(layout === "MATRIZ") TabMatriz(trg);
+        }
+
+        function TabKanbanOperacoes(t, d) {
+            let gruposRecurso = [...new Set(d.map(x => String(x.DESCR_RECURSO || 'SEM RECURSO DEFINIDO')))].sort();
+            let html = '<div style="display: flex; flex-direction: column; gap: 20px;">';
+            
+            gruposRecurso.forEach(g => {
+                let itens = d.filter(x => x.DESCR_RECURSO === g);
+                html += `<div class="recurso-bloco">
+                            <div class="recurso-tarja">
+                                <span><i class="fa-solid fa-industry"></i> &nbsp;${g}</span>
+                                <span class="badge-week" style="background:#FFFFFF; color:var(--moreno-black);">${itens.length} OPs</span>
+                            </div>
+                            <div class="recurso-cards-grid">`;
+                
+                itens.forEach(i => {
+                    let isFin = String(i.REALIZADO).toLowerCase().trim() === 'finalizado';
+                    html += `
+                    <div class="kanban-card ${isFin ? 'status-finalizado' : ''}">
+                        <div class="card-header-code">
+                            <span>#${i.COD || '—'}</span>
+                            <span class="badge-week">${i.SEMANA}</span>
+                        </div>
+                        <div class="card-body-desc">${i.DESCRICAO || 'Sem Descrição'}</div>
+                        <div class="card-footer-info">
+                            <div>Op: <b>${i.OPERACAO || '—'}</b></div>
+                            <div><span class="badge-client">${i.CLIENTE || '—'}</span></div>
+                        </div>
+                    </div>`;
+                });
+                html += '</div></div>';
+            });
+            t.innerHTML = gruposRecurso.length ? html+'</div>' : '<div class="state-empty"><p>Nenhuma OP ativa para os filtros atuais.</p></div>';
+        }
+
+        function TabCarteiraGeral(t, data) {
+            let linesHtml = '';
+            data.forEach(item => {
+                let statusUpper = String(item.STATUS).toUpperCase();
+                let isFinalizado = statusUpper.includes("FINALI") || statusUpper.includes("CONCLU") || statusUpper.includes("PRONTO");
+                let classeLinha = isFinalizado ? 'row-finalizado' : '';
+                let bolinhaVerde = isFinalizado ? '<span class="green-dot-table"></span>' : '';
+
+                linesHtml += `
+                <tr class="${classeLinha}">
+                    <td>${item.CLIENTES || '—'}</td>
+                    <td>${item.DESCRICAO || '—'}</td>
+                    <td>${item.UNID || '—'}</td>
+                    <td>${item.COD_PC || '—'}</td>
+                    <td>${item.QTD || '—'}</td>
+                    <td>${item.SUB_GRUPO || '—'}</td>
+                    <td>${item.SETOR_VENDA || '—'}</td>
+                    <td>${item.PRAZO_FUNDIDO || '—'}</td>
+                    <td>${item.PRAZO_ENTREGA || '—'}</td>
+                    <td>${item.MES || '—'}</td>
+                    <td class="cell-relative">${item.STATUS || '—'}${bolinhaVerde}</td>
+                </tr>`;
+            });
+
+            t.innerHTML = `
+            <div class="content-wrapper">
+                <table class="tabela-base">
+                    <thead>
+                        <tr>
+                            <th>Clientes</th>
+                            <th>Descrição</th>
+                            <th>Unid.</th>
+                            <th>CÓD_PÇ</th>
+                            <th>Qtd.</th>
+                            <th>Sub_Grupo</th>
+                            <th>Setor_Venda</th>
+                            <th>Prazo Fundido</th>
+                            <th>Prazo Entrega</th>
+                            <th>Mês</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${linesHtml || '<tr><td colspan="11" style="text-align:center; padding:30px; color:var(--text-muted);">Nenhum dado integrado nesta combinação de filtros.</td></tr>'}
+                    </tbody>
+                </table>
+            </div>`;
+        }
+
+        function TabMatriz(t) {
+            let chaves = Object.keys(MATRIZ_CARGA).sort((a,b) => parseInt(a) - parseInt(b));
+            if (chaves.length === 0) { t.innerHTML = '<div class="state-empty"><p>Sem dados de capacidade disponíveis.</p></div>'; return; }
+
+            let sems = MATRIZ_CARGA[chaves[0]].semanas;
+            let valIni = document.getElementById('filtroMatrizInicio').value;
+            let valFim = document.getElementById('filtroMatrizFim').value;
+            let idxIni = sems.indexOf(valIni), idxFim = sems.indexOf(valFim);
+            
+            if(idxIni === -1) idxIni = 0;
+            if(idxFim === -1 || idxFim < idxIni) idxFim = sems.length - 1;
+            let semsFiltradas = sems.slice(idxIni, idxFim + 1);
+            
+            let html = `<div class="content-wrapper"><table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => `<th>${s.replace('SEM ', '').replace('/2026', '')}</th>`).join('')}</tr></thead><tbody>`;
+
+            chaves.forEach(cc => {
+                let m = MATRIZ_CARGA[cc]; html += `<tr><td>[${cc}] ${m.nome}</td>`;
+                for(let i = idxIni; i <= idxFim; i++) {
+                    let carga = m.carga[i] || 0, cap = m.capacidade[i] || 1, pct = Math.round((carga / cap) * 100);
+                    let cls = "cell-livre", txt = "Livre";
+                    if (pct > 0 && pct <= 85) { cls = "cell-ok"; txt = pct + "%"; } 
+                    else if (pct > 85 && pct <= 100) { cls = "cell-alert"; txt = pct + "%"; } 
+                    else if (pct > 100) { cls = "cell-danger"; txt = pct + "%"; }
+                    html += `<td class="${cls}">${txt}</td>`;
+                }
+                html += `</tr>`;
+            });
+            t.innerHTML = html + `</tbody></table></div>`;
+        }
+
+        function LimparBase() {
+            if(confirm("Deseja resetar e limpar todos os dados importados do sistema?")) {
+                localStorage.removeItem("MORENO_EX_BASE");
+                localStorage.removeItem("MORENO_EX_CARGA");
+                localStorage.removeItem("MORENO_EX_CARTEIRA");
+                localStorage.removeItem("MORENO_EX_I2");
+                localStorage.removeItem("MORENO_EX_N2");
+                localStorage.removeItem("MORENO_EX_N3");
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
