@@ -23,57 +23,25 @@
         body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
         
         header { 
-            background-color: var(--moreno-black); 
-            color: white; 
-            padding: 15px 40px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 4px solid var(--moreno-red); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            gap: 20px; 
+            background-color: var(--moreno-black); color: white; padding: 15px 40px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 4px solid var(--moreno-red); box-shadow: 0 4px 12px rgba(0,0,0,0.15); gap: 20px; flex-wrap: wrap;
         }
         .header-left h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
         .header-left p { margin: 5px 0 0 0; font-size: 14px; color: #31C48D; font-weight: 700; text-transform: uppercase; }
         
-        .header-chart-box {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background-color: var(--card-dark);
-            padding: 8px 20px;
-            border-radius: 6px;
-            border: 1px solid #2D2D35;
-        }
+        .header-chart-box { display: flex; align-items: center; gap: 15px; background-color: var(--card-dark); padding: 8px 20px; border-radius: 6px; border: 1px solid #2D2D35; }
         .header-chart-wrapper { width: 45px; height: 45px; position: relative; }
         .header-chart-info { display: flex; flex-direction: column; justify-content: center; }
         .header-chart-pct { font-size: 18px; font-weight: 800; color: #31C48D; line-height: 1.1; }
         .header-chart-lbl { font-size: 9px; color: #A0AEC0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
 
-        .kpi-group { display: flex; gap: 15px; }
-        .kpi-box { 
-            background-color: var(--card-dark); 
-            padding: 8px 20px; 
-            border-radius: 4px; 
-            min-width: 130px;
-            border: 1px solid #2D2D35;
-            border-left-width: 4px;
-        }
+        .kpi-group { display: flex; gap: 15px; flex-wrap: wrap; }
+        .kpi-box { background-color: var(--card-dark); padding: 8px 20px; border-radius: 4px; min-width: 130px; border: 1px solid #2D2D35; border-left-width: 4px; }
         .kpi-box-label { font-size: 9px; text-transform: uppercase; color: #A0AEC0; font-weight: 700; letter-spacing: 0.5px; }
         .kpi-box-value { font-size: 24px; font-weight: 800; margin-top: 2px; color: white; }
 
-        .dashboard-summary-card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 25px;
-            margin: 25px 40px 5px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 60px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
+        .dashboard-summary-card { background: white; border-radius: 8px; border: 1px solid var(--border-color); padding: 25px; margin: 25px 40px 5px 40px; display: flex; align-items: center; justify-content: center; gap: 60px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); flex-wrap: wrap;}
         .summary-text-side { display: flex; flex-direction: column; gap: 10px; }
         .summary-text-side h2 { margin: 0 0 5px 0; font-size: 32px; font-weight: 800; color: var(--moreno-black); }
         .summary-legend-item { font-size: 14px; color: #4A5568; display: flex; align-items: center; gap: 10px; font-weight: 600; }
@@ -82,7 +50,7 @@
         .summary-chart-wrapper { width: 140px; height: 140px; position: relative; }
 
         .control-panel { background-color: white; padding: 15px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .selector-wrapper { display: flex; align-items: center; gap: 10px; }
+        .selector-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .dropdown-semana { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-weight: 600; outline: none; background-color: white; color: var(--text-main); }
         .btn { padding: 10px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: none; }
         .btn-pdf { background-color: #2B6CB0; color: white; }
@@ -102,8 +70,11 @@
         main { padding: 20px 40px 40px 40px; }
 
         .recurso-bloco { background: white; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; page-break-inside: avoid; margin-bottom: 20px; }
-        .recurso-tarja { background-color: #1A1A1B; color: white; padding: 10px 15px; font-size: 13px; font-weight: 700; border-left: 5px solid var(--moreno-red); display: flex; justify-content: space-between; align-items: center; }
-        .recurso-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding: 15px; background-color: #F8FAFC; }
+        .recurso-tarja { background-color: #1A1A1B; color: white; padding: 10px 15px; font-size: 13px; font-weight: 700; border-left: 5px solid var(--moreno-red); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
+        .recurso-tarja:hover { background-color: #2D2D35; }
+        .recurso-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding: 15px; background-color: #F8FAFC; transition: all 0.3s ease-in-out; }
+        
+        .op-count { font-weight: 900; color: #1A1A1B; background-color: #FFFFFF; padding: 2px 8px; border-radius: 4px; font-size: 20px; } 
         
         .kanban-card { background: white; border: 1px solid var(--border-color); border-left: 4px solid #A0AEC0; border-radius: 6px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 8px; position: relative; }
         .kanban-card.status-finalizado { background-color: #DEF7EC !important; color: #03543F !important; border-left-color: #31C48D !important; }
@@ -123,25 +94,57 @@
         .green-dot-card { position: absolute; top: 15px; right: 15px; width: 10px; height: 10px; background-color: #31C48D; border-radius: 50%; display: none; }
         .status-finalizado .green-dot-card { display: block; }
 
-        .tabela-base { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        .table-container { width: 100%; overflow-x: auto; }
+        .tabela-base { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; white-space: nowrap; }
         .tabela-base th { background-color: #EDF2F7; color: #4A5568; font-weight: 700; padding: 12px; text-transform: uppercase; font-size: 11px; border-bottom: 2px solid var(--border-color); }
         .tabela-base td { padding: 12px; border-bottom: 1px solid var(--border-color); }
         .row-finalizado { background-color: #DEF7EC !important; color: #03543F !important; font-weight: 600; }
         .cell-relative { position: relative; }
         .green-dot-table { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; background-color: #31C48D; border-radius: 50%; }
 
+        .matriz-layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+        .matriz-table-wrapper { flex: 1; min-width: 60%; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid var(--border-color); }
+        .gargalos-sidebar { width: 320px; background: white; border-radius: 8px; border: 1px solid var(--moreno-red); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .gargalos-header { background: var(--moreno-red); color: white; padding: 12px 15px; font-weight: 800; font-size: 14px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .gargalos-list { max-height: 500px; overflow-y: auto; padding: 0; margin: 0; list-style: none; }
+        .gargalo-item { padding: 12px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .gargalo-item:nth-child(even) { background-color: #F8FAFC; }
+        .gargalo-nome { font-weight: 700; color: #1A1A1B; flex: 1; }
+        .gargalo-semana { font-size: 10px; color: var(--text-muted); display: block; margin-top: 2px; }
+        .gargalo-pct { font-weight: 900; color: var(--moreno-red); background: #FED7D7; padding: 3px 8px; border-radius: 4px; font-size: 14px; }
+
         .matriz-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .matriz-table th { background-color: white; color: #718096; padding: 12px 5px; font-weight: 600; text-align: center; border-bottom: 2px solid #EDF2F7; }
-        .matriz-table th:first-child { text-align: left; padding-left: 15px; }
-        .matriz-table td { padding: 10px 5px; text-align: center; font-weight: 700; border: 2px solid white; }
-        .matriz-table td:first-child { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; }
+        .matriz-table th:first-child { text-align: left; padding-left: 15px; position: sticky; left: 0; background: white; z-index: 2; border-right: 1px solid #EDF2F7; }
+        .matriz-table td { padding: 10px 5px; text-align: center; font-weight: 700; border: 2px solid white; cursor: help; position: relative; }
+        .matriz-table td:first-child { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; position: sticky; left: 0; background: white; z-index: 1; cursor: default;}
         
         .cell-livre { background-color: #F8F9FA; color: #A0AEC0; }
         .cell-ok { background-color: #C6F6D5; color: #22543D; }
         .cell-alert { background-color: #FEEBC8; color: #C05621; }
         .cell-danger { background-color: #FED7D7; color: #9B2C2C; }
 
-        .state-empty { text-align: center; padding: 60px; color: var(--text-muted); }
+        /* Estilização do Tooltip */
+        .tooltip .tooltiptext {
+            visibility: hidden; width: max-content; max-width: 320px; background-color: #1A1A1B; color: #fff;
+            text-align: left; border-radius: 6px; padding: 12px; position: absolute; z-index: 100;
+            bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s;
+            font-size: 11px; font-weight: normal; white-space: pre-wrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid #4A5568;
+            line-height: 1.4;
+        }
+        .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #1A1A1B transparent transparent transparent; }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+        .state-empty { text-align: center; padding: 60px; color: var(--text-muted); width: 100%; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; align-items: flex-start; }
+            .kpi-group { width: 100%; }
+            .kpi-box { flex: 1; min-width: 45%; }
+            .control-panel, .navigation-tabs, .search-area { padding: 15px 20px; }
+            main { padding: 20px; }
+            .gargalos-sidebar { width: 100%; }
+        }
 
         @page { size: landscape; margin: 10mm; }
         @media print {
@@ -152,6 +155,7 @@
             .recurso-bloco { border: 1px solid #CBD5E0 !important; page-break-inside: avoid; }
             .recurso-tarja { background-color: #1A1A1B !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .kanban-card.status-finalizado { background-color: #DEF7EC !important; color: #03543F !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .gargalos-sidebar { display: none; }
         }
     </style>
 </head>
@@ -183,7 +187,7 @@
                 <div class="kpi-box-value" id="kpiAderencia">0%</div>
             </div>
             <div class="kpi-box" style="border-left-color: #e53e3e;">
-                <div class="kpi-box-label">Máqs Gargalo (&gt;100%)</div>
+                <div class="kpi-box-label">Máqs Gargalo (>100%)</div>
                 <div class="kpi-box-value" id="kpiGargalo">0</div>
             </div>
         </div>
@@ -197,16 +201,25 @@
             </select>
         </div>
 
+        <div class="selector-wrapper" id="wrapFiltroKanban" style="display: flex;">
+            <label style="font-weight: 700; font-size: 13px;"><i class="fa-solid fa-tasks"></i> Status:</label>
+            <select id="filtroStatusKanban" class="dropdown-semana" onchange="RenderizarAtual()">
+                <option value="TODAS">Todas</option>
+                <option value="PLANEJADAS">Apenas Planejadas</option>
+                <option value="EXECUTADAS">Apenas Executadas</option>
+            </select>
+        </div>
+
         <div class="selector-wrapper" id="wrapFiltroMatriz" style="display: none; background: #EDF2F7; padding: 5px 15px; border-radius: 6px;">
-            <label style="font-weight: 700; font-size: 13px; color: var(--moreno-red);"><i class="fa-solid fa-arrows-left-right"></i> Período da Matriz:</label>
+            <label style="font-weight: 700; font-size: 13px; color: var(--moreno-red);"><i class="fa-solid fa-arrows-left-right"></i> Período Matriz:</label>
             <select id="filtroMatrizInicio" class="dropdown-semana" onchange="RenderizarAtual()"></select>
             <span style="font-weight:bold;">até</span>
             <select id="filtroMatrizFim" class="dropdown-semana" onchange="RenderizarAtual()"></select>
         </div>
 
         <div style="display: flex; gap: 10px;">
-            <button class="btn btn-pdf" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir / PDF</button>
-            <button class="btn btn-sync" onclick="CarregarDadosDoGitHub()"><i class="fa-solid fa-rotate"></i> Forçar Atualização</button>
+            <button class="btn btn-pdf" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir</button>
+            <button class="btn btn-sync" onclick="CarregarDadosDoGitHub()"><i class="fa-solid fa-rotate"></i> Atualizar</button>
         </div>
     </div>
 
@@ -238,7 +251,6 @@
     </main>
 
     <script>
-        // URL DIRETA DO RAW NO GITHUB (Branch Main)
         const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/gilmarcosta2812200-hash/Progr_MECAL.html/main/PROG.%20SEMANAL_TESTE.xlsx";
 
         let BASE_PROD = [];
@@ -247,6 +259,7 @@
         let SEMANA_TRAVADA_I2 = 'NÃO IDENTIFICADA';
         let EXEC_N2 = 0;
         let PLAN_N3 = 0;
+        let MESES_ORDEM = { 'jan':1, 'fev':2, 'mar':3, 'abr':4, 'mai':5, 'jun':6, 'jul':7, 'ago':8, 'set':9, 'out':10, 'nov':11, 'dez':12 };
         
         let layout = "KANBAN";
         let graficoAderencia = null;
@@ -266,9 +279,8 @@
                 document.getElementById('headerSemana').textContent = "SINCRONIZANDO...";
                 document.getElementById('renderTarget').innerHTML = '<div class="state-empty"><i class="fa-solid fa-spinner fa-spin" style="font-size:48px;color:#CBD5E0"></i><p>Conectando ao banco de dados no servidor...</p></div>';
 
-                // Usamos o fetch para pegar o arquivo como um ArrayBuffer
                 const response = await fetch(GITHUB_EXCEL_URL, { cache: "no-store" });
-                if (!response.ok) throw new Error(`Falha ao acessar o arquivo no repositório. Código: ${response.status}`);
+                if (!response.ok) throw new Error(`Falha ao acessar o arquivo. Código: ${response.status}`);
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const data = new Uint8Array(arrayBuffer);
@@ -284,19 +296,17 @@
                         <i class="fa-solid fa-triangle-exclamation" style="font-size:48px;color:#E30613"></i>
                         <p style="margin-top:15px; font-weight:bold; color:var(--moreno-red);">Erro de Sincronização</p>
                         <p style="font-size:13px;">${error.message}</p>
-                        <p style="font-size:12px; margin-top:10px;">Verifique se o arquivo "PROG. SEMANAL_TESTE.xlsx" existe na raiz do repositório no branch principal.</p>
                     </div>`;
             }
         }
 
         function ProcessarPlanilha(wb) {
-            let sBase, sPlan, sCap, sCarteira;
+            let sBase, sPlan, sCarteira;
             
             wb.SheetNames.forEach(n => {
                 let normName = normalizarTexto(n);
-                if(normName.includes("PROGRAMACAO")) sBase = wb.Sheets[n]; 
+                if(normName.includes("PROGRAMACAO") || normName.includes("BASE")) sBase = wb.Sheets[n]; 
                 if(normName.includes("PLANEJ")) sPlan = wb.Sheets[n];
-                if(normName.includes("CAPINST")) sCap = wb.Sheets[n];
                 if(normName.includes("CARTEIRAGERAL") || normName.includes("USI")) sCarteira = wb.Sheets[n];
             });
             
@@ -311,16 +321,32 @@
             let mBase = XLSX.utils.sheet_to_json(sBase, { header: 1, defval: "" });
             let idH = 0;
             for (let i=0; i<15; i++) { 
-                if(mBase[i] && mBase[i].map(c=>normalizarTexto(c)).join('').includes("CLIENTE")) { idH=i; break; } 
+                if(mBase[i] && mBase[i].map(c=>normalizarTexto(c)).join('').includes("RECURSO")) { idH=i; break; } 
             }
             
             BASE_PROD = [];
+            let cBaseCols = mBase[idH].map(c => normalizarTexto(c));
             for(let r=idH+1; r<mBase.length; r++) {
-                if(!mBase[r][0] && !mBase[r][2]) continue;
-                let obj = { RECURSO:"", DESCR_RECURSO:"", COD:"", DESCRICAO:"", CLIENTE:"", OPERACAO:"", SEMANA:"", REALIZADO:"" };
+                if(!mBase[r][0] && !mBase[r][2] && !mBase[r][18]) continue;
+                let obj = { RECURSO:"", DESCR_RECURSO:"", COD:"", DESCRICAO:"", CLIENTE:"", OPERACAO:"", SEMANA:"", REALIZADO:"", OP_TOOLTIP:"", SEM_REAL:"" };
                 
-                mBase[idH].forEach((rawCol, idx) => {
-                    let col = normalizarTexto(rawCol);
+                // Mapeamento absoluto via índice corrigido (S=18, Z=25, AC=28)
+                let valS = mBase[r][18] !== undefined ? String(mBase[r][18]).trim() : "";
+                let valZ = mBase[r][25] !== undefined ? String(mBase[r][25]).trim() : "";
+                let valAC = mBase[r][28] !== undefined ? String(mBase[r][28]).trim() : "";
+                
+                obj.OP_TOOLTIP = valS;
+                let sNum = valZ.match(/\d+/);
+                let aNum = valAC.match(/\d+/);
+                if(sNum && aNum) {
+                    obj.SEM_REAL = `SEM ${sNum[0]}/${aNum[0]}`;
+                } else if(sNum) {
+                    obj.SEM_REAL = `SEM ${sNum[0]}/2026`;
+                } else {
+                    obj.SEM_REAL = "";
+                }
+
+                cBaseCols.forEach((col, idx) => {
                     let val = String(mBase[r][idx] || '').trim();
                     if(col.includes("RECURSO")) obj.RECURSO = val;
                     if(col.includes("DESCRRECURSO")) obj.DESCR_RECURSO = val;
@@ -345,7 +371,7 @@
                 let cCols = mCart[idHCart].map(c => normalizarTexto(c));
                 for(let r=idHCart+1; r<mCart.length; r++) {
                     if(!mCart[r].join('')) continue;
-                    let obj = { CLIENTES:"", DESCRICAO:"", UNID:"", COD_PC:"", QTD:"", SUB_GRUPO:"", SETOR_VENDA:"", PRAZO_FUNDIDO:"", PRAZO_ENTREGA:"", REPROG:"", MES:"", STATUS:"" };
+                    let obj = { CLIENTES:"", DESCRICAO:"", UNID:"", COD_PC:"", QTD:"", SUB_GRUPO:"", SETOR_VENDA:"", PRAZO_FUNDIDO:"", PRAZO_ENTREGA:"", MES:"", STATUS:"" };
                     
                     cCols.forEach((col, idx) => {
                         let val = String(mCart[r][idx] || '').trim();
@@ -358,8 +384,7 @@
                         if(col.includes("SETORVENDA")) obj.SETOR_VENDA = val;
                         if(col.includes("FUNDIDO")) obj.PRAZO_FUNDIDO = val;
                         if(col.includes("ENTREGA") && !col.includes("REPROGRAMACAO")) obj.PRAZO_ENTREGA = val;
-                        if(col.includes("REPROGRAMACAO") || col.includes("REPROG")) obj.REPROG = val;
-                        if(col.includes("MES")) obj.MES = val;
+                        if(col.includes("MES")) obj.MES = val.toLowerCase().substring(0,3);
                         if(col === "STATUS") obj.STATUS = val;
                     });
                     if(obj.CLIENTES || obj.DESCRICAO || obj.COD_PC || obj.SUB_GRUPO) CARTEIRA_DATA.push(obj);
@@ -371,7 +396,7 @@
                 let mPlan = XLSX.utils.sheet_to_json(sPlan, { header: 1, defval: "" });
                 let idP = -1;
                 for(let i=0; i<10; i++) { 
-                    if(mPlan[i] && (mPlan[i].map(c=>normalizarTexto(c)).join('').includes("SEM") || mPlan[i].map(c=>normalizarTexto(c)).join('').includes("ANO"))) { idP=i; break; } 
+                    if(mPlan[i] && (mPlan[i].map(c=>normalizarTexto(c)).join('').includes("SEM"))) { idP=i; break; } 
                 }
                 if(idP !== -1) {
                     let pCols = mPlan[idP].map(c=>String(c||'').trim());
@@ -380,7 +405,7 @@
                         let nm = String(mPlan[r][1]).trim();
                         if(!cc || !nm) continue;
                         
-                        let semL=[], cL=[], cpL=[];
+                        let semL=[], cL=[], cpL([]);
                         pCols.forEach((col, idx) => {
                             if(idx>=2 && col && col!=="—") {
                                 let fs = col.toUpperCase().includes("SEM") ? col.toUpperCase() : `SEM ${col}/2026`;
@@ -399,14 +424,29 @@
         }
 
         function PrepararInterface() {
+            let numSemI2 = SEMANA_TRAVADA_I2.match(/\d+/);
+
+            // Filtro Semana Geral
             let sel = document.getElementById('filtroSemanaGeral');
             sel.innerHTML = '<option value="TODAS">📋 Visão Completa</option>';
             let semsProd = [...new Set(BASE_PROD.map(x=>x.SEMANA))].filter(Boolean).sort();
             semsProd.forEach(s => sel.innerHTML += `<option value="${s}">📆 ${s}</option>`);
 
+            // Auto-filtro inicial baseado no valor de I2 (Semana Atual)
+            if (numSemI2) {
+                let targetNum = numSemI2[0];
+                let correspondente = semsProd.find(s => {
+                    let m = s.match(/\d+/);
+                    return m && m[0] === targetNum;
+                });
+                if (correspondente) sel.value = correspondente;
+            }
+
+            // Filtros da Matriz
             let selIni = document.getElementById('filtroMatrizInicio');
             let selFim = document.getElementById('filtroMatrizFim');
             selIni.innerHTML = ''; selFim.innerHTML = '';
+            
             if(Object.keys(MATRIZ_CARGA).length > 0) {
                 let semsMatriz = MATRIZ_CARGA[Object.keys(MATRIZ_CARGA)[0]].semanas;
                 semsMatriz.forEach(s => {
@@ -414,27 +454,44 @@
                     selIni.innerHTML += `<option value="${s}">${text}</option>`;
                     selFim.innerHTML += `<option value="${s}">${text}</option>`;
                 });
+                
+                if(numSemI2) {
+                    let correspondenteMatriz = semsMatriz.find(s => {
+                        let m = s.match(/\d+/);
+                        return m && m[0] === numSemI2[0];
+                    });
+                    if (correspondenteMatriz) selIni.value = correspondenteMatriz;
+                }
                 selFim.value = semsMatriz[semsMatriz.length - 1];
             }
 
             ConstruirFiltrosCarteiraUI();
             AtualizarVisaoGeral();
-            TrocarAba(layout); // Força a aba atual a renderizar novamente
+            TrocarAba(layout); 
         }
 
         function ConstruirFiltrosCarteiraUI() {
             const container = document.getElementById('containerFiltrosCarteira');
             if(!container || CARTEIRA_DATA.length === 0) return;
 
+            let mesesUnicos = [...new Set(CARTEIRA_DATA.map(x => x.MES))].filter(v => v && v !== "-").sort((a,b) => (MESES_ORDEM[a] || 99) - (MESES_ORDEM[b] || 99));
+            let mesOptions = `<option value="TODOS">-- Todos --</option>` + mesesUnicos.map(v => `<option value="${v}">${v.toUpperCase()}</option>`).join('');
+
             const configuracaoFiltros = [
                 { id: 'fCartCliente', label: 'Clientes', key: 'CLIENTES' },
                 { id: 'fCartSubGrupo', label: 'Sub_Grupo', key: 'SUB_GRUPO' },
                 { id: 'fCartSetor', label: 'Setor Venda', key: 'SETOR_VENDA' },
-                { id: 'fCartMes', label: 'Mês', key: 'MES' },
                 { id: 'fCartStatus', label: 'Status', key: 'STATUS' }
             ];
 
-            let html = '';
+            let html = `
+                <div class="filter-field-group">
+                    <label>Mês</label>
+                    <select id="fCartMes" class="dropdown-semana" onchange="RenderizarAtual()" style="font-size:12px; padding:6px 10px;">
+                        ${mesOptions}
+                    </select>
+                </div>`;
+
             configuracaoFiltros.forEach(f => {
                 let valoresUnicos = [...new Set(CARTEIRA_DATA.map(x => x[f.key]))].filter(v => v && v !== "-").sort();
                 html += `
@@ -447,6 +504,12 @@
                 </div>`;
             });
             container.innerHTML = html;
+
+            let curMonthShort = new Date().toLocaleString('pt-BR', { month: 'short' }).replace('.','').toLowerCase();
+            let selectMes = document.getElementById('fCartMes');
+            if(selectMes && [...selectMes.options].some(o => o.value === curMonthShort)) {
+                selectMes.value = curMonthShort;
+            }
         }
 
         function AtualizarVisaoGeral() {
@@ -464,42 +527,29 @@
             document.getElementById('summaryExecutadas').textContent = EXEC_N2;
             document.getElementById('summaryPlanejadas').textContent = PLAN_N3;
 
-            let gargalos = 0;
+            let gargalosGlobal = 0;
             Object.keys(MATRIZ_CARGA).forEach(cc => {
                 let m = MATRIZ_CARGA[cc];
-                let cg = 0, cp = 0;
-                if(sem==="TODAS") { cg = m.carga.reduce((a,b)=>a+b,0); cp = m.capacidade.reduce((a,b)=>a+b,0); }
-                else { let i = m.semanas.indexOf(sem); if(i>-1) { cg = m.carga[i]; cp = m.capacidade[i]; } }
-                if(cp>0 && (cg/cp)*100 > 100) gargalos++;
+                m.carga.forEach((cg, i) => {
+                    let cp = m.capacidade[i] || 1;
+                    if((cg/cp)*100 > 100) gargalosGlobal++;
+                });
             });
-            document.getElementById('kpiGargalo').textContent = gargalos;
+            document.getElementById('kpiGargalo').textContent = gargalosGlobal;
 
             let pendentes = Math.max(0, PLAN_N3 - EXEC_N2);
 
-            let ctx = document.getElementById('aderenciaHeaderChart');
-            if (ctx) {
-                if(graficoAderencia) graficoAderencia.destroy();
-                graficoAderencia = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: { 
-                        labels: ['Executadas', 'Pendentes'], 
-                        datasets: [{ data: [EXEC_N2, pendentes], backgroundColor: ['#31C48D', '#E2E8F0'], borderWidth: 0 }] 
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
-                });
-            }
+            if(graficoAderencia) graficoAderencia.destroy();
+            graficoAderencia = new Chart(document.getElementById('aderenciaHeaderChart'), {
+                type: 'doughnut', data: { labels: ['Executadas', 'Pendentes'], datasets: [{ data: [EXEC_N2, pendentes], backgroundColor: ['#31C48D', '#E2E8F0'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+            });
 
-            let ctxMini = document.getElementById('miniAderenciaChart');
-            if (ctxMini) {
-                if(miniGraficoAderencia) miniGraficoAderencia.destroy();
-                miniGraficoAderencia = new Chart(ctxMini, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{ data: [EXEC_N2, pendentes], backgroundColor: ['#31C48D', '#2D2D35'], borderWidth: 0 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
-                });
-            }
+            if(miniGraficoAderencia) miniGraficoAderencia.destroy();
+            miniGraficoAderencia = new Chart(document.getElementById('miniAderenciaChart'), {
+                type: 'doughnut', data: { datasets: [{ data: [EXEC_N2, pendentes], backgroundColor: ['#31C48D', '#2D2D35'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '80%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+            });
 
             RenderizarAtual();
         }
@@ -512,11 +562,24 @@
             
             document.getElementById('wrapperBusca').style.display = ['KANBAN','TABELA'].includes(tipo) ? 'block' : 'none';
             document.getElementById('wrapFiltroGeral').style.display = ['KANBAN','MATRIZ'].includes(tipo) ? 'flex' : 'none';
+            document.getElementById('wrapFiltroKanban').style.display = tipo === 'KANBAN' ? 'flex' : 'none';
             document.getElementById('wrapFiltroMatriz').style.display = tipo === 'MATRIZ' ? 'flex' : 'none';
             document.getElementById('containerFiltrosCarteira').style.display = tipo === 'TABELA' ? 'grid' : 'none';
             document.getElementById('blocoAderenciaDashboard').style.display = tipo === 'TABELA' ? 'none' : 'flex';
 
             RenderizarAtual();
+        }
+
+        function AlternarRecurso(idBlock) {
+            let grade = document.getElementById(idBlock);
+            let icon = document.getElementById('icon-' + idBlock);
+            if(grade.style.display === 'none') {
+                grade.style.display = 'grid';
+                icon.className = 'fa-solid fa-chevron-up';
+            } else {
+                grade.style.display = 'none';
+                icon.className = 'fa-solid fa-chevron-down';
+            }
         }
 
         function RenderizarAtual() {
@@ -526,8 +589,17 @@
 
             if(layout === "KANBAN") {
                 let sem = document.getElementById('filtroSemanaGeral').value;
+                let status = document.getElementById('filtroStatusKanban').value;
+                
                 let d = BASE_PROD;
                 if(sem !== "TODAS") d = d.filter(x => x.SEMANA === sem);
+                
+                if(status === "EXECUTADAS") {
+                    d = d.filter(x => String(x.REALIZADO).toUpperCase().includes("FINALIZADO") || String(x.REALIZADO).toUpperCase() === "M");
+                } else if(status === "PLANEJADAS") {
+                    d = d.filter(x => !(String(x.REALIZADO).toUpperCase().includes("FINALIZADO") || String(x.REALIZADO).toUpperCase() === "M"));
+                }
+
                 if(busca) {
                     d = d.filter(x => String(x.DESCRICAO).toLowerCase().includes(busca) || String(x.COD).toLowerCase().includes(busca) || String(x.CLIENTE).toLowerCase().includes(busca) || String(x.RECURSO).toLowerCase().includes(busca));
                 }
@@ -565,14 +637,16 @@
 
             let html = '<div style="display: flex; flex-direction: column; gap: 20px;">';
             
-            recursosMapeados.forEach(rec => {
+            recursosMapeados.forEach((rec, index) => {
                 let itens = d.filter(x => x.RECURSO === rec.codClean);
+                let blockId = `grade-rec-${index}`;
+                
                 html += `<div class="recurso-bloco">
-                            <div class="recurso-tarja">
-                                <span><i class="fa-solid fa-industry"></i> &nbsp;${rec.fullStr}</span>
-                                <span class="badge-week" style="background:#FFFFFF; color:#000;">${itens.length} op(s)</span>
+                            <div class="recurso-tarja" onclick="AlternarRecurso('${blockId}')" title="Clique para ocultar/mostrar operações">
+                                <span><i id="icon-${blockId}" class="fa-solid fa-chevron-up"></i> &nbsp; <i class="fa-solid fa-industry"></i> &nbsp;${rec.fullStr}</span>
+                                <span class="op-count">${itens.length} op(s)</span>
                             </div>
-                            <div class="recurso-cards-grid">`;
+                            <div class="recurso-cards-grid" id="${blockId}">`;
                 
                 itens.forEach(i => {
                     let isFin = String(i.REALIZADO).toUpperCase().includes("FINALIZADO") || String(i.REALIZADO).toUpperCase() === "M";
@@ -588,7 +662,7 @@
                             <div style="margin-bottom:4px;">Op: <b>${i.OPERACAO || '—'}</b></div>
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span class="badge-client">${i.CLIENTE || '—'}</span>
-                                <span class="badge-finalizado-tag">OPERAÇÕES EXECUTADAS</span>
+                                <span class="badge-finalizado-tag">EXECUTADA</span>
                             </div>
                         </div>
                     </div>`;
@@ -617,13 +691,13 @@
                     <td>${item.SETOR_VENDA || '—'}</td>
                     <td>${item.PRAZO_FUNDIDO || '—'}</td>
                     <td>${item.PRAZO_ENTREGA || '—'}</td>
-                    <td>${item.MES || '—'}</td>
+                    <td>${item.MES ? item.MES.toUpperCase() : '—'}</td>
                     <td class="cell-relative">${item.STATUS || '—'}${bolinhaVerde}</td>
                 </tr>`;
             });
 
             t.innerHTML = `
-            <div class="content-wrapper">
+            <div class="table-container">
                 <table class="tabela-base">
                     <thead>
                         <tr>
@@ -660,21 +734,57 @@
             if(idxFim === -1 || idxFim < idxIni) idxFim = sems.length - 1;
             let semsFiltradas = sems.slice(idxIni, idxFim + 1);
             
-            let html = `<div class="content-wrapper"><table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => `<th>${s.replace('SEM ', '').replace('/2026', '')}</th>`).join('')}</tr></thead><tbody>`;
+            let gargalosListHTML = '';
+            let htmlTable = `<table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => `<th>${s.replace('SEM ', '').replace('/2026', '')}</th>`).join('')}</tr></thead><tbody>`;
 
             chaves.forEach(cc => {
-                let m = MATRIZ_CARGA[cc]; html += `<tr><td>[${cc}] ${m.nome}</td>`;
+                let m = MATRIZ_CARGA[cc]; 
+                htmlTable += `<tr><td>[${cc}] ${m.nome}</td>`;
+                
                 for(let i = idxIni; i <= idxFim; i++) {
                     let carga = m.carga[i] || 0, cap = m.capacidade[i] || 1, pct = Math.round((carga / cap) * 100);
                     let cls = "cell-livre", txt = "Livre";
+                    
                     if (pct > 0 && pct <= 85) { cls = "cell-ok"; txt = pct + "%"; } 
                     else if (pct > 85 && pct <= 100) { cls = "cell-alert"; txt = pct + "%"; } 
-                    else if (pct > 100) { cls = "cell-danger"; txt = pct + "%"; }
-                    html += `<td class="${cls}">${txt}</td>`;
+                    else if (pct > 100) { 
+                        cls = "cell-danger"; txt = pct + "%"; 
+                        gargalosListHTML += `
+                        <li class="gargalo-item">
+                            <div class="gargalo-nome">[${cc}] ${m.nome}<span class="gargalo-semana">Semana ${sems[i].replace('SEM ', '').replace('/2026', '')}</span></div>
+                            <div class="gargalo-pct">${pct}%</div>
+                        </li>`;
+                    }
+                    
+                    // Filtragem e busca exata de operações cruzando Recurso + Chave Única de Semana (Ex: SEM 25/2026)
+                    let opsNaSemana = BASE_PROD.filter(x => String(x.RECURSO) === cc && x.SEM_REAL === sems[i]);
+                    
+                    let tooltipHtml = '';
+                    if(opsNaSemana.length > 0) {
+                        tooltipHtml = `<span class="tooltiptext"><b>OPERAÇÕES PLANEJADAS (${sems[i].replace('SEM ', '')}):</b><br><br>` + 
+                                      opsNaSemana.map(op => `• Cód #${op.COD || '—'}: ${op.OP_TOOLTIP || '—'}`).join('<br>') + `</span>`;
+                        cls += " tooltip";
+                    } else if (pct > 0) {
+                        tooltipHtml = `<span class="tooltiptext">Sem descritivo mapeado para este recurso nesta semana.</span>`;
+                        cls += " tooltip";
+                    }
+
+                    htmlTable += `<td class="${cls}">${txt}${tooltipHtml}</td>`;
                 }
-                html += `</tr>`;
+                htmlTable += `</tr>`;
             });
-            t.innerHTML = html + `</tbody></table></div>`;
+            
+            htmlTable += `</tbody></table>`;
+
+            let boxGargaloHTML = `
+                <aside class="gargalos-sidebar">
+                    <div class="gargalos-header"><i class="fa-solid fa-triangle-exclamation"></i> Máquinas Gargalo (>100%)</div>
+                    <ul class="gargalos-list">
+                        ${gargalosListHTML || '<li class="gargalo-item" style="color:var(--text-muted); justify-content:center;">Nenhum gargalo no período filtrado.</li>'}
+                    </ul>
+                </aside>`;
+
+            t.innerHTML = `<div class="matriz-layout"><div class="matriz-table-wrapper">${htmlTable}</div>${boxGargaloHTML}</div>`;
         }
     </script>
 </body>
