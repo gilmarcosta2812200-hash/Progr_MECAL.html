@@ -74,6 +74,7 @@
         .recurso-tarja:hover { background-color: #2D2D35; }
         .recurso-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding: 15px; background-color: #F8FAFC; transition: all 0.3s ease-in-out; }
         
+        /* Aumentando a fonte do 1 op(s) 2x */
         .op-count { font-weight: 900; color: #1A1A1B; background-color: #FFFFFF; padding: 2px 8px; border-radius: 4px; font-size: 20px; } 
         
         .kanban-card { background: white; border: 1px solid var(--border-color); border-left: 4px solid #A0AEC0; border-radius: 6px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 8px; position: relative; }
@@ -102,6 +103,7 @@
         .cell-relative { position: relative; }
         .green-dot-table { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; background-color: #31C48D; border-radius: 50%; }
 
+        /* Matriz Tooltip e Layout Flexível */
         .matriz-layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
         .matriz-table-wrapper { flex: 1; min-width: 60%; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid var(--border-color); }
         .gargalos-sidebar { width: 320px; background: white; border-radius: 8px; border: 1px solid var(--moreno-red); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -124,19 +126,19 @@
         .cell-alert { background-color: #FEEBC8; color: #C05621; }
         .cell-danger { background-color: #FED7D7; color: #9B2C2C; }
 
-        /* Estilização do Tooltip */
+        /* Tooltip Matriz CSS */
         .tooltip .tooltiptext {
-            visibility: hidden; width: max-content; max-width: 320px; background-color: #1A1A1B; color: #fff;
-            text-align: left; border-radius: 6px; padding: 12px; position: absolute; z-index: 100;
+            visibility: hidden; width: max-content; max-width: 300px; background-color: #1A1A1B; color: #fff;
+            text-align: left; border-radius: 6px; padding: 10px; position: absolute; z-index: 10;
             bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s;
-            font-size: 11px; font-weight: normal; white-space: pre-wrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid #4A5568;
-            line-height: 1.4;
+            font-size: 11px; font-weight: normal; white-space: pre-wrap; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 1px solid #4A5568;
         }
         .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #1A1A1B transparent transparent transparent; }
         .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
 
         .state-empty { text-align: center; padding: 60px; color: var(--text-muted); width: 100%; }
 
+        /* Responsividade Extrema */
         @media (max-width: 768px) {
             header { flex-direction: column; align-items: flex-start; }
             .kpi-group { width: 100%; }
@@ -318,6 +320,7 @@
             EXEC_N2 = sBase['N2'] ? (parseInt(sBase['N2'].v) || 0) : 0;
             PLAN_N3 = sBase['N3'] ? (parseInt(sBase['N3'].v) || 0) : 0;
 
+            // Extração BASE PROD para Tooltips e Kanban
             let mBase = XLSX.utils.sheet_to_json(sBase, { header: 1, defval: "" });
             let idH = 0;
             for (let i=0; i<15; i++) { 
@@ -328,24 +331,8 @@
             let cBaseCols = mBase[idH].map(c => normalizarTexto(c));
             for(let r=idH+1; r<mBase.length; r++) {
                 if(!mBase[r][0] && !mBase[r][2] && !mBase[r][18]) continue;
-                let obj = { RECURSO:"", DESCR_RECURSO:"", COD:"", DESCRICAO:"", CLIENTE:"", OPERACAO:"", SEMANA:"", REALIZADO:"", OP_TOOLTIP:"", SEM_REAL:"" };
+                let obj = { RECURSO:"", DESCR_RECURSO:"", COD:"", DESCRICAO:"", CLIENTE:"", OPERACAO:"", SEMANA:"", REALIZADO:"", SEM_PLANEJ:"" };
                 
-                // Mapeamento absoluto via índice corrigido (S=18, Z=25, AC=28)
-                let valS = mBase[r][18] !== undefined ? String(mBase[r][18]).trim() : "";
-                let valZ = mBase[r][25] !== undefined ? String(mBase[r][25]).trim() : "";
-                let valAC = mBase[r][28] !== undefined ? String(mBase[r][28]).trim() : "";
-                
-                obj.OP_TOOLTIP = valS;
-                let sNum = valZ.match(/\d+/);
-                let aNum = valAC.match(/\d+/);
-                if(sNum && aNum) {
-                    obj.SEM_REAL = `SEM ${sNum[0]}/${aNum[0]}`;
-                } else if(sNum) {
-                    obj.SEM_REAL = `SEM ${sNum[0]}/2026`;
-                } else {
-                    obj.SEM_REAL = "";
-                }
-
                 cBaseCols.forEach((col, idx) => {
                     let val = String(mBase[r][idx] || '').trim();
                     if(col.includes("RECURSO")) obj.RECURSO = val;
@@ -356,10 +343,13 @@
                     if(col.includes("OPERACAO")) obj.OPERACAO = val;
                     if(col.includes("SEMANA") || col === "SEM") obj.SEMANA = (!isNaN(val) && val) ? `SEM ${val}/2026` : val.toUpperCase();
                     if(col.includes("FINALIZADO") || col === "M" || col.includes("STATUS")) obj.REALIZADO = val;
+                    // Mapeamento SEMANA PLANEJADA para Matriz
+                    if(col.includes("SEMPLANEJ")) obj.SEM_PLANEJ = val;
                 });
                 if(obj.COD || obj.DESCRICAO || obj.RECURSO) BASE_PROD.push(obj);
             }
 
+            // Extração CARTEIRA GERAL
             CARTEIRA_DATA = [];
             if(sCarteira) {
                 let mCart = XLSX.utils.sheet_to_json(sCarteira, { header: 1, defval: "" });
@@ -384,13 +374,14 @@
                         if(col.includes("SETORVENDA")) obj.SETOR_VENDA = val;
                         if(col.includes("FUNDIDO")) obj.PRAZO_FUNDIDO = val;
                         if(col.includes("ENTREGA") && !col.includes("REPROGRAMACAO")) obj.PRAZO_ENTREGA = val;
-                        if(col.includes("MES")) obj.MES = val.toLowerCase().substring(0,3);
+                        if(col.includes("MES")) obj.MES = val.toLowerCase().substring(0,3); // padroniza mes
                         if(col === "STATUS") obj.STATUS = val;
                     });
                     if(obj.CLIENTES || obj.DESCRICAO || obj.COD_PC || obj.SUB_GRUPO) CARTEIRA_DATA.push(obj);
                 }
             }
 
+            // Extração MATRIZ CARGA
             MATRIZ_CARGA = {};
             if(sPlan) {
                 let mPlan = XLSX.utils.sheet_to_json(sPlan, { header: 1, defval: "" });
@@ -405,43 +396,32 @@
                         let nm = String(mPlan[r][1]).trim();
                         if(!cc || !nm) continue;
                         
-                        let semL = [], cL = [], cpL = [];
-        pCols.forEach((col, idx) => {
-            if (idx >= 2 && col && col !== "~") {
-                let fs = col.toUpperCase().includes("SEM") ? col.toUpperCase() : `SEM${col}/2026`;
-                semL.push(fs);
-                cL.push(parseFloat(String(mPlan[r][idx] || '0').replace(',', '.')) || 0);
-                let baseCap = (nm.toUpperCase().includes("ZERBST") || nm.toUpperCase().includes("PORÉBA")) ? 44 : 88;
-                cpL.push(baseCap);
-            }
-        });
-        MATRIZ_CARGA[cc] = { cc: cc, nome: nm, semanas: semL, carga: cL, capacidade: cpL };
-    }
-}
-
-PrepararInterface();
-}
-
-function PrepararInterface() {
-    let numSemI2 = SEMANA_TRAVADA_I2.match(/\d+/);
-
-    // Filtro Semana Geral
-    let sel = document.getElementById('filtroSemanaGeral');
-    sel.innerHTML = '<option value="TODAS">🗓️ Visão Completa</option>';
-    let semsProd = [...new Set(PRODUÇÃO_BASE.map(x => x.SEMANA))].filter(Boolean).sort();
-    semsProd.forEach(s => sel.innerHTML += `<option value="${s}">🗓️ ${s}</option>`);
-
-            // Auto-filtro inicial baseado no valor de I2 (Semana Atual)
-            if (numSemI2) {
-                let targetNum = numSemI2[0];
-                let correspondente = semsProd.find(s => {
-                    let m = s.match(/\d+/);
-                    return m && m[0] === targetNum;
-                });
-                if (correspondente) sel.value = correspondente;
+                        let semL=[], cL=[], cpL=[];
+                        pCols.forEach((col, idx) => {
+                            if(idx>=2 && col && col!=="—") {
+                                let fs = col.toUpperCase().includes("SEM") ? col.toUpperCase() : `SEM ${col}/2026`;
+                                semL.push(fs);
+                                cL.push(parseFloat(String(mPlan[r][idx]||'0').replace(',','.')) || 0);
+                                let baseCap = (nm.toUpperCase().includes("ZERBST") || nm.toUpperCase().includes("POREBA")) ? 44 : 88;
+                                cpL.push(baseCap);
+                            }
+                        });
+                        MATRIZ_CARGA[cc] = { cc:cc, nome:nm, semanas:semL, carga:cL, capacidade:cpL };
+                    }
+                }
             }
 
-            // Filtros da Matriz
+            PrepararInterface();
+        }
+
+        function PrepararInterface() {
+            // Filtro Semana Geral
+            let sel = document.getElementById('filtroSemanaGeral');
+            sel.innerHTML = '<option value="TODAS">📋 Visão Completa</option>';
+            let semsProd = [...new Set(BASE_PROD.map(x=>x.SEMANA))].filter(Boolean).sort();
+            semsProd.forEach(s => sel.innerHTML += `<option value="${s}">📆 ${s}</option>`);
+
+            // Filtro Matriz + Puxando semana planejada principal
             let selIni = document.getElementById('filtroMatrizInicio');
             let selFim = document.getElementById('filtroMatrizFim');
             selIni.innerHTML = ''; selFim.innerHTML = '';
@@ -454,12 +434,13 @@ function PrepararInterface() {
                     selFim.innerHTML += `<option value="${s}">${text}</option>`;
                 });
                 
+                // Tenta puxar a semana da Célula I2 (Ex: "SEMANA 24")
+                let numSemI2 = SEMANA_TRAVADA_I2.match(/\d+/);
                 if(numSemI2) {
-                    let correspondenteMatriz = semsMatriz.find(s => {
-                        let m = s.match(/\d+/);
-                        return m && m[0] === numSemI2[0];
-                    });
-                    if (correspondenteMatriz) selIni.value = correspondenteMatriz;
+                    let formataSem = `SEM ${numSemI2[0]}/2026`;
+                    if(semsMatriz.includes(formataSem)) {
+                        selIni.value = formataSem;
+                    }
                 }
                 selFim.value = semsMatriz[semsMatriz.length - 1];
             }
@@ -473,6 +454,7 @@ function PrepararInterface() {
             const container = document.getElementById('containerFiltrosCarteira');
             if(!container || CARTEIRA_DATA.length === 0) return;
 
+            // Filtro Mês Ordenado + Autoseleção mês atual
             let mesesUnicos = [...new Set(CARTEIRA_DATA.map(x => x.MES))].filter(v => v && v !== "-").sort((a,b) => (MESES_ORDEM[a] || 99) - (MESES_ORDEM[b] || 99));
             let mesOptions = `<option value="TODOS">-- Todos --</option>` + mesesUnicos.map(v => `<option value="${v}">${v.toUpperCase()}</option>`).join('');
 
@@ -504,6 +486,7 @@ function PrepararInterface() {
             });
             container.innerHTML = html;
 
+            // Selecionar mes atual por padrao
             let curMonthShort = new Date().toLocaleString('pt-BR', { month: 'short' }).replace('.','').toLowerCase();
             let selectMes = document.getElementById('fCartMes');
             if(selectMes && [...selectMes.options].some(o => o.value === curMonthShort)) {
@@ -526,6 +509,7 @@ function PrepararInterface() {
             document.getElementById('summaryExecutadas').textContent = EXEC_N2;
             document.getElementById('summaryPlanejadas').textContent = PLAN_N3;
 
+            // Calculo de KPI de Gargalo Global (>100%)
             let gargalosGlobal = 0;
             Object.keys(MATRIZ_CARGA).forEach(cc => {
                 let m = MATRIZ_CARGA[cc];
@@ -593,6 +577,7 @@ function PrepararInterface() {
                 let d = BASE_PROD;
                 if(sem !== "TODAS") d = d.filter(x => x.SEMANA === sem);
                 
+                // Filtro Status Corrigido
                 if(status === "EXECUTADAS") {
                     d = d.filter(x => String(x.REALIZADO).toUpperCase().includes("FINALIZADO") || String(x.REALIZADO).toUpperCase() === "M");
                 } else if(status === "PLANEJADAS") {
@@ -734,6 +719,7 @@ function PrepararInterface() {
             let semsFiltradas = sems.slice(idxIni, idxFim + 1);
             
             let gargalosListHTML = '';
+            
             let htmlTable = `<table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => `<th>${s.replace('SEM ', '').replace('/2026', '')}</th>`).join('')}</tr></thead><tbody>`;
 
             chaves.forEach(cc => {
@@ -748,6 +734,7 @@ function PrepararInterface() {
                     else if (pct > 85 && pct <= 100) { cls = "cell-alert"; txt = pct + "%"; } 
                     else if (pct > 100) { 
                         cls = "cell-danger"; txt = pct + "%"; 
+                        // Alimentando a Lista de Gargalos
                         gargalosListHTML += `
                         <li class="gargalo-item">
                             <div class="gargalo-nome">[${cc}] ${m.nome}<span class="gargalo-semana">Semana ${sems[i].replace('SEM ', '').replace('/2026', '')}</span></div>
@@ -755,16 +742,17 @@ function PrepararInterface() {
                         </li>`;
                     }
                     
-                    // Filtragem e busca exata de operações cruzando Recurso + Chave Única de Semana (Ex: SEM 25/2026)
-                    let opsNaSemana = BASE_PROD.filter(x => String(x.RECURSO) === cc && x.SEM_REAL === sems[i]);
+                    // Lógica do Tooltip Puxando as Operações
+                    let semLimpa = sems[i].replace('SEM ', '').replace('/2026', ''); // Ex: "24"
+                    let opsNaSemana = BASE_PROD.filter(x => String(x.RECURSO) === cc && String(x.SEM_PLANEJ) === semLimpa);
                     
                     let tooltipHtml = '';
                     if(opsNaSemana.length > 0) {
-                        tooltipHtml = `<span class="tooltiptext"><b>OPERAÇÕES PLANEJADAS (${sems[i].replace('SEM ', '')}):</b><br><br>` + 
-                                      opsNaSemana.map(op => `• Cód #${op.COD || '—'}: ${op.OP_TOOLTIP || '—'}`).join('<br>') + `</span>`;
-                        cls += " tooltip";
+                        tooltipHtml = `<span class="tooltiptext"><b>OPERAÇÕES DA SEMANA ${semLimpa}:</b><br><br>` + 
+                                      opsNaSemana.map(op => `• Cód ${op.COD}: ${op.OPERACAO}`).join('<br>') + `</span>`;
+                        cls += " tooltip"; // adiciona classe tooltip
                     } else if (pct > 0) {
-                        tooltipHtml = `<span class="tooltiptext">Sem descritivo mapeado para este recurso nesta semana.</span>`;
+                        tooltipHtml = `<span class="tooltiptext">Sem descritivo de operações na Base.</span>`;
                         cls += " tooltip";
                     }
 
