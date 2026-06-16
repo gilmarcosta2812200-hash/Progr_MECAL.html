@@ -405,32 +405,31 @@
                         let nm = String(mPlan[r][1]).trim();
                         if(!cc || !nm) continue;
                         
-                        deixar semL = [], cL = [], cpl = [];
-                        pCols.forEach((col, idx) => {
-                            if(idx>=2 && col && col!=="—") {
-                                let fs = col.toUpperCase().includes("SEM") ? col.toUpperCase() : `SEM ${col}/2026`;
-                                semL.push(fs);
-                                cL.push(parseFloat(String(mPlan[r][idx]||'0').replace(',','.')) || 0);
-                                let baseCap = (nm.toUpperCase().includes("ZERBST") || nm.toUpperCase().includes("POREBA")) ? 44 : 88;
-                                cpL.push(baseCap);
-                            }
-                        });
-                        MATRIZ_CARGA[cc] = { cc:cc, nome:nm, semanas:semL, carga:cL, capacidade:cpL };
-                    }
-                }
+                        let semL = [], cL = [], cpL = [];
+        pCols.forEach((col, idx) => {
+            if (idx >= 2 && col && col !== "~") {
+                let fs = col.toUpperCase().includes("SEM") ? col.toUpperCase() : `SEM${col}/2026`;
+                semL.push(fs);
+                cL.push(parseFloat(String(mPlan[r][idx] || '0').replace(',', '.')) || 0);
+                let baseCap = (nm.toUpperCase().includes("ZERBST") || nm.toUpperCase().includes("PORÉBA")) ? 44 : 88;
+                cpL.push(baseCap);
             }
+        });
+        MATRIZ_CARGA[cc] = { cc: cc, nome: nm, semanas: semL, carga: cL, capacidade: cpL };
+    }
+}
 
-            PrepararInterface();
-        }
+PrepararInterface();
+}
 
-        function PrepararInterface() {
-            let numSemI2 = SEMANA_TRAVADA_I2.match(/\d+/);
+function PrepararInterface() {
+    let numSemI2 = SEMANA_TRAVADA_I2.match(/\d+/);
 
-            // Filtro Semana Geral
-            let sel = document.getElementById('filtroSemanaGeral');
-            sel.innerHTML = '<option value="TODAS">📋 Visão Completa</option>';
-            let semsProd = [...new Set(BASE_PROD.map(x=>x.SEMANA))].filter(Boolean).sort();
-            semsProd.forEach(s => sel.innerHTML += `<option value="${s}">📆 ${s}</option>`);
+    // Filtro Semana Geral
+    let sel = document.getElementById('filtroSemanaGeral');
+    sel.innerHTML = '<option value="TODAS">🗓️ Visão Completa</option>';
+    let semsProd = [...new Set(PRODUÇÃO_BASE.map(x => x.SEMANA))].filter(Boolean).sort();
+    semsProd.forEach(s => sel.innerHTML += `<option value="${s}">🗓️ ${s}</option>`);
 
             // Auto-filtro inicial baseado no valor de I2 (Semana Atual)
             if (numSemI2) {
