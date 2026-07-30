@@ -103,20 +103,13 @@
         .cell-relative { position: relative; }
         .green-dot-table { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; background-color: #31C48D; border-radius: 50%; }
 
-        /* Matriz Tooltip e Layout Flexível */
-        .matriz-layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
-        .matriz-table-wrapper { flex: 1; min-width: 60%; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid var(--border-color); }
-        .gargalos-sidebar { width: 320px; background: white; border-radius: 8px; border: 1px solid var(--moreno-red); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .gargalos-header { background: var(--moreno-red); color: white; padding: 12px 15px; font-weight: 800; font-size: 14px; text-transform: uppercase; display: flex; justify-content: space-between; }
-        .gargalos-list { max-height: 500px; overflow-y: auto; padding: 0; margin: 0; list-style: none; }
-        .gargalo-item { padding: 12px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-        .gargalo-item:nth-child(even) { background-color: #F8FAFC; }
-        .gargalo-nome { font-weight: 700; color: #1A1A1B; flex: 1; }
-        .gargalo-semana { font-size: 10px; color: var(--text-muted); display: block; margin-top: 2px; }
-        .gargalo-pct { font-weight: 900; color: var(--moreno-red); background: #FED7D7; padding: 3px 8px; border-radius: 4px; font-size: 14px; }
+        /* Matriz Layout */
+        .matriz-table-wrapper { width: 100%; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid var(--border-color); }
 
         .matriz-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .matriz-table th { background-color: white; color: #718096; padding: 12px 5px; font-weight: 600; text-align: center; border-bottom: 2px solid #EDF2F7; }
+        .matriz-table th .th-semana { display: block; font-weight: 800; font-size: 12px; color: #1A1A1B; line-height: 1.3; }
+        .matriz-table th .th-ano { display: block; font-size: 9px; color: #A0AEC0; font-weight: 700; line-height: 1.2; }
         .matriz-table th:first-child { text-align: left; padding-left: 15px; position: sticky; left: 0; background: white; z-index: 2; border-right: 1px solid #EDF2F7; }
         .matriz-table td { padding: 10px 5px; text-align: center; font-weight: 700; border: 2px solid white; cursor: help; position: relative; }
         .matriz-table td:first-child { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; position: sticky; left: 0; background: white; z-index: 1; cursor: default;}
@@ -126,15 +119,66 @@
         .cell-alert { background-color: #FEEBC8; color: #C05621; }
         .cell-danger { background-color: #FED7D7; color: #9B2C2C; }
 
-        /* Tooltip Matriz CSS */
-        .tooltip .tooltiptext {
-            visibility: hidden; width: max-content; max-width: 300px; background-color: #1A1A1B; color: #fff;
-            text-align: left; border-radius: 6px; padding: 10px; position: absolute; z-index: 10;
-            bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s;
-            font-size: 11px; font-weight: normal; white-space: pre-wrap; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 1px solid #4A5568;
+        /* Matriz: célula clicável (abre modal de detalhes) */
+        .matriz-table td.matriz-cell-click { cursor: pointer; }
+        .matriz-table td.matriz-cell-click:hover { outline: 2px solid #1A1A1B; outline-offset: -2px; }
+
+        /* ========== Modal de Detalhes da Matriz ========== */
+        .matriz-modal-overlay {
+            position: fixed; inset: 0; background-color: rgba(15, 15, 18, 0.6);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+            padding: 24px; opacity: 0; visibility: hidden; transition: opacity 0.15s ease;
         }
-        .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #1A1A1B transparent transparent transparent; }
-        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        .matriz-modal-overlay.is-open { opacity: 1; visibility: visible; }
+
+        .matriz-modal-box {
+            background-color: #FFFFFF; border-radius: 12px; width: 100%; max-width: 880px;
+            max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.35); transform: translateY(14px);
+            transition: transform 0.15s ease;
+        }
+        .matriz-modal-overlay.is-open .matriz-modal-box { transform: translateY(0); }
+
+        .matriz-modal-header {
+            background-color: #1A1A1B; color: #fff; padding: 18px 24px;
+            border-left: 5px solid var(--moreno-red); display: flex;
+            justify-content: space-between; align-items: flex-start; gap: 15px; flex-shrink: 0;
+        }
+        .matriz-modal-title { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.3; }
+        .matriz-modal-sub { font-size: 12px; color: #CBD5E0; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .matriz-modal-close {
+            background: transparent; border: none; color: #fff; font-size: 22px; line-height: 1;
+            cursor: pointer; padding: 6px 10px; border-radius: 6px; flex-shrink: 0;
+        }
+        .matriz-modal-close:hover { background-color: rgba(255,255,255,0.15); }
+
+        .matriz-modal-summary {
+            display: flex; gap: 28px; padding: 16px 24px; background-color: #F8FAFC;
+            border-bottom: 1px solid var(--border-color); flex-wrap: wrap; flex-shrink: 0;
+        }
+        .mms-item { display: flex; flex-direction: column; gap: 2px; }
+        .mms-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.4px; }
+        .mms-value { font-size: 22px; font-weight: 800; color: #1A1A1B; }
+        .mms-value.pct-ok { color: #22543D; }
+        .mms-value.pct-alert { color: #C05621; }
+        .mms-value.pct-danger { color: #9B2C2C; }
+
+        .matriz-modal-body { overflow-y: auto; }
+        .matriz-modal-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .matriz-modal-table thead th {
+            position: sticky; top: 0; background-color: #EDF2F7; color: #4A5568;
+            padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; border-bottom: 2px solid var(--border-color); z-index: 1;
+        }
+        .matriz-modal-table td { padding: 10px 16px; border-bottom: 1px solid var(--border-color); vertical-align: top; color: var(--text-main); }
+        .matriz-modal-table tbody tr:hover td { background-color: #F8FAFC; }
+        .mmt-hr-badge { font-weight: 800; background-color: #EDF2F7; color: #2D3748; padding: 3px 9px; border-radius: 4px; white-space: nowrap; display: inline-block; }
+        .matriz-modal-empty { padding: 60px 20px; text-align: center; color: var(--text-muted); font-weight: 600; }
+
+        @media (max-width: 640px) {
+            .matriz-modal-box { max-height: 92vh; }
+            .matriz-modal-summary { gap: 16px; }
+        }
 
         .state-empty { text-align: center; padding: 60px; color: var(--text-muted); width: 100%; }
 
@@ -145,7 +189,6 @@
             .kpi-box { flex: 1; min-width: 45%; }
             .control-panel, .navigation-tabs, .search-area { padding: 15px 20px; }
             main { padding: 20px; }
-            .gargalos-sidebar { width: 100%; }
         }
 
         @page { size: landscape; margin: 10mm; }
@@ -157,7 +200,6 @@
             .recurso-bloco { border: 1px solid #CBD5E0 !important; page-break-inside: avoid; }
             .recurso-tarja { background-color: #1A1A1B !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .kanban-card.status-finalizado { background-color: #DEF7EC !important; color: #03543F !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .gargalos-sidebar { display: none; }
         }
     </style>
 </head>
@@ -258,6 +300,8 @@
         let BASE_PROD = [];
         let MATRIZ_CARGA = {};
         let CARTEIRA_DATA = [];
+        let BASE_NORMALIZADA = []; // Base saneada (tipos/chaves consistentes) usada para embutir operações nas células
+        let INDICE_CELULA = {};    // `${recursoId}_${semana}` -> [operações] — usado só durante a montagem da tabela (não no hover)
         let SEMANA_TRAVADA_I2 = 'NÃO IDENTIFICADA';
         let EXEC_N2 = 0;
         let PLAN_N3 = 0;
@@ -269,6 +313,239 @@
 
         function normalizarTexto(str) {
             return String(str || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z0-9]/g, ""); 
+        }
+
+        // Extrai somente o número inteiro do código do recurso, eliminando divergências de tipo
+        // (float "112.0" vs string "112") e formatação ("[112]", "[112] FURADEIRA... - [112]").
+        function normalizarRecurso(val) {
+            const n = Math.floor(Number(val));
+            if (!isNaN(n) && String(val).trim() !== '') return String(n);
+            const m = String(val == null ? '' : val).match(/\d+/);
+            return m ? String(parseInt(m[0], 10)) : String(val || '').trim();
+        }
+
+        // Extrai somente o número inteiro da semana, eliminando divergências de tipo
+        // (float "32.0" vs string "32") e formatação ("32/2026", "SEM 32/2026").
+        function normalizarSemana(val) {
+            const n = Math.floor(Number(val));
+            if (!isNaN(n) && String(val).trim() !== '') return String(n);
+            const m = String(val == null ? '' : val).match(/\d+/);
+            return m ? String(parseInt(m[0], 10)) : '';
+        }
+
+        // Extrai SEMANA e ANO juntos de um valor tipo "32/2026", "SEM 32/2026", 32, etc.
+        // Não assume mais um ano fixo — respeita o ano real de cada coluna/registro, o que é
+        // necessário para virar a virada de ano (ex: SEM 52/2026 seguido de SEM 1/2027).
+        function extrairSemanaEAno(val, anoPadrao) {
+            const s = String(val == null ? '' : val).trim();
+            const grupos = s.match(/\d+/g) || [];
+            if (grupos.length >= 2) {
+                return { semana: String(parseInt(grupos[0], 10)), ano: String(parseInt(grupos[1], 10)) };
+            }
+            if (grupos.length === 1) {
+                return { semana: String(parseInt(grupos[0], 10)), ano: String(anoPadrao || '') };
+            }
+            return { semana: '', ano: String(anoPadrao || '') };
+        }
+
+        // Converte um número de série de data do Excel (ex: 46118) no ano correspondente.
+        // Usado quando a aba não tem uma coluna "ANO" explícita, mas tem colunas de data.
+        function anoDeSerialExcel(serial) {
+            const n = Number(serial);
+            if (!n || isNaN(n)) return '';
+            const ms = (n - 25569) * 86400 * 1000; // 25569 = dias entre 1899-12-30 (época do Excel) e 1970-01-01 (época do JS)
+            const d = new Date(ms);
+            if (isNaN(d.getTime())) return '';
+            return String(d.getUTCFullYear());
+        }
+
+        // Sanidade: rejeita anos claramente inválidos/placeholder (ex: "1900", vindo de datas
+        // zeradas tipo "00:00:00" na planilha). Fora da janela plausível, retorna '' para cair
+        // no próximo fallback da cadeia (|| ...).
+        function anoValido(ano) {
+            const n = parseInt(ano, 10);
+            if (isNaN(n) || n < 2020 || n > 2035) return '';
+            return String(n);
+        }
+
+        // Extração dedicada da aba "BASE" — usada EXCLUSIVAMENTE pelo modal da Matriz de
+        // Disponibilidade. É independente do pipeline do Kanban (BASE_PROD/sBase) para que
+        // ajustes num não afetem o outro.
+        //
+        // Mapeamento de colunas (aba BASE):
+        //   Coluna E  CLIENTE           -> cliente
+        //   Coluna H  CÓD               -> cod        (exibido como "Ordem / PV" no modal)
+        //   Coluna F  DESCRIÇÃO         -> descricao
+        //   Coluna S  OPERAÇÕES         -> operacao
+        //   Coluna T  RECURSO           -> recursoId
+        //   Coluna AE SEMANA / ANO      -> semana + ano (PADRÃO — já vem pronta no formato "WW/AAAA")
+        //   Coluna Z  SEM. PLANEJ. + Coluna AC ANO (+ fallback DATA PLANJ.) -> usados só se a coluna AE estiver vazia
+        //   Coluna V  HR Prev.          -> hrPrev
+        //   Coluna L  ORDEM  MEGA       -> ordem      (mantido, não usado no modal por ora)
+        //
+        // Retorna um array (não mexe em BASE_NORMALIZADA/INDICE_CELULA diretamente) para poder
+        // ser somado com outras fontes (ex: aba "BASE (SERVIÇO EM EIXO)") antes de indexar.
+        function ExtrairBaseParaMatriz(sheet) {
+            if (!sheet) return [];
+
+            let mBase = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            let linhas = [];
+
+            // Localiza a linha de cabeçalho procurando a coluna "RECURSO" (match exato, evita
+            // colidir com "DESCR_RECURSO", que também contém a substring "RECURSO").
+            let idH = 0;
+            for (let i = 0; i < 15; i++) {
+                if (mBase[i] && mBase[i].some(c => normalizarTexto(c) === "RECURSO")) { idH = i; break; }
+            }
+
+            let cCols = mBase[idH].map(c => normalizarTexto(c));
+
+            for (let r = idH + 1; r < mBase.length; r++) {
+                if (!mBase[r].join('')) continue;
+
+                let bruto = { RECURSO:"", SEM_PLANEJ:"", CLIENTE:"", DESCRICAO:"", COD:"", OPERACAO:"", ORDEM_MEGA:"", HR_PREV:"", ANO:"", DATA_PLANJ:"", SEMANA_ANO:"" };
+
+                cCols.forEach((col, idx) => {
+                    let val = String(mBase[r][idx] || '').trim();
+                    if (col === "RECURSO") bruto.RECURSO = val;              // match exato: NÃO usar .includes() aqui
+                    else if (col === "SEMANAANO") bruto.SEMANA_ANO = val;    // Coluna AE, ex: "13/2026" — PADRÃO
+                    else if (col.includes("SEMPLANEJ")) bruto.SEM_PLANEJ = val;
+                    else if (col.includes("CLIENTE")) bruto.CLIENTE = val;
+                    else if (col.includes("DESCRICAO")) bruto.DESCRICAO = val;
+                    else if (col === "COD") bruto.COD = val;                 // Coluna H, match exato
+                    else if (col.includes("OPERACOES") || col.includes("OPERACAO")) bruto.OPERACAO = val; // Coluna S (corrige bug do plural)
+                    else if (col.includes("ORDEMMEGA")) bruto.ORDEM_MEGA = val;
+                    else if (col.includes("HRPREV")) bruto.HR_PREV = val;
+                    else if (col === "ANO") bruto.ANO = val;
+                    else if (col.includes("DATAPLANJ")) bruto.DATA_PLANJ = val;
+                });
+
+                if (!bruto.RECURSO) continue;
+
+                // PADRÃO: usa a coluna "SEMANA / ANO" (AE), que já vem pronta no formato "WW/AAAA".
+                // Se estiver vazia (planilhas antigas sem essa coluna), cai no cálculo anterior:
+                // SEM. PLANEJ. + ANO (com fallback em DATA PLANJ. e sanidade contra anos inválidos).
+                let semana, ano;
+                if (bruto.SEMANA_ANO) {
+                    let extra = extrairSemanaEAno(bruto.SEMANA_ANO);
+                    semana = extra.semana;
+                    ano = anoValido(extra.ano) || '2026';
+                } else {
+                    semana = normalizarSemana(bruto.SEM_PLANEJ);
+                    ano = anoValido(bruto.ANO) || anoValido(anoDeSerialExcel(bruto.DATA_PLANJ)) || '2026';
+                }
+
+                linhas.push({
+                    recursoId: normalizarRecurso(bruto.RECURSO),
+                    semana: semana,
+                    ano: ano,
+                    cliente: bruto.CLIENTE || 'Não informado',
+                    descricao: bruto.DESCRICAO || '',
+                    operacao: bruto.OPERACAO || '',
+                    cod: bruto.COD || '-',
+                    ordem: bruto.ORDEM_MEGA || '-',
+                    hrPrev: Number(String(bruto.HR_PREV || '0').replace(',', '.')) || 0
+                });
+            }
+
+            return linhas;
+        }
+
+        // Extração da aba "BASE (SERVIÇO EM EIXO)" — fonte COMPLEMENTAR à aba "BASE", usada para
+        // um grupo específico de recursos (serviços em eixo: solda, montagem, faceamento, etc.)
+        // que não aparecem na aba "BASE" principal. Mesma estrutura de saída de ExtrairBaseParaMatriz,
+        // para poder ser somada ao mesmo array/índice.
+        //
+        // Mapeamento de colunas (aba BASE (SERVIÇO EM EIXO)):
+        //   Coluna A  Cliente:                -> cliente
+        //   Coluna G  Numero (ex: "7083/2026") -> cod        (exibido como "Ordem / PV" no modal)
+        //   Coluna D  Peça:  + Coluna E Tipo:  -> descricao
+        //   Coluna I  Descrição da disposição  -> operacao
+        //   Coluna J  Recurso                  -> recursoId
+        //   Coluna R  Sem. Planejada: (prioridade) ou Coluna Q Sem. Prevista: (fallback) -> semana
+        //   Coluna P  Data Planejada: (prioridade) ou Coluna O Data Prevista: (fallback) -> ano (via serial Excel)
+        //   Coluna N  Tempo Total:             -> hrPrev
+        function ExtrairBaseServicoEixo(sheet) {
+            if (!sheet) return [];
+
+            let m = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            let linhas = [];
+
+            let idH = 0;
+            for (let i = 0; i < 15; i++) {
+                if (m[i] && m[i].some(c => normalizarTexto(c) === "RECURSO")) { idH = i; break; }
+            }
+
+            let cCols = m[idH].map(c => normalizarTexto(c));
+
+            for (let r = idH + 1; r < m.length; r++) {
+                if (!m[r].join('')) continue;
+
+                let bruto = {
+                    CLIENTE:"", NUMERO:"", PECA:"", TIPO:"", DISPOSICAO:"",
+                    RECURSO:"", TEMPO_TOTAL:"", SEM_PREVISTA:"", SEM_PLANEJADA:"",
+                    DATA_PREVISTA:"", DATA_PLANEJADA:""
+                };
+
+                cCols.forEach((col, idx) => {
+                    let val = String(m[r][idx] || '').trim();
+                    if (col.includes("CLIENTE")) bruto.CLIENTE = val;
+                    else if (col === "NUMERO") bruto.NUMERO = val; // há 2 colunas "Numero" — a 2ª (índice maior) sobrescreve e é a que queremos (ex: 7083/2026)
+                    else if (col.includes("PECA")) bruto.PECA = val;
+                    else if (col === "TIPO") bruto.TIPO = val;
+                    else if (col.includes("DESCRICAODADISPOSICAO")) bruto.DISPOSICAO = val;
+                    else if (col === "RECURSO") bruto.RECURSO = val;
+                    else if (col.includes("TEMPOTOTAL")) bruto.TEMPO_TOTAL = val;
+                    else if (col.includes("SEMPREVISTA")) bruto.SEM_PREVISTA = val;
+                    else if (col.includes("SEMPLANEJADA")) bruto.SEM_PLANEJADA = val;
+                    else if (col.includes("DATAPREVISTA")) bruto.DATA_PREVISTA = val;
+                    else if (col.includes("DATAPLANEJADA")) bruto.DATA_PLANEJADA = val;
+                });
+
+                if (!bruto.RECURSO) continue;
+
+                // Prioriza "Sem. Planejada:"; usa "Sem. Prevista:" como fallback quando a primeira estiver vazia.
+                let semanaBruta = bruto.SEM_PLANEJADA || bruto.SEM_PREVISTA;
+                let descricaoPeca = [bruto.PECA, bruto.TIPO].filter(Boolean).join(' - ');
+
+                // Esta aba não tem coluna "ANO" — deriva do serial de data (Planejada, senão Prevista);
+                // se nenhuma existir, cai em 2026 como último recurso.
+                let ano = anoValido(anoDeSerialExcel(bruto.DATA_PLANEJADA)) || anoValido(anoDeSerialExcel(bruto.DATA_PREVISTA)) || '2026';
+
+                linhas.push({
+                    recursoId: normalizarRecurso(bruto.RECURSO),
+                    semana: normalizarSemana(semanaBruta),
+                    ano: ano,
+                    cliente: bruto.CLIENTE || 'Não informado',
+                    descricao: descricaoPeca || 'Sem descrição cadastrada',
+                    operacao: bruto.DISPOSICAO || '',
+                    cod: bruto.NUMERO || '-',
+                    ordem: '-',
+                    hrPrev: Number(String(bruto.TEMPO_TOTAL || '0').replace(',', '.')) || 0
+                });
+            }
+
+            return linhas;
+        }
+
+        // Constrói o índice O(1) `${recursoId}_${semana}` -> [operações] a partir de BASE_NORMALIZADA.
+        // Usado só na montagem da tabela (nenhuma busca acontece no clique/hover).
+        function construirIndiceCelula() {
+            INDICE_CELULA = {};
+            BASE_NORMALIZADA.forEach(op => {
+                if (!op.recursoId || !op.semana) return;
+                const chave = `${op.recursoId}_${op.semana}_${op.ano || '2026'}`;
+                if (!INDICE_CELULA[chave]) INDICE_CELULA[chave] = [];
+                INDICE_CELULA[chave].push(op);
+            });
+        }
+
+        // Escapa texto para uso seguro dentro de HTML (usado no corpo do modal).
+        function escapeHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
         }
 
         window.onload = () => {
@@ -303,16 +580,31 @@
         }
 
         function ProcessarPlanilha(wb) {
-            let sBase, sPlan, sCarteira;
-            
+            let sBase, sPlan, sCarteira, sBaseMatriz, sBaseEixo;
+
+            // sBase alimenta o KANBAN, os KPIs e o filtro de semana geral — este é o comportamento
+            // ORIGINAL do sistema (restaurado): prioriza a aba "PROGRAMAÇÃO" (que tem FINALIZADO?,
+            // SEM. PROG.) e cai para "BASE" só se PROGRAMAÇÃO não existir. NÃO MEXER nesta lógica,
+            // pois o Kanban depende dela para status de operações finalizadas/planejadas da semana.
             wb.SheetNames.forEach(n => {
                 let normName = normalizarTexto(n);
-                if(normName.includes("PROGRAMACAO") || normName.includes("BASE")) sBase = wb.Sheets[n]; 
+                if(normName.includes("PROGRAMACAO") || normName.includes("BASE")) sBase = wb.Sheets[n];
                 if(normName.includes("PLANEJ")) sPlan = wb.Sheets[n];
                 if(normName.includes("CARTEIRAGERAL") || normName.includes("USI")) sCarteira = wb.Sheets[n];
             });
-            
             if(!sBase) sBase = wb.Sheets[wb.SheetNames[0]];
+
+            // sBaseMatriz e sBaseEixo alimentam EXCLUSIVAMENTE o modal da Matriz de Disponibilidade —
+            // são fontes separadas das usadas pelo Kanban, para não afetar um ao alterar o outro.
+            //   sBaseMatriz: aba chamada exatamente "BASE" (RECURSO, SEM. PLANEJ., HR Prev., CÓD, OPERAÇÕES)
+            //   sBaseEixo:   aba "BASE (SERVIÇO EM EIXO)", fonte COMPLEMENTAR para os recursos de
+            //                serviço em eixo (solda, montagem, faceamento, etc.) que não aparecem em "BASE"
+            wb.SheetNames.forEach(n => {
+                let normName = normalizarTexto(n);
+                if (normName === "BASE") sBaseMatriz = wb.Sheets[n];
+                if (normName.includes("SERVICOEMEIXO")) sBaseEixo = wb.Sheets[n];
+            });
+            if (!sBaseMatriz) sBaseMatriz = sBase; // fallback: planilha sem aba "BASE" dedicada
 
             SEMANA_TRAVADA_I2 = sBase['I2'] ? String(sBase['I2'].v).trim() : 'NÃO IDENTIFICADA';
             document.getElementById('headerSemana').textContent = SEMANA_TRAVADA_I2;
@@ -320,7 +612,7 @@
             EXEC_N2 = sBase['N2'] ? (parseInt(sBase['N2'].v) || 0) : 0;
             PLAN_N3 = sBase['N3'] ? (parseInt(sBase['N3'].v) || 0) : 0;
 
-            // Extração BASE PROD para Tooltips e Kanban
+            // Extração BASE PROD para o Kanban (sBase — comportamento ORIGINAL, sem alterações)
             let mBase = XLSX.utils.sheet_to_json(sBase, { header: 1, defval: "" });
             let idH = 0;
             for (let i=0; i<15; i++) { 
@@ -331,7 +623,7 @@
             let cBaseCols = mBase[idH].map(c => normalizarTexto(c));
             for(let r=idH+1; r<mBase.length; r++) {
                 if(!mBase[r][0] && !mBase[r][2] && !mBase[r][18]) continue;
-                let obj = { RECURSO:"", DESCR_RECURSO:"", COD:"", DESCRICAO:"", CLIENTE:"", OPERACAO:"", SEMANA:"", REALIZADO:"", SEM_PLANEJ:"" };
+                let obj = { RECURSO:"", DESCR_RECURSO:"", COD:"", DESCRICAO:"", CLIENTE:"", OPERACAO:"", SEMANA:"", REALIZADO:"", SEM_PLANEJ:"", HR_PREV:"", ORDEM_MEGA:"" };
                 
                 cBaseCols.forEach((col, idx) => {
                     let val = String(mBase[r][idx] || '').trim();
@@ -343,11 +635,20 @@
                     if(col.includes("OPERACAO")) obj.OPERACAO = val;
                     if(col.includes("SEMANA") || col === "SEM") obj.SEMANA = (!isNaN(val) && val) ? `SEM ${val}/2026` : val.toUpperCase();
                     if(col.includes("FINALIZADO") || col === "M" || col.includes("STATUS")) obj.REALIZADO = val;
-                    // Mapeamento SEMANA PLANEJADA para Matriz
+                    // Mapeamento SEMANA PLANEJADA (mantido por compatibilidade, não usado mais pela Matriz)
                     if(col.includes("SEMPLANEJ")) obj.SEM_PLANEJ = val;
+                    if(col.includes("HRPREV")) obj.HR_PREV = val;
+                    if(col.includes("ORDEMMEGA")) obj.ORDEM_MEGA = val;
                 });
                 if(obj.COD || obj.DESCRICAO || obj.RECURSO) BASE_PROD.push(obj);
             }
+
+            // Extração dedicada da Matriz de Disponibilidade — mescla a aba "BASE" (principal)
+            // com a aba "BASE (SERVIÇO EM EIXO)" (complementar, para os recursos de serviço em
+            // eixo que não aparecem na aba principal). Depois, um único índice é construído
+            // sobre o conjunto combinado.
+            BASE_NORMALIZADA = ExtrairBaseParaMatriz(sBaseMatriz).concat(ExtrairBaseServicoEixo(sBaseEixo));
+            construirIndiceCelula();
 
             // Extração CARTEIRA GERAL
             CARTEIRA_DATA = [];
@@ -399,7 +700,8 @@
                         let semL=[], cL=[], cpL=[];
                         pCols.forEach((col, idx) => {
                             if(idx>=2 && col && col!=="—") {
-                                let fs = col.toUpperCase().includes("SEM") ? col.toUpperCase() : `SEM ${col}/2026`;
+                                let { semana: numSem, ano: anoCol } = extrairSemanaEAno(col, '2026');
+                                let fs = numSem ? `SEM ${numSem}/${anoCol}` : String(col).toUpperCase();
                                 semL.push(fs);
                                 cL.push(parseFloat(String(mPlan[r][idx]||'0').replace(',','.')) || 0);
                                 let baseCap = (nm.toUpperCase().includes("ZERBST") || nm.toUpperCase().includes("POREBA")) ? 44 : 88;
@@ -429,16 +731,18 @@
             if(Object.keys(MATRIZ_CARGA).length > 0) {
                 let semsMatriz = MATRIZ_CARGA[Object.keys(MATRIZ_CARGA)[0]].semanas;
                 semsMatriz.forEach(s => {
-                    let text = s.replace('/2026', '');
+                    let { semana: optSem, ano: optAno } = extrairSemanaEAno(s, '2026');
+                    let text = `${optSem}/${optAno}`; // ex: "45/2025", "1/2026" — evita ambiguidade entre anos
                     selIni.innerHTML += `<option value="${s}">${text}</option>`;
                     selFim.innerHTML += `<option value="${s}">${text}</option>`;
                 });
                 
-                // Tenta puxar a semana da Célula I2 (Ex: "SEMANA 24")
+                // Tenta puxar a semana da Célula I2 (Ex: "SEMANA 24") — busca o ano real na lista
+                // de semanas (não assume mais 2026, para funcionar também com SEM 1/2027 em diante).
                 let numSemI2 = SEMANA_TRAVADA_I2.match(/\d+/);
                 if(numSemI2) {
-                    let formataSem = `SEM ${numSemI2[0]}/2026`;
-                    if(semsMatriz.includes(formataSem)) {
+                    let formataSem = semsMatriz.find(s => s.startsWith(`SEM ${numSemI2[0]}/`));
+                    if(formataSem) {
                         selIni.value = formataSem;
                     }
                 }
@@ -718,9 +1022,10 @@
             if(idxFim === -1 || idxFim < idxIni) idxFim = sems.length - 1;
             let semsFiltradas = sems.slice(idxIni, idxFim + 1);
             
-            let gargalosListHTML = '';
-            
-            let htmlTable = `<table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => `<th>${s.replace('SEM ', '').replace('/2026', '')}</th>`).join('')}</tr></thead><tbody>`;
+            let htmlTable = `<table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => {
+                let { semana: wSem, ano: wAno } = extrairSemanaEAno(s, '2026');
+                return `<th><span class="th-semana">${wSem}</span><span class="th-ano">${wAno}</span></th>`;
+            }).join('')}</tr></thead><tbody>`;
 
             chaves.forEach(cc => {
                 let m = MATRIZ_CARGA[cc]; 
@@ -729,50 +1034,165 @@
                 for(let i = idxIni; i <= idxFim; i++) {
                     let carga = m.carga[i] || 0, cap = m.capacidade[i] || 1, pct = Math.round((carga / cap) * 100);
                     let cls = "cell-livre", txt = "Livre";
-                    
+
+                    // Extrai semana E ano reais desta coluna uma única vez (usado na célula)
+                    let { semana: semLimpa, ano: anoLimpa } = extrairSemanaEAno(sems[i], '2026');
+
                     if (pct > 0 && pct <= 85) { cls = "cell-ok"; txt = pct + "%"; } 
                     else if (pct > 85 && pct <= 100) { cls = "cell-alert"; txt = pct + "%"; } 
-                    else if (pct > 100) { 
-                        cls = "cell-danger"; txt = pct + "%"; 
-                        // Alimentando a Lista de Gargalos
-                        gargalosListHTML += `
-                        <li class="gargalo-item">
-                            <div class="gargalo-nome">[${cc}] ${m.nome}<span class="gargalo-semana">Semana ${sems[i].replace('SEM ', '').replace('/2026', '')}</span></div>
-                            <div class="gargalo-pct">${pct}%</div>
-                        </li>`;
-                    }
+                    else if (pct > 100) { cls = "cell-danger"; txt = pct + "%"; }
                     
-                    // Lógica do Tooltip Puxando as Operações
-                    let semLimpa = sems[i].replace('SEM ', '').replace('/2026', ''); // Ex: "24"
-                    let opsNaSemana = BASE_PROD.filter(x => String(x.RECURSO) === cc && String(x.SEM_PLANEJ) === semLimpa);
-                    
-                    let tooltipHtml = '';
-                    if(opsNaSemana.length > 0) {
-                        tooltipHtml = `<span class="tooltiptext"><b>OPERAÇÕES DA SEMANA ${semLimpa}:</b><br><br>` + 
-                                      opsNaSemana.map(op => `• Cód ${op.COD}: ${op.OPERACAO}`).join('<br>') + `</span>`;
-                        cls += " tooltip"; // adiciona classe tooltip
-                    } else if (pct > 0) {
-                        tooltipHtml = `<span class="tooltiptext">Sem descritivo de operações na Base.</span>`;
-                        cls += " tooltip";
+                    // Célula clicável: guarda só os identificadores. A busca das operações
+                    // acontece no clique, consultando o índice pré-construído (O(1)).
+                    let codRecursoNormalizado = normalizarRecurso(cc);
+                    let dataAttrs = '';
+                    if (pct > 0) {
+                        let nomeSeguro = String(m.nome || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        cls += " matriz-cell-click";
+                        dataAttrs = ` data-recurso-id="${codRecursoNormalizado}" data-recurso-nome="${nomeSeguro}" data-semana-num="${semLimpa}" data-ano="${anoLimpa}" data-pct="${pct}" data-cap="${cap}"`;
                     }
 
-                    htmlTable += `<td class="${cls}">${txt}${tooltipHtml}</td>`;
+                    htmlTable += `<td class="${cls}"${dataAttrs}>${txt}</td>`;
                 }
                 htmlTable += `</tr>`;
             });
             
             htmlTable += `</tbody></table>`;
 
-            let boxGargaloHTML = `
-                <aside class="gargalos-sidebar">
-                    <div class="gargalos-header"><i class="fa-solid fa-triangle-exclamation"></i> Máquinas Gargalo (>100%)</div>
-                    <ul class="gargalos-list">
-                        ${gargalosListHTML || '<li class="gargalo-item" style="color:var(--text-muted); justify-content:center;">Nenhum gargalo no período filtrado.</li>'}
-                    </ul>
-                </aside>`;
-
-            t.innerHTML = `<div class="matriz-layout"><div class="matriz-table-wrapper">${htmlTable}</div>${boxGargaloHTML}</div>`;
+            t.innerHTML = `<div class="matriz-table-wrapper">${htmlTable}</div>`;
         }
+
+        /* ==========================================================
+           MODAL DE DETALHES DA MATRIZ DE DISPONIBILIDADE (clique)
+           ========================================================== */
+        let matrizModalEl = null;
+
+        function getMatrizModalEl() {
+            if (matrizModalEl) return matrizModalEl;
+
+            matrizModalEl = document.createElement('div');
+            matrizModalEl.className = 'matriz-modal-overlay';
+            matrizModalEl.id = 'matrizModalOverlay';
+            matrizModalEl.innerHTML = `
+                <div class="matriz-modal-box" role="dialog" aria-modal="true" aria-labelledby="mmTitle">
+                    <div class="matriz-modal-header">
+                        <div>
+                            <div class="matriz-modal-title" id="mmTitle"></div>
+                            <div class="matriz-modal-sub" id="mmSub"></div>
+                        </div>
+                        <button type="button" class="matriz-modal-close" id="mmCloseBtn" aria-label="Fechar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="matriz-modal-summary">
+                        <div class="mms-item">
+                            <span class="mms-label">Total de Operações</span>
+                            <span class="mms-value" id="mmTotalOps">0</span>
+                        </div>
+                        <div class="mms-item">
+                            <span class="mms-label">Horas Previstas (Total)</span>
+                            <span class="mms-value" id="mmTotalHoras">0.0h</span>
+                        </div>
+                        <div class="mms-item">
+                            <span class="mms-label">Ocupação</span>
+                            <span class="mms-value" id="mmPct">0%</span>
+                        </div>
+                    </div>
+                    <div class="matriz-modal-body" id="mmBody"></div>
+                </div>`;
+            document.body.appendChild(matrizModalEl);
+
+            // Fechar: botão "X"
+            matrizModalEl.querySelector('#mmCloseBtn').addEventListener('click', fecharModalMatriz);
+
+            // Fechar: clique na área sombreada (fora da caixa)
+            matrizModalEl.addEventListener('click', (e) => {
+                if (e.target === matrizModalEl) fecharModalMatriz();
+            });
+
+            return matrizModalEl;
+        }
+
+        function abrirModalMatriz(td) {
+            const el = getMatrizModalEl();
+
+            const recursoId = td.dataset.recursoId || '';
+            const recursoNome = td.dataset.recursoNome || '';
+            const numSemana = td.dataset.semanaNum || '';
+            const ano = td.dataset.ano || '2026';
+            const pct = parseInt(td.dataset.pct) || 0;
+            const cap = parseFloat(td.dataset.cap) || 0;
+
+            // Busca no índice pré-construído: `${recursoId}_${numSemana}_${ano}` -> operações[]
+            // O ano faz parte da chave para não misturar, por exemplo, semana 1/2026 com semana 1/2027.
+            const ops = INDICE_CELULA[`${recursoId}_${numSemana}_${ano}`] || [];
+            const totalHoras = ops.reduce((acc, op) => acc + (Number(op.hrPrev) || 0), 0);
+
+            let pctClass = 'pct-ok';
+            if (pct > 100) pctClass = 'pct-danger';
+            else if (pct > 85) pctClass = 'pct-alert';
+
+            el.querySelector('#mmTitle').innerHTML = `<i class="fa-solid fa-industry"></i> [${escapeHtml(recursoId)}] ${escapeHtml(recursoNome)}`;
+            el.querySelector('#mmSub').textContent = `SEMANA ${numSemana}/${ano}`;
+            el.querySelector('#mmTotalOps').textContent = ops.length;
+            el.querySelector('#mmTotalHoras').textContent = `${totalHoras.toFixed(1)}h / ${cap}h`;
+            const mmPct = el.querySelector('#mmPct');
+            mmPct.textContent = `${pct}%`;
+            mmPct.className = `mms-value ${pctClass}`;
+
+            const corpo = el.querySelector('#mmBody');
+            if (ops.length > 0) {
+                let linhas = ops.map(op => {
+                    const ordemPv = (op.cod && op.cod !== '-') ? op.cod : '—';
+                    const horas = Number(op.hrPrev) || 0;
+                    return `
+                    <tr>
+                        <td>${escapeHtml(op.cliente || 'Não informado')}</td>
+                        <td>${escapeHtml(ordemPv)}</td>
+                        <td>${escapeHtml(op.descricao || 'Sem descrição cadastrada')}</td>
+                        <td>${escapeHtml(op.operacao || '—')}</td>
+                        <td><span class="mmt-hr-badge">${horas.toFixed(1)}h</span></td>
+                    </tr>`;
+                }).join('');
+
+                corpo.innerHTML = `
+                    <table class="matriz-modal-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Ordem / PV</th>
+                                <th>Descrição da Peça</th>
+                                <th>Operação</th>
+                                <th>HR Prev.</th>
+                            </tr>
+                        </thead>
+                        <tbody>${linhas}</tbody>
+                    </table>`;
+            } else {
+                corpo.innerHTML = '<div class="matriz-modal-empty"><i class="fa-solid fa-circle-info" style="font-size:28px; margin-bottom:10px; display:block;"></i>Sem descritivo de operações na Base para esta semana.</div>';
+            }
+
+            el.classList.add('is-open');
+            document.body.style.overflow = 'hidden'; // trava o scroll de fundo enquanto o modal está aberto
+        }
+
+        function fecharModalMatriz() {
+            if (matrizModalEl) matrizModalEl.classList.remove('is-open');
+            document.body.style.overflow = '';
+        }
+
+        // Ativação: clique em qualquer célula com carga (%) na Matriz
+        document.addEventListener('click', (e) => {
+            const td = e.target.closest('.matriz-cell-click');
+            if (td) abrirModalMatriz(td);
+        });
+
+        // Fechar com a tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && matrizModalEl && matrizModalEl.classList.contains('is-open')) {
+                fecharModalMatriz();
+            }
+        });
     </script>
 </body>
 </html>
