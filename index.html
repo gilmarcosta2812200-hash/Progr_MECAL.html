@@ -104,13 +104,13 @@
         .green-dot-table { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; background-color: #31C48D; border-radius: 50%; }
 
         /* Matriz Layout */
-        .matriz-table-wrapper { width: 100%; overflow-x: auto; background: white; border-radius: 8px; border: 1px solid var(--border-color); }
+        .matriz-table-wrapper { width: 100%; max-height: 75vh; overflow: auto; background: white; border-radius: 8px; border: 1px solid var(--border-color); }
 
         .matriz-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        .matriz-table th { background-color: white; color: #718096; padding: 12px 5px; font-weight: 600; text-align: center; border-bottom: 2px solid #EDF2F7; }
+        .matriz-table th { background-color: white; color: #718096; padding: 12px 5px; font-weight: 600; text-align: center; border-bottom: 2px solid #EDF2F7; position: sticky; top: 0; z-index: 3; box-shadow: 0 1px 0 0 #EDF2F7; }
         .matriz-table th .th-semana { display: block; font-weight: 800; font-size: 12px; color: #1A1A1B; line-height: 1.3; }
         .matriz-table th .th-ano { display: block; font-size: 9px; color: #A0AEC0; font-weight: 700; line-height: 1.2; }
-        .matriz-table th:first-child { text-align: left; padding-left: 15px; position: sticky; left: 0; background: white; z-index: 2; border-right: 1px solid #EDF2F7; }
+        .matriz-table th:first-child { text-align: left; padding-left: 15px; left: 0; z-index: 4; border-right: 1px solid #EDF2F7; }
         .matriz-table td { padding: 10px 5px; text-align: center; font-weight: 700; border: 2px solid white; cursor: help; position: relative; }
         .matriz-table td:first-child { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; position: sticky; left: 0; background: white; z-index: 1; cursor: default;}
         
@@ -813,12 +813,18 @@
             document.getElementById('summaryExecutadas').textContent = EXEC_N2;
             document.getElementById('summaryPlanejadas').textContent = PLAN_N3;
 
-            // Calculo de KPI de Gargalo Global (>100%)
+            // Calculo de KPI de Gargalo Global (>100%) — usa a mesma carga dinâmica
+            // (calculada a partir da aba BASE via INDICE_CELULA) da Matriz, para o
+            // contador do cabeçalho sempre bater com o que aparece nas células.
             let gargalosGlobal = 0;
             Object.keys(MATRIZ_CARGA).forEach(cc => {
                 let m = MATRIZ_CARGA[cc];
-                m.carga.forEach((cg, i) => {
+                let codRecursoNormalizado = normalizarRecurso(cc);
+                m.semanas.forEach((s, i) => {
                     let cp = m.capacidade[i] || 1;
+                    let { semana: semLimpa, ano: anoLimpa } = extrairSemanaEAno(s, '2026');
+                    let ops = INDICE_CELULA[`${codRecursoNormalizado}_${semLimpa}_${anoLimpa}`] || [];
+                    let cg = ops.reduce((acc, op) => acc + (Number(op.hrPrev) || 0), 0);
                     if((cg/cp)*100 > 100) gargalosGlobal++;
                 });
             });
@@ -1030,13 +1036,23 @@
             chaves.forEach(cc => {
                 let m = MATRIZ_CARGA[cc]; 
                 htmlTable += `<tr><td>[${cc}] ${m.nome}</td>`;
+                let codRecursoNormalizado = normalizarRecurso(cc);
                 
                 for(let i = idxIni; i <= idxFim; i++) {
-                    let carga = m.carga[i] || 0, cap = m.capacidade[i] || 1, pct = Math.round((carga / cap) * 100);
-                    let cls = "cell-livre", txt = "Livre";
+                    let cap = m.capacidade[i] || 1;
 
                     // Extrai semana E ano reais desta coluna uma única vez (usado na célula)
                     let { semana: semLimpa, ano: anoLimpa } = extrairSemanaEAno(sems[i], '2026');
+
+                    // CARGA (horas previstas) é calculada DINAMICAMENTE somando as operações
+                    // reais da aba BASE (via INDICE_CELULA) — não lida mais do valor estático
+                    // da aba "CARGA MÁQUINA (PLANEJ)" (m.carga), que fica desatualizado sempre
+                    // que a aba BASE muda mas essa planilha auxiliar não é recalculada. Assim a
+                    // Matriz sempre bate com o que o modal de detalhes mostra (mesma fonte).
+                    let opsCelula = INDICE_CELULA[`${codRecursoNormalizado}_${semLimpa}_${anoLimpa}`] || [];
+                    let carga = opsCelula.reduce((acc, op) => acc + (Number(op.hrPrev) || 0), 0);
+                    let pct = Math.round((carga / cap) * 100);
+                    let cls = "cell-livre", txt = "Livre";
 
                     if (pct > 0 && pct <= 85) { cls = "cell-ok"; txt = pct + "%"; } 
                     else if (pct > 85 && pct <= 100) { cls = "cell-alert"; txt = pct + "%"; } 
@@ -1044,7 +1060,6 @@
                     
                     // Célula clicável: guarda só os identificadores. A busca das operações
                     // acontece no clique, consultando o índice pré-construído (O(1)).
-                    let codRecursoNormalizado = normalizarRecurso(cc);
                     let dataAttrs = '';
                     if (pct > 0) {
                         let nomeSeguro = String(m.nome || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
