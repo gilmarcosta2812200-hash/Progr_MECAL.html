@@ -106,6 +106,47 @@
         /* Matriz Layout */
         .matriz-table-wrapper { width: 100%; max-height: 75vh; overflow: auto; background: white; border-radius: 8px; border: 1px solid var(--border-color); }
 
+        /* Aba 4 — Programação Capacitada (PCP) */
+        .cap-kpis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .cap-kpi-card { background: white; border-radius: 10px; border: 1px solid var(--border-color); padding: 16px 18px; border-left: 5px solid #A0AEC0; }
+        .cap-kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.3px; }
+        .cap-kpi-valor { font-size: 28px; font-weight: 800; color: #1A1A1B; margin: 6px 0 4px; }
+        .cap-kpi-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+        .cap-kpi-danger { border-left-color: var(--moreno-red); }
+        .cap-kpi-danger .cap-kpi-valor { color: var(--moreno-red); }
+        .cap-kpi-azul { border-left-color: #2E5C8A; }
+        .cap-kpi-azul .cap-kpi-valor { color: #2E5C8A; }
+        .cap-kpi-amarelo { border-left-color: #B8860B; }
+        .cap-kpi-amarelo .cap-kpi-valor { color: #B8860B; }
+        .cap-kpi-verde { border-left-color: #1E7B34; }
+        .cap-kpi-verde .cap-kpi-valor { color: #1E7B34; }
+
+        .cap-badge { display: inline-block; padding: 4px 10px; border-radius: 5px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
+        .cap-badge-verde { background-color: #C6F6D5; color: #22543D; }
+        .cap-badge-vermelho { background-color: #FED7D7; color: #9B2C2C; }
+        .cap-badge-cinza { background-color: #E2E8F0; color: #4A5568; }
+
+        .cap-toggle-visao { display: flex; align-items: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .cap-toggle-btn { background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 14px; font-size: 12.5px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+        .cap-toggle-btn.active { background-color: var(--moreno-black); color: white; border-color: var(--moreno-black); }
+        .cap-toggle-legenda { font-size: 11px; color: var(--text-muted); font-style: italic; margin-left: 4px; }
+
+        .cap-tag-atrasado { display: inline-block; background-color: #FED7D7; color: #9B2C2C; font-size: 9.5px; font-weight: 800; padding: 1px 6px; border-radius: 4px; margin-left: 4px; white-space: nowrap; }
+
+        .cap-recursos-lista { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+        .cap-recurso-card { background: white; border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; }
+        .cap-recurso-header { padding: 12px 16px; background-color: #F8FAFC; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .cap-recurso-nome { font-weight: 800; font-size: 13px; color: #1A1A1B; text-transform: uppercase; white-space: nowrap; }
+        .cap-recurso-medidas { flex: 1; min-width: 220px; }
+        .cap-recurso-medidas span { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+        .cap-progress-bar { width: 100%; height: 6px; background-color: #EDF2F7; border-radius: 3px; margin-top: 4px; overflow: hidden; }
+        .cap-progress-fill { height: 100%; border-radius: 3px; }
+        .cap-recurso-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+        .cap-recurso-table th { text-align: center; padding: 8px 10px; background-color: white; color: #A0AEC0; font-size: 10px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
+        .cap-recurso-table td { text-align: center; padding: 8px 10px; border-bottom: 1px solid #F1F5F9; }
+        .cap-recurso-table tr:last-child td { border-bottom: none; }
+        .cap-linha-sugerida { background-color: #F7FDF9; }
+
         .matriz-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .matriz-table th { background-color: white; color: #718096; padding: 12px 5px; font-weight: 600; text-align: center; border-bottom: 2px solid #EDF2F7; position: sticky; top: 0; z-index: 3; box-shadow: 0 1px 0 0 #EDF2F7; }
         .matriz-table th .th-semana { display: block; font-weight: 800; font-size: 12px; color: #1A1A1B; line-height: 1.3; }
@@ -230,10 +271,6 @@
                 <div class="kpi-box-label">Aderência Global</div>
                 <div class="kpi-box-value" id="kpiAderencia">0%</div>
             </div>
-            <div class="kpi-box" style="border-left-color: #e53e3e;">
-                <div class="kpi-box-label">Máqs Gargalo (>100%)</div>
-                <div class="kpi-box-value" id="kpiGargalo">0</div>
-            </div>
         </div>
     </header>
 
@@ -261,6 +298,16 @@
             <select id="filtroMatrizFim" class="dropdown-semana" onchange="RenderizarAtual()"></select>
         </div>
 
+        <div class="selector-wrapper" id="wrapFiltroCapacitada" style="display: none; background: #EDF2F7; padding: 5px 15px; border-radius: 6px;">
+            <label style="font-weight: 700; font-size: 13px; color: var(--moreno-red);"><i class="fa-solid fa-calendar-week"></i> Semana Alvo:</label>
+            <select id="filtroSemanaCapacitada" class="dropdown-semana" onchange="RenderizarAtual()"></select>
+            <label style="font-weight: 700; font-size: 13px; margin-left: 8px;"><i class="fa-solid fa-sort"></i> Ordenar por:</label>
+            <select id="filtroCriterioCapacitada" class="dropdown-semana" onchange="RenderizarAtual()">
+                <option value="PRAZO">Menor Prazo Entrega</option>
+                <option value="HORAS">Maiores Horas Previstas</option>
+            </select>
+        </div>
+
         <div style="display: flex; gap: 10px;">
             <button class="btn btn-pdf" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir</button>
             <button class="btn btn-sync" onclick="CarregarDadosDoGitHub()"><i class="fa-solid fa-rotate"></i> Atualizar</button>
@@ -273,6 +320,11 @@
         <button id="navKanban" class="nav-btn active" onclick="TrocarAba('KANBAN')"><i class="fa-solid fa-table-columns"></i> 1. Kanban</button>
         <button id="navMatriz" class="nav-btn" onclick="TrocarAba('MATRIZ')"><i class="fa-solid fa-table-cells"></i> 2. Matriz Disp.</button>
         <button id="navTabela" class="nav-btn" onclick="TrocarAba('TABELA')"><i class="fa-solid fa-database"></i> 3. CARTEIRA GERAL (USI)</button>
+        <button id="navCapacitada" class="nav-btn" onclick="TrocarAba('CAPACITADA')"><i class="fa-solid fa-robot"></i> 4. Program. Capacitada</button>
+    </div>
+
+    <div class="search-area" id="wrapFiltroRecursoMatriz" style="display: none;">
+        <input type="text" id="filtroRecursoMatriz" class="search-field" placeholder="🔍 Filtrar recursos por nome ou código...">
     </div>
 
     <div class="dashboard-summary-card" id="blocoAderenciaDashboard">
@@ -302,6 +354,7 @@
         let CARTEIRA_DATA = [];
         let BASE_NORMALIZADA = []; // Base saneada (tipos/chaves consistentes) usada para embutir operações nas células
         let INDICE_CELULA = {};    // `${recursoId}_${semana}` -> [operações] — usado só durante a montagem da tabela (não no hover)
+        let CAPACIDADE_INSTALADA = {}; // `recursoId` -> { "semana_ano": horasCapacidadeInstalada } — aba CARGA MÁQUINA (CAP INST)
         let SEMANA_TRAVADA_I2 = 'NÃO IDENTIFICADA';
         let EXEC_N2 = 0;
         let PLAN_N3 = 0;
@@ -359,6 +412,33 @@
             return String(d.getUTCFullYear());
         }
 
+        // Converte um número de série de data do Excel na data completa (objeto Date, em UTC).
+        // Usado pelo Algoritmo de PCP para comparar Prazo Fundido / Prazo Entrega com a semana alvo.
+        function dataDeSerialExcel(serial) {
+            const n = Number(serial);
+            if (!n || isNaN(n)) return null;
+            const ms = (n - 25569) * 86400 * 1000;
+            const d = new Date(ms);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        // Calcula a semana ISO 8601 (semana começa na segunda-feira) de uma data.
+        function semanaISOdeData(data) {
+            const d = new Date(Date.UTC(data.getUTCFullYear(), data.getUTCMonth(), data.getUTCDate()));
+            const diaSemana = d.getUTCDay() || 7; // domingo=0 -> 7
+            d.setUTCDate(d.getUTCDate() + 4 - diaSemana);
+            const inicioAno = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const semana = Math.ceil((((d - inicioAno) / 86400000) + 1) / 7);
+            return { semana, ano: d.getUTCFullYear() };
+        }
+
+        // Compara (semanaA/anoA) <= (semanaB/anoB), útil para checar se um prazo já passou
+        // da semana alvo ou ainda está dentro do prazo.
+        function semanaMenorOuIgual(semanaA, anoA, semanaB, anoB) {
+            if (anoA !== anoB) return anoA < anoB;
+            return semanaA <= semanaB;
+        }
+
         // Sanidade: rejeita anos claramente inválidos/placeholder (ex: "1900", vindo de datas
         // zeradas tipo "00:00:00" na planilha). Fora da janela plausível, retorna '' para cair
         // no próximo fallback da cadeia (|| ...).
@@ -403,7 +483,7 @@
             for (let r = idH + 1; r < mBase.length; r++) {
                 if (!mBase[r].join('')) continue;
 
-                let bruto = { RECURSO:"", SEM_PLANEJ:"", CLIENTE:"", DESCRICAO:"", COD:"", OPERACAO:"", ORDEM_MEGA:"", HR_PREV:"", ANO:"", DATA_PLANJ:"", SEMANA_ANO:"" };
+                let bruto = { RECURSO:"", SEM_PLANEJ:"", CLIENTE:"", DESCRICAO:"", COD:"", OPERACAO:"", ORDEM_MEGA:"", HR_PREV:"", ANO:"", DATA_PLANJ:"", SEMANA_ANO:"", CONTR_ATUALIZ:"" };
 
                 cCols.forEach((col, idx) => {
                     let val = String(mBase[r][idx] || '').trim();
@@ -418,6 +498,7 @@
                     else if (col.includes("HRPREV")) bruto.HR_PREV = val;
                     else if (col === "ANO") bruto.ANO = val;
                     else if (col.includes("DATAPLANJ")) bruto.DATA_PLANJ = val;
+                    else if (col.includes("CONTRDEATUALIZ")) bruto.CONTR_ATUALIZ = val; // Passo 1 do PCP: baixa/conclusão
                 });
 
                 if (!bruto.RECURSO) continue;
@@ -444,7 +525,8 @@
                     operacao: bruto.OPERACAO || '',
                     cod: bruto.COD || '-',
                     ordem: bruto.ORDEM_MEGA || '-',
-                    hrPrev: Number(String(bruto.HR_PREV || '0').replace(',', '.')) || 0
+                    hrPrev: Number(String(bruto.HR_PREV || '0').replace(',', '.')) || 0,
+                    baixado: (String(bruto.CONTR_ATUALIZ).trim() === '1' || String(bruto.CONTR_ATUALIZ).trim() === '1.0')
                 });
             }
 
@@ -521,7 +603,8 @@
                     operacao: bruto.DISPOSICAO || '',
                     cod: bruto.NUMERO || '-',
                     ordem: '-',
-                    hrPrev: Number(String(bruto.TEMPO_TOTAL || '0').replace(',', '.')) || 0
+                    hrPrev: Number(String(bruto.TEMPO_TOTAL || '0').replace(',', '.')) || 0,
+                    baixado: false // aba "SERVIÇO EM EIXO" não tem coluna CONTR. DE ATUALIZ.
                 });
             }
 
@@ -530,6 +613,53 @@
 
         // Constrói o índice O(1) `${recursoId}_${semana}` -> [operações] a partir de BASE_NORMALIZADA.
         // Usado só na montagem da tabela (nenhuma busca acontece no clique/hover).
+        // Extração da aba "CARGA MÁQUINA (CAP INST )" — capacidade nominal instalada
+        // (em horas) por recurso e semana. Usada pelo Passo 3 do Algoritmo de PCP
+        // (Capacidade Instalada - Carga Já Alocada = Saldo Livre).
+        //
+        // ATENÇÃO: essa aba tem um bloco de linhas DUPLICADO mais abaixo na planilha
+        // (mesmos códigos de recurso reaparecendo, com outros números — aparentemente
+        // um resumo/rascunho diferente). Por isso pegamos só a PRIMEIRA ocorrência de
+        // cada código de recurso e ignoramos qualquer repetição posterior.
+        function ExtrairCapacidadeInstalada(sheet) {
+            const mapa = {};
+            if (!sheet) return mapa;
+
+            let m = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            let idH = 0;
+            for (let i = 0; i < 10; i++) {
+                if (m[i] && m[i].some(c => normalizarTexto(c) === "COD")) { idH = i; break; }
+            }
+            let cabecalho = m[idH].map(c => String(c || '').trim());
+
+            const vistos = new Set();
+            for (let r = idH + 1; r < m.length; r++) {
+                let linha = m[r];
+                if (!linha || !linha.join('')) continue;
+
+                let codigoBruto = linha[0];
+                let recursoId = normalizarRecurso(codigoBruto);
+                if (!recursoId || vistos.has(recursoId)) continue; // ignora linhas sem código e o bloco duplicado
+                vistos.add(recursoId);
+
+                let porSemana = {};
+                cabecalho.forEach((col, idx) => {
+                    if (idx < 8) return; // colunas 0-7 são metadados (Cód, Centro Trabalho, Turnos, etc.), não semanas
+                    let { semana, ano } = extrairSemanaEAno(col);
+                    if (!semana || !ano) return;
+                    let horas = parseFloat(String(linha[idx] || '0').replace(',', '.')) || 0;
+                    horas = Math.round(horas * 10) / 10; // corrige artefatos de ponto flutuante (ex: 61.6000000000001 -> 61.6)
+                    porSemana[`${semana}_${ano}`] = horas;
+                });
+
+                mapa[recursoId] = porSemana;
+            }
+
+            return mapa;
+        }
+
+        // Constrói o índice O(1) `${recursoId}_${semana}_${ano}` -> [operações] a partir de
+        // BASE_NORMALIZADA. Usado só na montagem da tabela (nenhuma busca acontece no clique/hover).
         function construirIndiceCelula() {
             INDICE_CELULA = {};
             BASE_NORMALIZADA.forEach(op => {
@@ -548,9 +678,217 @@
                 .replace(/>/g, '&gt;');
         }
 
+        // Formata uma data (objeto Date) como DD/MM/AAAA.
+        function formatarDataBR(d) {
+            if (!d) return '';
+            const dd = String(d.getUTCDate()).padStart(2, '0');
+            const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+            const yyyy = d.getUTCFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+
+        // ================================================================================
+        // AGENTE DE PROGRAMAÇÃO SEMANAL CAPACITADA (PCP)
+        // Implementação de "Especificação Técnica: Programação Capacitada do PCP"
+        // (Passos 1 a 5 do documento) — ver aba "4. Program. Capacitada" na interface.
+        // ================================================================================
+
+        // Passo 1 (parte 2): status da CARTEIRA que tiram o item da fila de carga pendente.
+        function statusIndicaConcluido(status) {
+            const s = normalizarTexto(status);
+            return s.includes("FINALIZADO") || s.includes("CONCLUIDO") || s.includes("PRONTO");
+        }
+
+        // Índice CLIENTE|CÓD -> item da Carteira, para cruzamento rápido (Passo 5).
+        function construirMapaCarteira() {
+            const mapa = {};
+            CARTEIRA_DATA.forEach(item => {
+                const chave = `${String(item.CLIENTES || '').trim().toUpperCase()}|${String(item.COD_PC || '').trim().toUpperCase()}`;
+                mapa[chave] = item;
+            });
+            return mapa;
+        }
+
+        // Passo 2: interpreta o campo "Prazo Fundido" e decide se a matéria-prima está
+        // liberada para a semana alvo da programação.
+        function interpretarPrazoFundido(valorBruto, semanaAlvo, anoAlvo) {
+            const s = String(valorBruto == null ? "" : valorBruto).trim();
+            const sNorm = normalizarTexto(s);
+
+            if (!s || sNorm === "-" || sNorm === "NA" || sNorm === "OK" || sNorm === "LIBERADO") {
+                return { liberado: true, texto: s || "—" };
+            }
+
+            const n = Number(s);
+            if (!isNaN(n) && n > 20000) { // parece um serial de data do Excel
+                const data = dataDeSerialExcel(n);
+                if (data) {
+                    const { semana, ano } = semanaISOdeData(data);
+                    const liberado = semanaMenorOuIgual(semana, ano, Number(semanaAlvo), Number(anoAlvo));
+                    return { liberado, texto: formatarDataBR(data) };
+                }
+            }
+
+            // Texto não reconhecido (observação livre etc.) — assume liberado por padrão,
+            // para não bloquear indevidamente por um valor que o algoritmo não sabe interpretar.
+            return { liberado: true, texto: s };
+        }
+
+        // Passos 3, 4 e 5: monta a fila de trabalho pendente da semana alvo, calcula o saldo
+        // livre de cada recurso (Capacidade Instalada - Carga Já Alocada) e simula o encaixe
+        // capacitado, priorizando por urgência (Prazo Entrega) ou por horas previstas.
+        //
+        // Args:
+        //   semanaAlvo, anoAlvo: semana/ano da programação a simular (ex.: "32", "2026")
+        //   criterio: "PRAZO" (padrão, menor Prazo Entrega primeiro) ou "HORAS" (maiores HR Prev. primeiro)
+        function CalcularProgramacaoCapacitada(semanaAlvo, anoAlvo, criterio) {
+            const mapaCarteira = construirMapaCarteira();
+
+            // Passo 1 (contagem): etapas concluídas contam só as que eram DESSA semana
+            // especificamente (indicador de ritmo de produção da semana alvo).
+            const daSemanaExata = BASE_NORMALIZADA.filter(op =>
+                String(op.semana) === String(semanaAlvo) && String(op.ano) === String(anoAlvo)
+            );
+            const etapasConcluidas = daSemanaExata.filter(op => op.baixado).length;
+
+            // Candidatos da SUGESTÃO DE COMBINAÇÃO: não só o que já está etiquetado
+            // exatamente nessa semana, mas também qualquer atraso de semanas anteriores
+            // ainda não baixado — assim a sugestão respeita de verdade o Prazo de Entrega,
+            // priorizando o que está mais urgente independentemente de qual semana o
+            // roteiro original apontava.
+            const candidatos = BASE_NORMALIZADA.filter(op =>
+                !op.baixado && op.semana && op.ano &&
+                semanaMenorOuIgual(Number(op.semana), Number(op.ano), Number(semanaAlvo), Number(anoAlvo))
+            );
+
+            // Passo 2 + cruzamento com a Carteira (CLIENTE + CÓD)
+            let fila = candidatos.map(op => {
+                const chaveCarteira = `${String(op.cliente || "").trim().toUpperCase()}|${String(op.cod || "").trim().toUpperCase()}`;
+                const itemCarteira = mapaCarteira[chaveCarteira];
+
+                const statusCarteira = itemCarteira ? itemCarteira.STATUS : "";
+                const concluidoNaCarteira = itemCarteira ? statusIndicaConcluido(statusCarteira) : false;
+
+                const fundido = itemCarteira
+                    ? interpretarPrazoFundido(itemCarteira.PRAZO_FUNDIDO, semanaAlvo, anoAlvo)
+                    : { liberado: true, texto: "—" }; // sem correspondência na carteira: não bloqueia por falta de dado
+
+                const prazoEntregaSerial = itemCarteira ? Number(itemCarteira.PRAZO_ENTREGA) : NaN;
+                const prazoEntregaData = (!isNaN(prazoEntregaSerial) && prazoEntregaSerial > 20000) ? dataDeSerialExcel(prazoEntregaSerial) : null;
+
+                const ehDaSemanaAlvo = String(op.semana) === String(semanaAlvo) && String(op.ano) === String(anoAlvo);
+
+                return {
+                    ...op,
+                    statusCarteira,
+                    concluidoNaCarteira,
+                    fundidoLiberado: fundido.liberado,
+                    fundidoTexto: fundido.texto,
+                    prazoEntregaOrdenacao: prazoEntregaData ? prazoEntregaData.getTime() : Infinity,
+                    prazoEntregaTexto: prazoEntregaData ? formatarDataBR(prazoEntregaData) : (itemCarteira ? "—" : "Sem correspondência na Carteira"),
+                    atrasado: !ehDaSemanaAlvo, // veio de uma semana anterior à semana alvo (backlog)
+                    semanaOrigemTexto: ehDaSemanaAlvo ? "" : `${op.semana}/${op.ano}`,
+                };
+            }).filter(item => !item.concluidoNaCarteira); // Passo 1: remove concluídos também na Carteira
+
+            // Passo 4: ordenação da fila
+            if (criterio === "HORAS") {
+                fila.sort((a, b) => b.hrPrev - a.hrPrev);
+            } else {
+                fila.sort((a, b) => a.prazoEntregaOrdenacao - b.prazoEntregaOrdenacao);
+            }
+
+            // Passo 3: saldo inicial de cada recurso = capacidade instalada da semana alvo
+            // (com fallback conservador de 88h caso a aba CAP INST não cubra essa semana/recurso)
+            const saldoPorRecurso = {};
+            fila.forEach(item => {
+                if (saldoPorRecurso[item.recursoId] === undefined) {
+                    const capMap = CAPACIDADE_INSTALADA[item.recursoId];
+                    const cap = capMap ? capMap[`${semanaAlvo}_${anoAlvo}`] : undefined;
+                    saldoPorRecurso[item.recursoId] = (cap !== undefined) ? cap : 88;
+                }
+            });
+            const capacidadeInicial = { ...saldoPorRecurso };
+
+            // Passo 5: simulação de encaixe capacitado, item a item, na ordem de prioridade
+            let gargalos = 0, cargaAlocadaSugerida = 0, alertasFundido = 0;
+            fila.forEach(item => {
+                if (!item.fundidoLiberado) {
+                    item.statusSugestao = "BLOQUEADO";
+                    item.motivo = "Aguardando liberação de fundido";
+                    alertasFundido++;
+                    return;
+                }
+                const saldo = saldoPorRecurso[item.recursoId];
+                if (item.hrPrev <= saldo) {
+                    item.statusSugestao = "SUGERIDO";
+                    item.motivo = item.atrasado
+                        ? `Atrasado desde ${item.semanaOrigemTexto} — priorizado dentro da capacidade disponível`
+                        : "Dentro da capacidade disponível";
+                    saldoPorRecurso[item.recursoId] -= item.hrPrev;
+                    cargaAlocadaSugerida += item.hrPrev;
+                } else {
+                    item.statusSugestao = "GARGALO";
+                    item.motivo = item.atrasado
+                        ? `Atrasado desde ${item.semanaOrigemTexto} — capacidade ainda insuficiente`
+                        : "Capacidade excedida no recurso";
+                    gargalos++;
+                }
+            });
+
+            return {
+                fila,
+                indicadores: {
+                    gargalos,
+                    cargaAlocadaSugerida: Math.round(cargaAlocadaSugerida * 10) / 10,
+                    alertasFundido,
+                    etapasConcluidas,
+                    totalFila: fila.length,
+                },
+                saldoPorRecurso,
+                capacidadeInicial,
+            };
+        }
+
+        // Agrupa o resultado de CalcularProgramacaoCapacitada por RECURSO — a "sugestão de
+        // combinação de operações por recurso" propriamente dita: para cada máquina, a lista
+        // de operações escolhidas (na ordem de prioridade já aplicada, respeitando o Prazo de
+        // Entrega ou Horas conforme o critério) que cabem no saldo daquela semana, mais o que
+        // ficou de fora (gargalo/bloqueado). Recursos mais críticos (maior % de ocupação
+        // sugerida) aparecem primeiro.
+        function AgruparSugestaoPorRecurso(resultado) {
+            const porRecurso = {};
+            resultado.fila.forEach(item => {
+                if (!porRecurso[item.recursoId]) {
+                    porRecurso[item.recursoId] = {
+                        recursoId: item.recursoId,
+                        nome: (MATRIZ_CARGA[item.recursoId] || {}).nome || `Recurso ${item.recursoId}`,
+                        capacidadeInicial: resultado.capacidadeInicial[item.recursoId] || 0,
+                        saldoRestante: resultado.saldoPorRecurso[item.recursoId] || 0,
+                        itens: [],
+                        horasSugeridas: 0,
+                        qtdGargalo: 0,
+                        qtdBloqueado: 0,
+                    };
+                }
+                const grupo = porRecurso[item.recursoId];
+                grupo.itens.push(item);
+                if (item.statusSugestao === "SUGERIDO") grupo.horasSugeridas += item.hrPrev;
+                else if (item.statusSugestao === "GARGALO") grupo.qtdGargalo++;
+                else if (item.statusSugestao === "BLOQUEADO") grupo.qtdBloqueado++;
+            });
+
+            return Object.values(porRecurso).sort((a, b) => {
+                const pctA = a.capacidadeInicial ? a.horasSugeridas / a.capacidadeInicial : 0;
+                const pctB = b.capacidadeInicial ? b.horasSugeridas / b.capacidadeInicial : 0;
+                return pctB - pctA; // recursos mais ocupados/críticos primeiro
+            });
+        }
+
         window.onload = () => {
             CarregarDadosDoGitHub();
             document.getElementById('campoBusca').addEventListener('input', RenderizarAtual);
+            document.getElementById('filtroRecursoMatriz').addEventListener('input', RenderizarAtual);
         };
 
         async function CarregarDadosDoGitHub() {
@@ -580,7 +918,7 @@
         }
 
         function ProcessarPlanilha(wb) {
-            let sBase, sPlan, sCarteira, sBaseMatriz, sBaseEixo;
+            let sBase, sPlan, sCarteira, sBaseMatriz, sBaseEixo, sCapInst;
 
             // sBase alimenta o KANBAN, os KPIs e o filtro de semana geral — este é o comportamento
             // ORIGINAL do sistema (restaurado): prioriza a aba "PROGRAMAÇÃO" (que tem FINALIZADO?,
@@ -591,6 +929,7 @@
                 if(normName.includes("PROGRAMACAO") || normName.includes("BASE")) sBase = wb.Sheets[n];
                 if(normName.includes("PLANEJ")) sPlan = wb.Sheets[n];
                 if(normName.includes("CARTEIRAGERAL") || normName.includes("USI")) sCarteira = wb.Sheets[n];
+                if(normName.includes("CAPINST")) sCapInst = wb.Sheets[n];
             });
             if(!sBase) sBase = wb.Sheets[wb.SheetNames[0]];
 
@@ -650,6 +989,9 @@
             BASE_NORMALIZADA = ExtrairBaseParaMatriz(sBaseMatriz).concat(ExtrairBaseServicoEixo(sBaseEixo));
             construirIndiceCelula();
 
+            // Capacidade Instalada (Passo 3 do Algoritmo de PCP) — aba CARGA MÁQUINA (CAP INST)
+            CAPACIDADE_INSTALADA = ExtrairCapacidadeInstalada(sCapInst);
+
             // Extração CARTEIRA GERAL
             CARTEIRA_DATA = [];
             if(sCarteira) {
@@ -674,7 +1016,7 @@
                         if(col.includes("SUBGRUPO")) obj.SUB_GRUPO = val;
                         if(col.includes("SETORVENDA")) obj.SETOR_VENDA = val;
                         if(col.includes("FUNDIDO")) obj.PRAZO_FUNDIDO = val;
-                        if(col.includes("ENTREGA") && !col.includes("REPROGRAMACAO")) obj.PRAZO_ENTREGA = val;
+                        if(col.includes("ENTREGA") && !col.includes("REPROG")) obj.PRAZO_ENTREGA = val;
                         if(col.includes("MES")) obj.MES = val.toLowerCase().substring(0,3); // padroniza mes
                         if(col === "STATUS") obj.STATUS = val;
                     });
@@ -698,14 +1040,24 @@
                         if(!cc || !nm) continue;
                         
                         let semL=[], cL=[], cpL=[];
+                        let codRecursoNormalizado = normalizarRecurso(cc);
+                        let capMapRecurso = CAPACIDADE_INSTALADA[codRecursoNormalizado];
                         pCols.forEach((col, idx) => {
                             if(idx>=2 && col && col!=="—") {
                                 let { semana: numSem, ano: anoCol } = extrairSemanaEAno(col, '2026');
                                 let fs = numSem ? `SEM ${numSem}/${anoCol}` : String(col).toUpperCase();
                                 semL.push(fs);
                                 cL.push(parseFloat(String(mPlan[r][idx]||'0').replace(',','.')) || 0);
+
+                                // Capacidade: usa o valor REAL por recurso/semana da aba
+                                // "CARGA MÁQUINA (CAP INST)" quando disponível — assim, uma
+                                // alteração de capacidade na planilha (ex: aumento de Hrs/turno)
+                                // é refletida na Matriz automaticamente. Só cai no heurístico
+                                // fixo (44/88h por nome de máquina) quando essa aba não cobre
+                                // a semana em questão (ex: semanas futuras ainda não cadastradas lá).
+                                let capReal = capMapRecurso ? capMapRecurso[`${numSem}_${anoCol}`] : undefined;
                                 let baseCap = (nm.toUpperCase().includes("ZERBST") || nm.toUpperCase().includes("POREBA")) ? 44 : 88;
-                                cpL.push(baseCap);
+                                cpL.push(capReal !== undefined ? capReal : baseCap);
                             }
                         });
                         MATRIZ_CARGA[cc] = { cc:cc, nome:nm, semanas:semL, carga:cL, capacidade:cpL };
@@ -747,6 +1099,18 @@
                     }
                 }
                 selFim.value = semsMatriz[semsMatriz.length - 1];
+
+                // Seletor de Semana Alvo da aba "4. Program. Capacitada"
+                let selCap = document.getElementById('filtroSemanaCapacitada');
+                selCap.innerHTML = '';
+                semsMatriz.forEach(s => {
+                    let { semana, ano } = extrairSemanaEAno(s, '2026');
+                    selCap.innerHTML += `<option value="${semana}|${ano}">${semana}/${ano}</option>`;
+                });
+                if (numSemI2) {
+                    let opcaoCap = Array.from(selCap.options).find(o => o.value.startsWith(numSemI2[0] + '|'));
+                    if (opcaoCap) selCap.value = opcaoCap.value;
+                }
             }
 
             ConstruirFiltrosCarteiraUI();
@@ -813,23 +1177,6 @@
             document.getElementById('summaryExecutadas').textContent = EXEC_N2;
             document.getElementById('summaryPlanejadas').textContent = PLAN_N3;
 
-            // Calculo de KPI de Gargalo Global (>100%) — usa a mesma carga dinâmica
-            // (calculada a partir da aba BASE via INDICE_CELULA) da Matriz, para o
-            // contador do cabeçalho sempre bater com o que aparece nas células.
-            let gargalosGlobal = 0;
-            Object.keys(MATRIZ_CARGA).forEach(cc => {
-                let m = MATRIZ_CARGA[cc];
-                let codRecursoNormalizado = normalizarRecurso(cc);
-                m.semanas.forEach((s, i) => {
-                    let cp = m.capacidade[i] || 1;
-                    let { semana: semLimpa, ano: anoLimpa } = extrairSemanaEAno(s, '2026');
-                    let ops = INDICE_CELULA[`${codRecursoNormalizado}_${semLimpa}_${anoLimpa}`] || [];
-                    let cg = ops.reduce((acc, op) => acc + (Number(op.hrPrev) || 0), 0);
-                    if((cg/cp)*100 > 100) gargalosGlobal++;
-                });
-            });
-            document.getElementById('kpiGargalo').textContent = gargalosGlobal;
-
             let pendentes = Math.max(0, PLAN_N3 - EXEC_N2);
 
             if(graficoAderencia) graficoAderencia.destroy();
@@ -850,15 +1197,17 @@
         function TrocarAba(tipo) {
             layout = tipo;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            let btnId = {'KANBAN':'navKanban', 'TABELA':'navTabela', 'MATRIZ':'navMatriz'}[tipo];
+            let btnId = {'KANBAN':'navKanban', 'TABELA':'navTabela', 'MATRIZ':'navMatriz', 'CAPACITADA':'navCapacitada'}[tipo];
             if(document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
             
             document.getElementById('wrapperBusca').style.display = ['KANBAN','TABELA'].includes(tipo) ? 'block' : 'none';
+            document.getElementById('wrapFiltroRecursoMatriz').style.display = tipo === 'MATRIZ' ? 'block' : 'none';
             document.getElementById('wrapFiltroGeral').style.display = ['KANBAN','MATRIZ'].includes(tipo) ? 'flex' : 'none';
             document.getElementById('wrapFiltroKanban').style.display = tipo === 'KANBAN' ? 'flex' : 'none';
             document.getElementById('wrapFiltroMatriz').style.display = tipo === 'MATRIZ' ? 'flex' : 'none';
+            document.getElementById('wrapFiltroCapacitada').style.display = tipo === 'CAPACITADA' ? 'flex' : 'none';
             document.getElementById('containerFiltrosCarteira').style.display = tipo === 'TABELA' ? 'grid' : 'none';
-            document.getElementById('blocoAderenciaDashboard').style.display = tipo === 'TABELA' ? 'none' : 'flex';
+            document.getElementById('blocoAderenciaDashboard').style.display = (tipo === 'KANBAN') ? 'flex' : 'none';
 
             RenderizarAtual();
         }
@@ -921,6 +1270,8 @@
             }
             
             if(layout === "MATRIZ") TabMatriz(trg);
+
+            if(layout === "CAPACITADA") TabProgramacaoCapacitada(trg);
         }
 
         function TabKanbanOperacoes(t, d) {
@@ -1019,7 +1370,18 @@
             let chaves = Object.keys(MATRIZ_CARGA).sort((a,b) => parseInt(a) - parseInt(b));
             if (chaves.length === 0) { t.innerHTML = '<div class="state-empty"><p>Sem dados de capacidade disponíveis.</p></div>'; return; }
 
-            let sems = MATRIZ_CARGA[chaves[0]].semanas;
+            // Filtro de Recursos: aplica o texto digitado em "Filtrar recursos por
+            // nome ou código..." contra o código do recurso e o nome da máquina.
+            let filtroRecurso = (document.getElementById('filtroRecursoMatriz')?.value || '').trim().toLowerCase();
+            if (filtroRecurso) {
+                chaves = chaves.filter(cc => {
+                    let nome = (MATRIZ_CARGA[cc].nome || '').toLowerCase();
+                    return cc.toLowerCase().includes(filtroRecurso) || nome.includes(filtroRecurso);
+                });
+            }
+            if (chaves.length === 0) { t.innerHTML = '<div class="state-empty"><p>Nenhum recurso encontrado para o filtro informado.</p></div>'; return; }
+
+            let sems = MATRIZ_CARGA[Object.keys(MATRIZ_CARGA)[0]].semanas;
             let valIni = document.getElementById('filtroMatrizInicio').value;
             let valFim = document.getElementById('filtroMatrizFim').value;
             let idxIni = sems.indexOf(valIni), idxFim = sems.indexOf(valFim);
@@ -1075,6 +1437,177 @@
             htmlTable += `</tbody></table>`;
 
             t.innerHTML = `<div class="matriz-table-wrapper">${htmlTable}</div>`;
+        }
+
+        /* ==========================================================
+           4. PROGRAMAÇÃO CAPACITADA — Agente de PCP (ver Especificação Técnica)
+           ========================================================== */
+        let modoVisualizacaoCapacitada = 'RECURSO'; // 'RECURSO' (combinação por máquina) ou 'LISTA' (fila completa)
+
+        function AlternarVisaoCapacitada(modo) {
+            modoVisualizacaoCapacitada = modo;
+            RenderizarAtual();
+        }
+
+        function TabProgramacaoCapacitada(t) {
+            let selCap = document.getElementById('filtroSemanaCapacitada');
+            if (!selCap || !selCap.value) {
+                t.innerHTML = '<div class="state-empty"><p>Sem dados de capacidade disponíveis para simular a programação.</p></div>';
+                return;
+            }
+            let [semanaAlvo, anoAlvo] = selCap.value.split('|');
+            let criterio = document.getElementById('filtroCriterioCapacitada').value;
+
+            let resultado = CalcularProgramacaoCapacitada(semanaAlvo, anoAlvo, criterio);
+            let { fila, indicadores } = resultado;
+
+            let kpisHtml = `
+                <div class="cap-kpis-grid">
+                    <div class="cap-kpi-card cap-kpi-danger">
+                        <div class="cap-kpi-label"><i class="fa-solid fa-triangle-exclamation"></i> Gargalos Identificados</div>
+                        <div class="cap-kpi-valor">${indicadores.gargalos}</div>
+                        <div class="cap-kpi-sub">Ordens liberadas cujo tempo excede o saldo da máquina</div>
+                    </div>
+                    <div class="cap-kpi-card cap-kpi-azul">
+                        <div class="cap-kpi-label"><i class="fa-solid fa-layer-group"></i> Carga Alocada Sugerida</div>
+                        <div class="cap-kpi-valor">${indicadores.cargaAlocadaSugerida}h</div>
+                        <div class="cap-kpi-sub">Total de horas adicionais sugeridas para aprovação</div>
+                    </div>
+                    <div class="cap-kpi-card cap-kpi-amarelo">
+                        <div class="cap-kpi-label"><i class="fa-solid fa-industry"></i> Alertas de Fundido</div>
+                        <div class="cap-kpi-valor">${indicadores.alertasFundido}</div>
+                        <div class="cap-kpi-sub">Itens com entrega na semana mas fundido não liberado</div>
+                    </div>
+                    <div class="cap-kpi-card cap-kpi-verde">
+                        <div class="cap-kpi-label"><i class="fa-solid fa-check-double"></i> Etapas Concluídas</div>
+                        <div class="cap-kpi-valor">${indicadores.etapasConcluidas}</div>
+                        <div class="cap-kpi-sub">Linhas com CONTR. DE ATUALIZ. = 1 nesta semana</div>
+                    </div>
+                </div>`;
+
+            let toggleHtml = `
+                <div class="cap-toggle-visao">
+                    <button class="cap-toggle-btn ${modoVisualizacaoCapacitada === 'RECURSO' ? 'active' : ''}" onclick="AlternarVisaoCapacitada('RECURSO')">
+                        <i class="fa-solid fa-diagram-project"></i> Combinação por Recurso
+                    </button>
+                    <button class="cap-toggle-btn ${modoVisualizacaoCapacitada === 'LISTA' ? 'active' : ''}" onclick="AlternarVisaoCapacitada('LISTA')">
+                        <i class="fa-solid fa-list"></i> Fila Completa
+                    </button>
+                    <span class="cap-toggle-legenda">Prioridade calculada por ${criterio === 'HORAS' ? 'maiores horas previstas' : 'menor prazo de entrega'} — inclui atrasados de semanas anteriores ainda não baixados.</span>
+                </div>`;
+
+            let corpoHtml = (modoVisualizacaoCapacitada === 'RECURSO')
+                ? RenderizarCombinacaoPorRecurso(resultado, semanaAlvo, anoAlvo)
+                : RenderizarFilaCompleta(fila, semanaAlvo, anoAlvo);
+
+            t.innerHTML = `${kpisHtml}${toggleHtml}${corpoHtml}`;
+        }
+
+        // Renderiza a fila completa (visão em lista única, ordenada por prioridade).
+        function RenderizarFilaCompleta(fila, semanaAlvo, anoAlvo) {
+            let linhasHtml = '';
+            if (fila.length === 0) {
+                linhasHtml = `<tr><td colspan="9" style="text-align:center; padding:30px; color:var(--text-muted);">Nenhuma operação pendente encontrada até a semana ${semanaAlvo}/${anoAlvo}.</td></tr>`;
+            } else {
+                fila.forEach(item => {
+                    let badgeClasse = { SUGERIDO: 'cap-badge-verde', GARGALO: 'cap-badge-vermelho', BLOQUEADO: 'cap-badge-cinza' }[item.statusSugestao] || '';
+                    let iconeFundido = item.fundidoLiberado
+                        ? '<i class="fa-solid fa-circle-check" style="color:#22543D;"></i>'
+                        : '<i class="fa-solid fa-circle-xmark" style="color:#9B2C2C;"></i>';
+                    let nomeRecurso = (MATRIZ_CARGA[item.recursoId] || {}).nome || '';
+                    let tagAtrasado = item.atrasado ? `<span class="cap-tag-atrasado" title="Backlog de ${escapeHtml(item.semanaOrigemTexto)}">⏱ ${escapeHtml(item.semanaOrigemTexto)}</span>` : '';
+                    linhasHtml += `
+                        <tr>
+                            <td style="text-align:left;">${escapeHtml(item.cliente)}</td>
+                            <td style="text-align:left;">#${escapeHtml(item.cod)}</td>
+                            <td style="text-align:left;">[${escapeHtml(item.recursoId)}] ${escapeHtml(nomeRecurso)}</td>
+                            <td>${item.hrPrev.toFixed(1)}h</td>
+                            <td>${iconeFundido} ${escapeHtml(item.fundidoTexto)}</td>
+                            <td>${escapeHtml(item.prazoEntregaTexto)} ${tagAtrasado}</td>
+                            <td><span class="cap-badge ${badgeClasse}">${item.statusSugestao}</span></td>
+                            <td style="text-align:left; font-size:11px; color:var(--text-muted);">${escapeHtml(item.motivo)}</td>
+                        </tr>`;
+                });
+            }
+
+            return `
+                <div class="matriz-table-wrapper" style="margin-top:14px;">
+                    <table class="matriz-table" style="font-size:12px;">
+                        <thead><tr>
+                            <th style="text-align:left;">Cliente</th>
+                            <th style="text-align:left;">Cód.</th>
+                            <th style="text-align:left;">Recurso</th>
+                            <th>HR Prev.</th>
+                            <th>Fundido</th>
+                            <th>Prazo Entrega</th>
+                            <th>Status</th>
+                            <th style="text-align:left;">Motivo</th>
+                        </tr></thead>
+                        <tbody>${linhasHtml}</tbody>
+                    </table>
+                </div>`;
+        }
+
+        // Renderiza a "sugestão de combinação de operações por recurso": um card por
+        // máquina, com a lista de itens escolhidos (já na ordem de prioridade por Prazo
+        // de Entrega ou Horas) que cabem no saldo daquela semana, e uma barra mostrando
+        // o quanto da capacidade a combinação sugerida ocupa.
+        function RenderizarCombinacaoPorRecurso(resultado, semanaAlvo, anoAlvo) {
+            let grupos = AgruparSugestaoPorRecurso(resultado);
+
+            if (grupos.length === 0) {
+                return `<div class="state-empty"><p>Nenhuma operação pendente encontrada até a semana ${semanaAlvo}/${anoAlvo}.</p></div>`;
+            }
+
+            let cardsHtml = grupos.map(g => {
+                let pct = g.capacidadeInicial ? Math.round((g.horasSugeridas / g.capacidadeInicial) * 100) : 0;
+                let corBarra = pct > 100 ? '#C0392B' : (pct >= 85 ? '#B8860B' : '#1E7B34');
+
+                let linhasItens = g.itens.map(item => {
+                    let badgeClasse = { SUGERIDO: 'cap-badge-verde', GARGALO: 'cap-badge-vermelho', BLOQUEADO: 'cap-badge-cinza' }[item.statusSugestao] || '';
+                    let iconeFundido = item.fundidoLiberado
+                        ? '<i class="fa-solid fa-circle-check" style="color:#22543D;"></i>'
+                        : '<i class="fa-solid fa-circle-xmark" style="color:#9B2C2C;"></i>';
+                    let tagAtrasado = item.atrasado ? `<span class="cap-tag-atrasado" title="Backlog de ${escapeHtml(item.semanaOrigemTexto)}">⏱ ${escapeHtml(item.semanaOrigemTexto)}</span>` : '';
+                    return `
+                        <tr class="${item.statusSugestao === 'SUGERIDO' ? 'cap-linha-sugerida' : ''}">
+                            <td style="text-align:left;">${escapeHtml(item.cliente)}</td>
+                            <td style="text-align:left;">#${escapeHtml(item.cod)}</td>
+                            <td>${item.hrPrev.toFixed(1)}h</td>
+                            <td>${iconeFundido} ${escapeHtml(item.fundidoTexto)}</td>
+                            <td>${escapeHtml(item.prazoEntregaTexto)} ${tagAtrasado}</td>
+                            <td><span class="cap-badge ${badgeClasse}">${item.statusSugestao}</span></td>
+                        </tr>`;
+                }).join('');
+
+                let resumoExtra = [];
+                if (g.qtdGargalo > 0) resumoExtra.push(`${g.qtdGargalo} em gargalo`);
+                if (g.qtdBloqueado > 0) resumoExtra.push(`${g.qtdBloqueado} bloqueado(s) por fundido`);
+
+                return `
+                    <div class="cap-recurso-card">
+                        <div class="cap-recurso-header">
+                            <div class="cap-recurso-nome">[${escapeHtml(g.recursoId)}] ${escapeHtml(g.nome)}</div>
+                            <div class="cap-recurso-medidas">
+                                <span><b>${g.horasSugeridas.toFixed(1)}h</b> sugeridas / ${g.capacidadeInicial.toFixed(1)}h de capacidade (${pct}%)${resumoExtra.length ? ' — ' + resumoExtra.join(', ') : ''}</span>
+                                <div class="cap-progress-bar"><div class="cap-progress-fill" style="width:${Math.min(pct,100)}%; background:${corBarra};"></div></div>
+                            </div>
+                        </div>
+                        <table class="cap-recurso-table">
+                            <thead><tr>
+                                <th style="text-align:left;">Cliente</th>
+                                <th style="text-align:left;">Cód.</th>
+                                <th>HR Prev.</th>
+                                <th>Fundido</th>
+                                <th>Prazo Entrega</th>
+                                <th>Status</th>
+                            </tr></thead>
+                            <tbody>${linhasItens}</tbody>
+                        </table>
+                    </div>`;
+            }).join('');
+
+            return `<div class="cap-recursos-lista">${cardsHtml}</div>`;
         }
 
         /* ==========================================================
@@ -1150,7 +1683,7 @@
             el.querySelector('#mmTitle').innerHTML = `<i class="fa-solid fa-industry"></i> [${escapeHtml(recursoId)}] ${escapeHtml(recursoNome)}`;
             el.querySelector('#mmSub').textContent = `SEMANA ${numSemana}/${ano}`;
             el.querySelector('#mmTotalOps').textContent = ops.length;
-            el.querySelector('#mmTotalHoras').textContent = `${totalHoras.toFixed(1)}h / ${cap}h`;
+            el.querySelector('#mmTotalHoras').textContent = `${totalHoras.toFixed(1)}h / ${cap.toFixed(1)}h`;
             const mmPct = el.querySelector('#mmPct');
             mmPct.textContent = `${pct}%`;
             mmPct.className = `mms-value ${pctClass}`;
