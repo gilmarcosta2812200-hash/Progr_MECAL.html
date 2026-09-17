@@ -7,6 +7,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -117,6 +118,42 @@
         .cap-kpi-azul { border-left-color: #2E5C8A; }
         .cap-kpi-azul .cap-kpi-valor { color: #2E5C8A; }
         .cap-kpi-amarelo { border-left-color: #B8860B; }
+
+        /* Aba 5 — Curva "S" Entressafra */
+        .curva-s-card { background: white; border-radius: 8px; border: 1px solid var(--border-color); padding: 20px 25px; }
+        .curva-s-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-bottom: 3px solid var(--moreno-red); padding-bottom: 15px; margin-bottom: 18px; }
+        .curva-s-logo { display: flex; align-items: center; gap: 12px; }
+        .curva-s-logo i { font-size: 36px; color: var(--moreno-red); }
+        .curva-s-logo .logo-txt { font-size: 16px; font-weight: 900; line-height: 1.15; letter-spacing: 0.5px; color: var(--moreno-black); text-transform: uppercase; }
+        .curva-s-logo .logo-txt span { color: var(--moreno-red); display: block; }
+        .curva-s-title { font-size: 17px; font-weight: 800; text-transform: uppercase; color: var(--moreno-black); text-align: right; line-height: 1.4; }
+        .curva-s-filtros { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px; }
+        .curva-s-filtros .filter-field-group select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-weight: 600; min-width: 150px; background: white; }
+        .curva-s-filtros .btn { height: 38px; }
+        .curva-s-chart-wrapper { position: relative; height: 540px; width: 100%; }
+
+        /* Dashboard "Avanço Físico por Cliente" (acima da Curva "S") */
+        .clientes-card { background: white; border-radius: 8px; border: 1px solid var(--border-color); padding: 20px 25px; margin-bottom: 20px; }
+        .clientes-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 16px; }
+        .clientes-header h3 { margin: 0; font-size: 16px; font-weight: 800; text-transform: uppercase; color: var(--moreno-black); display: flex; align-items: center; gap: 10px; }
+        .clientes-header h3 i { color: var(--moreno-red); }
+        .clientes-kpis { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+        .clientes-kpi { background: #F8FAFC; border: 1px solid var(--border-color); border-left: 4px solid var(--moreno-red); border-radius: 6px; padding: 10px 18px; min-width: 150px; }
+        .clientes-kpi.kpi-final { border-left-color: #31C48D; }
+        .clientes-kpi.kpi-restante { border-left-color: var(--moreno-black); }
+        .clientes-kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.3px; }
+        .clientes-kpi-valor { font-size: 22px; font-weight: 800; color: var(--moreno-black); margin-top: 2px; }
+        .clientes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 520px; overflow-y: auto; padding-right: 4px; }
+        @media (max-width: 1200px) { .clientes-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 700px) { .clientes-grid { grid-template-columns: 1fr; } }
+        .cliente-item { display: flex; flex-direction: column; gap: 7px; background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; }
+        .cliente-numeros { flex: 0 0 68px; font-size: 14px; color: var(--text-main); font-weight: 800; text-align: right; }
+        .cliente-nome { font-size: 12px; font-weight: 800; color: var(--moreno-black); text-transform: uppercase; line-height: 1.3; white-space: normal; word-break: break-word; }
+        .cliente-bar-row { display: flex; align-items: center; gap: 10px; }
+        .cliente-barra-wrap { flex: 1; height: 20px; background: #E2E8F0; border-radius: 10px; overflow: visible; position: relative; }
+        .cliente-barra { height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; transition: width 0.3s ease; overflow: hidden; }
+        .cliente-barra-pct { font-size: 10px; font-weight: 800; color: white; text-shadow: 0 1px 1px rgba(0,0,0,0.25); white-space: nowrap; }
+        .cliente-barra-pct.pct-fora { color: var(--text-main); text-shadow: none; padding-left: 6px; }
         .cap-kpi-amarelo .cap-kpi-valor { color: #B8860B; }
         .cap-kpi-verde { border-left-color: #1E7B34; }
         .cap-kpi-verde .cap-kpi-valor { color: #1E7B34; }
@@ -310,7 +347,7 @@
 
         <div style="display: flex; gap: 10px;">
             <button class="btn btn-pdf" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir</button>
-            <button class="btn btn-sync" onclick="CarregarDadosDoGitHub(true)"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+            <button class="btn btn-sync" onclick="CarregarDadosDoGitHub()"><i class="fa-solid fa-rotate"></i> Atualizar</button>
         </div>
     </div>
 
@@ -321,6 +358,7 @@
         <button id="navMatriz" class="nav-btn" onclick="TrocarAba('MATRIZ')"><i class="fa-solid fa-table-cells"></i> 2. Matriz Disp.</button>
         <button id="navTabela" class="nav-btn" onclick="TrocarAba('TABELA')"><i class="fa-solid fa-database"></i> 3. CARTEIRA GERAL (USI)</button>
         <button id="navCapacitada" class="nav-btn" onclick="TrocarAba('CAPACITADA')"><i class="fa-solid fa-robot"></i> 4. Program. Capacitada</button>
+        <button id="navCurvaS" class="nav-btn" onclick="TrocarAba('CURVA_S')"><i class="fa-solid fa-chart-line"></i> 5. Curva "S" Entressafra</button>
     </div>
 
     <div class="search-area" id="wrapFiltroRecursoMatriz" style="display: none;">
@@ -349,19 +387,6 @@
     <script>
         const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/gilmarcosta2812200-hash/Progr_MECAL.html/main/PROG.%20SEMANAL_TESTE.xlsx";
 
-        // Espelho alternativo via jsDelivr (CDN próprio pra servir arquivos do GitHub, com
-        // limites de requisição muito mais generosos que o raw.githubusercontent.com direto).
-        // Usado como PLANO B automático quando a fonte primária falha (ex: 429 do GitHub).
-        // Nota: o jsDelivr faz cache mais agressivo, então pode demorar alguns minutos a mais
-        // pra refletir um push muito recente — por isso ele é só o plano B, não a fonte principal.
-        function construirUrlJsDelivr(urlRawGithub) {
-            const m = urlRawGithub.match(/^https:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)$/);
-            if (!m) return null;
-            const [, usuario, repo, branch, caminho] = m;
-            return `https://cdn.jsdelivr.net/gh/${usuario}/${repo}@${branch}/${caminho}`;
-        }
-        const JSDELIVR_EXCEL_URL = construirUrlJsDelivr(GITHUB_EXCEL_URL);
-
         let BASE_PROD = [];
         let MATRIZ_CARGA = {};
         let CARTEIRA_DATA = [];
@@ -376,6 +401,9 @@
         let layout = "KANBAN";
         let graficoAderencia = null;
         let miniGraficoAderencia = null;
+        let graficoCurvaS = null;
+        let CURVA_S_LABELS = [], CURVA_S_PLAN = [], CURVA_S_REAL = [];
+        let AVANCO_CLIENTES = []; // [{nome, progr, final}] — aba "% Concluída Clientes"
 
         function normalizarTexto(str) {
             return String(str || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z0-9]/g, ""); 
@@ -671,6 +699,131 @@
             return mapa;
         }
 
+        // Extração da aba "CALCULOS (Base_Curva S)" — alimenta a Curva "S" de Avanço Físico
+        // da Reforma Entressafra (aba 5). Layout esperado (2 blocos de 3 colunas lado a lado):
+        //   Bloco 1: Sem/Ano | Data Corrida | Planejado      (curva planejada, cobre o período todo)
+        //   Bloco 2: Sem/Ano | Data Corrida | Avanço Real    (curva realizada, só até a semana atual)
+        // O 2º bloco pode ter os cabeçalhos "Sem/Ano"/"Data Corrida" repetidos/sufixados pelo
+        // Excel (ex: "Sem/Ano_1") — por isso a extração localiza os blocos pela posição das
+        // colunas "PLANEJADO" e "REAL" (2 colunas à direita de cada Sem/Ano), não pelo nome exato.
+        function ExtrairCurvaS(sheet) {
+            CURVA_S_LABELS = []; CURVA_S_PLAN = []; CURVA_S_REAL = [];
+            if (!sheet) return;
+
+            let m = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            if (!m.length) return;
+
+            let idH = 0;
+            for (let i = 0; i < 10; i++) {
+                if (m[i] && m[i].some(c => normalizarTexto(c).includes("PLANEJADO"))) { idH = i; break; }
+            }
+            let cabecalho = (m[idH] || []).map(c => normalizarTexto(c));
+            let idxPlan = cabecalho.findIndex(c => c.includes("PLANEJADO"));
+            if (idxPlan === -1) return;
+            let idxReal = cabecalho.findIndex(c => c.includes("AVANCOREAL") || (c.includes("REAL") && !c.includes("PLANEJADO")));
+
+            let idxSemPlan = Math.max(0, idxPlan - 2);
+            let idxSemReal = idxReal !== -1 ? Math.max(0, idxReal - 2) : -1;
+
+            function parsePercentCurvaS(v) {
+                if (v === '' || v === null || v === undefined) return null;
+                if (typeof v === 'number') return v <= 1.0001 ? v * 100 : v;
+                let s = String(v).trim();
+                if (s === '') return null;
+                let hasPct = s.includes('%');
+                s = s.replace('%', '').replace(',', '.').trim();
+                let n = parseFloat(s);
+                if (isNaN(n)) return null;
+                return hasPct ? n : (n <= 1.0001 ? n * 100 : n);
+            }
+
+            let mapPlan = {}, mapReal = {}, ordemLabels = [];
+            for (let r = idH + 1; r < m.length; r++) {
+                let lblPlan = String(m[r][idxSemPlan] || '').trim();
+                if (lblPlan) {
+                    if (!ordemLabels.includes(lblPlan)) ordemLabels.push(lblPlan);
+                    // A aba é diária (várias linhas por semana) — fica com o último valor do
+                    // dia dentro da semana, mas nunca sobrescreve um valor já visto com um vazio
+                    // (isso acontecia na semana corrente, quando os dias futuros daquela mesma
+                    // semana ainda não têm valor e apagavam o último dado real informado).
+                    let vPlan = parsePercentCurvaS(m[r][idxPlan]);
+                    if (vPlan !== null) mapPlan[lblPlan] = vPlan;
+                }
+                if (idxReal !== -1) {
+                    let lblReal = String(m[r][idxSemReal] || '').trim();
+                    if (lblReal) {
+                        if (!ordemLabels.includes(lblReal)) ordemLabels.push(lblReal);
+                        let vReal = parsePercentCurvaS(m[r][idxReal]);
+                        if (vReal !== null) mapReal[lblReal] = vReal;
+                    }
+                }
+            }
+
+            CURVA_S_LABELS = ordemLabels;
+            CURVA_S_PLAN = ordemLabels.map(l => mapPlan[l] !== undefined ? mapPlan[l] : null);
+            CURVA_S_REAL = ordemLabels.map(l => mapReal[l] !== undefined ? mapReal[l] : null);
+        }
+
+        // Extração da aba "% Concluída Clientes" — alimenta o dashboard de Avanço Físico por
+        // Cliente exibido acima da Curva "S". Colunas reais da planilha: Clientes | Rolos Progr. |
+        // Rolos Finalz. | Operações Finalizadas | Operações Previstas | % Concluída.
+        // IMPORTANTE: o % de conclusão usado no dashboard vem da coluna "% Concluída" (calculada
+        // na planilha a partir de Operações Finalizadas/Previstas) — NÃO de Rolos Finalz./Rolos
+        // Progr., que fica em 0 na maioria dos clientes porque um rolo só conta como "finalizado"
+        // quando está 100% pronto (era esse o motivo do dashboard mostrar tudo 0%).
+        function ExtrairAvancoClientes(sheet) {
+            AVANCO_CLIENTES = [];
+            if (!sheet) return;
+
+            let m = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            if (!m.length) return;
+
+            let idH = 0;
+            for (let i = 0; i < 10; i++) {
+                if (m[i] && m[i].some(c => normalizarTexto(c).includes("PROGR"))) { idH = i; break; }
+            }
+            let cabecalho = (m[idH] || []).map(c => normalizarTexto(c));
+
+            let idxNome = cabecalho.findIndex(c => c.includes("CLIENTE") || c.includes("USINA"));
+            let idxProgr = cabecalho.findIndex(c => c.includes("ROLOS") && c.includes("PROGR"));
+            if (idxProgr === -1) idxProgr = cabecalho.findIndex(c => c.includes("PROGR"));
+            let idxFinal = cabecalho.findIndex(c => c.includes("ROLOS") && (c.includes("FINAL") || c.includes("CONCLU")));
+            let idxOpFinal = cabecalho.findIndex(c => c.includes("OPERACOES") && c.includes("FINALIZADAS"));
+            let idxOpPrev = cabecalho.findIndex(c => c.includes("OPERACOES") && c.includes("PREVISTAS"));
+            let idxPctConcluida = cabecalho.findIndex(c => c.includes("CONCLUID") && !c.includes("ROLOS"));
+            if (idxNome === -1 || idxProgr === -1) return;
+
+            let lista = [];
+            for (let r = idH + 1; r < m.length; r++) {
+                let nome = String(m[r][idxNome] || '').trim();
+                if (!nome || normalizarTexto(nome).includes("TOTAL")) continue;
+                let progr = parseFloat(String(m[r][idxProgr] || '0').replace(',', '.')) || 0;
+                let final = idxFinal !== -1 ? (parseFloat(String(m[r][idxFinal] || '0').replace(',', '.')) || 0) : 0;
+
+                // % concluída: prioriza a coluna própria da planilha; sem ela, calcula por
+                // Operações Finalizadas/Previstas; por último cai para Rolos Finalz./Progr.
+                let pct = null;
+                if (idxPctConcluida !== -1) {
+                    let raw = m[r][idxPctConcluida];
+                    if (raw !== '' && raw !== null && raw !== undefined) {
+                        let temPct = typeof raw === 'string' && raw.includes('%');
+                        let n = parseFloat(String(raw).replace('%', '').replace(',', '.'));
+                        if (!isNaN(n)) pct = temPct ? n : (n <= 1.0001 ? n * 100 : n);
+                    }
+                }
+                if (pct === null && idxOpFinal !== -1 && idxOpPrev !== -1) {
+                    let opFinal = parseFloat(String(m[r][idxOpFinal] || '0').replace(',', '.')) || 0;
+                    let opPrev = parseFloat(String(m[r][idxOpPrev] || '0').replace(',', '.')) || 0;
+                    pct = opPrev > 0 ? (opFinal / opPrev) * 100 : 0;
+                }
+                if (pct === null) pct = progr > 0 ? (final / progr) * 100 : (final > 0 ? 100 : 0);
+
+                if (progr === 0 && final === 0 && pct === 0) continue;
+                lista.push({ nome, progr, final, pct });
+            }
+            AVANCO_CLIENTES = lista;
+        }
+
         // Constrói o índice O(1) `${recursoId}_${semana}_${ano}` -> [operações] a partir de
         // BASE_NORMALIZADA. Usado só na montagem da tabela (nenhuma busca acontece no clique/hover).
         function construirIndiceCelula() {
@@ -904,57 +1057,13 @@
             document.getElementById('filtroRecursoMatriz').addEventListener('input', RenderizarAtual);
         };
 
-        // Busca o arquivo com retentativa automática para 429 (Too Many Requests). O GitHub
-        // (raw.githubusercontent.com) limita a taxa de requisições; se acontecer um 429,
-        // esperamos um pouco (respeitando o cabeçalho Retry-After quando presente) e tentamos
-        // de novo antes de desistir — em vez de mostrar erro na primeira falha transitória.
-        async function BuscarArquivoComRetentativa(url, opcoesFetch, maxTentativas = 3) {
-            for (let tentativa = 1; tentativa <= maxTentativas; tentativa++) {
-                const response = await fetch(url, opcoesFetch);
-
-                if (response.status !== 429) return response;
-
-                if (tentativa === maxTentativas) return response; // esgotou tentativas, devolve o 429 pro chamador tratar
-
-                const retryAfterHeader = parseInt(response.headers.get('Retry-After'), 10);
-                const esperaMs = !isNaN(retryAfterHeader) ? retryAfterHeader * 1000 : tentativa * 2000; // backoff: 2s, 4s...
-                document.getElementById('renderTarget').innerHTML = `<div class="state-empty"><i class="fa-solid fa-spinner fa-spin" style="font-size:48px;color:#CBD5E0"></i><p>O GitHub limitou as requisições no momento (429). Tentando de novo em ${Math.round(esperaMs/1000)}s... (tentativa ${tentativa}/${maxTentativas})</p></div>`;
-                await new Promise(resolve => setTimeout(resolve, esperaMs));
-            }
-        }
-
-        async function CarregarDadosDoGitHub(forcarAtualizacao = false) {
+        async function CarregarDadosDoGitHub() {
             try {
                 document.getElementById('headerSemana').textContent = "SINCRONIZANDO...";
                 document.getElementById('renderTarget').innerHTML = '<div class="state-empty"><i class="fa-solid fa-spinner fa-spin" style="font-size:48px;color:#CBD5E0"></i><p>Conectando ao banco de dados no servidor...</p></div>';
 
-                // IMPORTANTE: "no-store" (usado antes em TODO carregamento) força o navegador a
-                // ignorar completamente o cache HTTP e buscar um arquivo novo do GitHub a cada
-                // carregamento de página — isso soma requisições rapidamente e é a causa mais
-                // provável de bater no limite de taxa (erro 429) do GitHub, especialmente logo
-                // após um push (quando o CDN deles está invalidando cache). Agora só forçamos
-                // isso quando o usuário clica em "Atualizar" de propósito; no carregamento normal
-                // da página, deixamos o navegador reaproveitar cache válido quando possível.
-                const url = forcarAtualizacao ? `${GITHUB_EXCEL_URL}?_=${Date.now()}` : GITHUB_EXCEL_URL;
-                const opcoesFetch = forcarAtualizacao ? { cache: "no-store" } : { cache: "default" };
-
-                let response = await BuscarArquivoComRetentativa(url, opcoesFetch);
-
-                // Plano B: se a fonte primária (GitHub direto) falhar — 429 ou qualquer outro
-                // erro — tenta automaticamente o espelho jsDelivr antes de desistir.
-                if (!response.ok && JSDELIVR_EXCEL_URL) {
-                    console.warn(`Fonte primária falhou (status ${response.status}). Tentando espelho jsDelivr...`);
-                    document.getElementById('renderTarget').innerHTML = '<div class="state-empty"><i class="fa-solid fa-spinner fa-spin" style="font-size:48px;color:#CBD5E0"></i><p>Fonte principal indisponível — tentando espelho alternativo (jsDelivr)...</p></div>';
-                    const urlAlternativa = forcarAtualizacao ? `${JSDELIVR_EXCEL_URL}?_=${Date.now()}` : JSDELIVR_EXCEL_URL;
-                    response = await BuscarArquivoComRetentativa(urlAlternativa, opcoesFetch, 2);
-                }
-
-                if (!response.ok) {
-                    if (response.status === 429) {
-                        throw new Error("O GitHub limitou temporariamente as requisições a este arquivo (código 429), e o espelho alternativo também não respondeu. Isso costuma acontecer logo após subir um arquivo novo ou com várias atualizações seguidas. Aguarde alguns minutos e clique em \"Atualizar\" novamente.");
-                    }
-                    throw new Error(`Falha ao acessar o arquivo. Código: ${response.status}`);
-                }
+                const response = await fetch(GITHUB_EXCEL_URL, { cache: "no-store" });
+                if (!response.ok) throw new Error(`Falha ao acessar o arquivo. Código: ${response.status}`);
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const data = new Uint8Array(arrayBuffer);
@@ -969,13 +1078,13 @@
                     <div class="state-empty">
                         <i class="fa-solid fa-triangle-exclamation" style="font-size:48px;color:#E30613"></i>
                         <p style="margin-top:15px; font-weight:bold; color:var(--moreno-red);">Erro de Sincronização</p>
-                        <p style="font-size:13px; max-width:480px; margin:8px auto 0;">${error.message}</p>
+                        <p style="font-size:13px;">${error.message}</p>
                     </div>`;
             }
         }
 
         function ProcessarPlanilha(wb) {
-            let sBase, sPlan, sCarteira, sBaseMatriz, sBaseEixo, sCapInst;
+            let sBase, sPlan, sCarteira, sBaseMatriz, sBaseEixo, sCapInst, sCurvaS, sAvancoClientes;
 
             // sBase alimenta o KANBAN, os KPIs e o filtro de semana geral — este é o comportamento
             // ORIGINAL do sistema (restaurado): prioriza a aba "PROGRAMAÇÃO" (que tem FINALIZADO?,
@@ -983,6 +1092,12 @@
             // pois o Kanban depende dela para status de operações finalizadas/planejadas da semana.
             wb.SheetNames.forEach(n => {
                 let normName = normalizarTexto(n);
+                // "CALCULOS (Base_Curva S)" e "% Concluída Clientes" são checadas e "reservadas"
+                // ANTES da regra genérica de "BASE" — sem isso, "Base_Curva" (que contém a
+                // substring "BASE" após normalizar) acaba sobrescrevendo sBase e quebra o Kanban
+                // (é exatamente o bug que fazia "SEMANA: NÃO IDENTIFICADA" e 0 operações).
+                if(normName.includes("CALCULOS") || normName.includes("CURVAS")) { sCurvaS = wb.Sheets[n]; return; }
+                if(normName.includes("CONCLUIDACLIENTES") || (normName.includes("CONCLUID") && normName.includes("CLIENTE"))) { sAvancoClientes = wb.Sheets[n]; return; }
                 if(normName.includes("PROGRAMACAO") || normName.includes("BASE")) sBase = wb.Sheets[n];
                 if(normName.includes("PLANEJ")) sPlan = wb.Sheets[n];
                 if(normName.includes("CARTEIRAGERAL") || normName.includes("USI")) sCarteira = wb.Sheets[n];
@@ -1048,6 +1163,12 @@
 
             // Capacidade Instalada (Passo 3 do Algoritmo de PCP) — aba CARGA MÁQUINA (CAP INST)
             CAPACIDADE_INSTALADA = ExtrairCapacidadeInstalada(sCapInst);
+
+            // Curva "S" Entressafra — aba "CALCULOS (Base_Curva S)"
+            ExtrairCurvaS(sCurvaS);
+
+            // Dashboard de Avanço Físico por Cliente — aba "% Concluída Clientes"
+            ExtrairAvancoClientes(sAvancoClientes);
 
             // Extração CARTEIRA GERAL
             CARTEIRA_DATA = [];
@@ -1254,7 +1375,7 @@
         function TrocarAba(tipo) {
             layout = tipo;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            let btnId = {'KANBAN':'navKanban', 'TABELA':'navTabela', 'MATRIZ':'navMatriz', 'CAPACITADA':'navCapacitada'}[tipo];
+            let btnId = {'KANBAN':'navKanban', 'TABELA':'navTabela', 'MATRIZ':'navMatriz', 'CAPACITADA':'navCapacitada', 'CURVA_S':'navCurvaS'}[tipo];
             if(document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
             
             document.getElementById('wrapperBusca').style.display = ['KANBAN','TABELA'].includes(tipo) ? 'block' : 'none';
@@ -1329,6 +1450,7 @@
             if(layout === "MATRIZ") TabMatriz(trg);
 
             if(layout === "CAPACITADA") TabProgramacaoCapacitada(trg);
+            if(layout === "CURVA_S") TabCurvaS(trg);
         }
 
         function TabKanbanOperacoes(t, d) {
@@ -1504,6 +1626,338 @@
         function AlternarVisaoCapacitada(modo) {
             modoVisualizacaoCapacitada = modo;
             RenderizarAtual();
+        }
+
+        // Aba 5 — Curva "S" Entressafra: renderiza o cabeçalho com logo, os seletores de
+        // período (De/Até semana) e o gráfico de linha (Planejado x Avanço Real).
+        function TabCurvaS(t) {
+            if (!CURVA_S_LABELS.length) {
+                t.innerHTML = '<div class="state-empty"><p>Aba "CALCULOS (Base_Curva S)" não encontrada ou sem dados na planilha.</p></div>';
+                return;
+            }
+
+            // Preserva a seleção de período já feita pelo usuário ao re-renderizar (ex: após "Atualizar")
+            let selDeAnterior = document.getElementById('curvaSDe');
+            let selAteAnterior = document.getElementById('curvaSAte');
+            let idxDe = selDeAnterior ? parseInt(selDeAnterior.value) : 0;
+            let idxAte = selAteAnterior ? parseInt(selAteAnterior.value) : CURVA_S_LABELS.length - 1;
+            if (isNaN(idxDe) || idxDe < 0 || idxDe >= CURVA_S_LABELS.length) idxDe = 0;
+            if (isNaN(idxAte) || idxAte < 0 || idxAte >= CURVA_S_LABELS.length) idxAte = CURVA_S_LABELS.length - 1;
+
+            let opcoesHtml = CURVA_S_LABELS.map((l, i) => `<option value="${i}">${escapeHtml(l)}</option>`).join('');
+
+            t.innerHTML = `
+                ${MontarDashboardClientesHtml()}
+                <div class="curva-s-card">
+                    <div class="curva-s-header">
+                        <div class="curva-s-logo">
+                            <i class="fa-solid fa-gear"></i>
+                            <div class="logo-txt">FUNDIÇÃO<span>MORENO</span></div>
+                        </div>
+                        <div class="curva-s-title">Curva "S" Avanço Físico<br>Reforma Entressafra Rolos</div>
+                    </div>
+                    <div class="curva-s-filtros">
+                        <div class="filter-field-group">
+                            <label>De (semana)</label>
+                            <select id="curvaSDe" class="dropdown-semana" onchange="AoMudarPeriodoCurvaS()">${opcoesHtml}</select>
+                        </div>
+                        <div class="filter-field-group">
+                            <label>Até (semana)</label>
+                            <select id="curvaSAte" class="dropdown-semana" onchange="AoMudarPeriodoCurvaS()">${opcoesHtml}</select>
+                        </div>
+                        <button class="btn btn-sync" onclick="ResetPeriodoCurvaS()"><i class="fa-solid fa-rotate-left"></i> Período Completo</button>
+                    </div>
+                    <div class="curva-s-chart-wrapper">
+                        <canvas id="curvaSChart"></canvas>
+                    </div>
+                </div>`;
+
+            document.getElementById('curvaSDe').value = idxDe;
+            document.getElementById('curvaSAte').value = idxAte;
+
+            DesenharGraficoCurvaS(idxDe, idxAte);
+            RenderizarGridClientes();
+        }
+
+        // Monta o "casco" do dashboard "Avanço Físico por Cliente" (cabeçalho, busca e KPIs).
+        // O grid de clientes em si (que muda com a busca) é preenchido à parte por
+        // RenderizarGridClientes(), para não precisar remontar tudo a cada tecla digitada.
+        function MontarDashboardClientesHtml() {
+            if (!AVANCO_CLIENTES.length) {
+                return `
+                    <div class="clientes-card">
+                        <h3><i class="fa-solid fa-industry"></i> Avanço Físico por Cliente</h3>
+                        <div class="state-empty" style="padding:20px 0;"><p>Aba "% Concluída Clientes" não encontrada ou sem dados na planilha.</p></div>
+                    </div>`;
+            }
+
+            let totalProgr = AVANCO_CLIENTES.reduce((acc, c) => acc + c.progr, 0);
+            let totalFinal = AVANCO_CLIENTES.reduce((acc, c) => acc + c.final, 0);
+            let aConcluir = Math.max(0, totalProgr - totalFinal);
+
+            return `
+                <div class="clientes-card">
+                    <div class="clientes-header">
+                        <h3><i class="fa-solid fa-industry"></i> Avanço Físico por Cliente</h3>
+                        <input type="text" id="buscaClientesCurvaS" class="search-field" style="max-width:280px;" placeholder="🔍 Buscar cliente/usina..." oninput="RenderizarGridClientes()">
+                    </div>
+                    <div class="clientes-kpis">
+                        <div class="clientes-kpi">
+                            <div class="clientes-kpi-label">Rolos Progr. (Reforma)</div>
+                            <div class="clientes-kpi-valor">${totalProgr}</div>
+                        </div>
+                        <div class="clientes-kpi kpi-final">
+                            <div class="clientes-kpi-label">Rolos Finalizados</div>
+                            <div class="clientes-kpi-valor">${totalFinal}</div>
+                        </div>
+                        <div class="clientes-kpi kpi-restante">
+                            <div class="clientes-kpi-label">A Concluir</div>
+                            <div class="clientes-kpi-valor">${aConcluir}</div>
+                        </div>
+                    </div>
+                    <div class="clientes-grid" id="gridClientesCurvaS"></div>
+                </div>`;
+        }
+
+        // Preenche/atualiza só a lista de clientes (aplica a busca e ordena por % concluído
+        // crescente, para destacar primeiro quem ainda está com pendência).
+        function RenderizarGridClientes() {
+            let grid = document.getElementById('gridClientesCurvaS');
+            if (!grid) return;
+
+            let busca = normalizarTexto(document.getElementById('buscaClientesCurvaS')?.value || '');
+            let lista = AVANCO_CLIENTES
+                .filter(c => !busca || normalizarTexto(c.nome).includes(busca))
+                .sort((a, b) => a.pct - b.pct || a.nome.localeCompare(b.nome));
+
+            if (!lista.length) {
+                grid.innerHTML = '<div class="state-empty" style="grid-column:1/-1; padding:15px 0;"><p>Nenhum cliente encontrado.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = lista.map(c => {
+                let pct = Math.min(100, Math.round(c.pct * 10) / 10);
+                // Barra sempre azul (mesmo tom do "Planejado" da Curva "S") — sem cores de status,
+                // card sempre branco.
+                let corBarra = '#2E86DE';
+                let pctTxt = `${pct % 1 === 0 ? pct.toFixed(0) : pct.toFixed(1)}%`;
+                let labelDentro = pct >= 22; // rótulo cabe dentro da barra só se ela tiver largura suficiente
+                return `
+                    <div class="cliente-item" title="${escapeHtml(c.nome)}: ${c.final} de ${c.progr} rolos finalizados • ${pctTxt} concluído (por operações)">
+                        <div class="cliente-nome">${escapeHtml(c.nome)}</div>
+                        <div class="cliente-bar-row">
+                            <div class="cliente-numeros">${c.final}/${c.progr}</div>
+                            <div class="cliente-barra-wrap">
+                                <div class="cliente-barra" style="width:${pct}%; background-color:${corBarra};">
+                                    ${labelDentro ? `<span class="cliente-barra-pct">${pctTxt}</span>` : ''}
+                                </div>
+                                ${!labelDentro ? `<span class="cliente-barra-pct pct-fora" style="position:absolute; left:${pct}%; top:50%; transform:translateY(-50%);">${pctTxt}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function AoMudarPeriodoCurvaS() {
+            let idxDe = parseInt(document.getElementById('curvaSDe').value);
+            let idxAte = parseInt(document.getElementById('curvaSAte').value);
+            if (idxDe > idxAte) { let tmp = idxDe; idxDe = idxAte; idxAte = tmp; }
+            DesenharGraficoCurvaS(idxDe, idxAte);
+        }
+
+        function ResetPeriodoCurvaS() {
+            document.getElementById('curvaSDe').value = 0;
+            document.getElementById('curvaSAte').value = CURVA_S_LABELS.length - 1;
+            DesenharGraficoCurvaS(0, CURVA_S_LABELS.length - 1);
+        }
+
+        function DesenharGraficoCurvaS(idxDe, idxAte) {
+            let labels = CURVA_S_LABELS.slice(idxDe, idxAte + 1);
+            let plan = CURVA_S_PLAN.slice(idxDe, idxAte + 1);
+            let real = CURVA_S_REAL.slice(idxDe, idxAte + 1);
+
+            let ctx = document.getElementById('curvaSChart');
+            if (!ctx) return;
+            if (graficoCurvaS) graficoCurvaS.destroy();
+
+            const rotuloPct = v => (v === null || v === undefined) ? '' : `${Math.round(v)}%`;
+
+            // Só recebem rótulo os pontos do Planejado cujo valor já subiu pelo menos 5 pontos
+            // percentuais desde o ÚLTIMO rótulo mostrado (não uma grade fixa de 0/5/10/15...) —
+            // isso garante o espaçamento mínimo de 5% mesmo quando o avanço semanal já é
+            // próximo de 5% (o que faria uma grade fixa mostrar rótulo quase toda semana).
+            function indicesRotuloMultiplo5(valores) {
+                let indices = new Set();
+                let ultimoMostrado = null;
+                valores.forEach((v, i) => {
+                    if (v === null || v === undefined) return;
+                    if (ultimoMostrado === null || (v - ultimoMostrado) >= 5) {
+                        indices.add(i);
+                        ultimoMostrado = v;
+                    }
+                });
+                return indices;
+            }
+            let indicesPlanejadoRotulo = indicesRotuloMultiplo5(plan);
+
+            // Índice da última semana com Avanço Real informado (dentro do período exibido) —
+            // só esse ponto recebe rótulo de dado; os demais mostram só o marcador na linha.
+            let idxUltimoReal = -1;
+            for (let i = real.length - 1; i >= 0; i--) {
+                if (real[i] !== null && real[i] !== undefined) { idxUltimoReal = i; break; }
+            }
+
+            // Agrupa as semanas exibidas por mês/ano (para a faixa de meses desenhada sob o eixo X).
+            let gruposMeses = calcularGruposMeses(labels);
+            const pluginFaixaMeses = {
+                id: 'faixaMeses',
+                afterDraw(chart) {
+                    if (!gruposMeses.length) return;
+                    const escalaX = chart.scales.x;
+                    const ctxDesenho = chart.ctx;
+                    const larguraColuna = (labels.length > 1)
+                        ? (escalaX.getPixelForValue(1) - escalaX.getPixelForValue(0))
+                        : (chart.chartArea.right - chart.chartArea.left);
+                    const alturaFaixa = 20;
+                    // escalaX.bottom já inclui a área dos rótulos de semana (ticks) — a faixa de
+                    // meses precisa começar DEPOIS disso, não logo após a área de plotagem
+                    // (chart.chartArea.bottom), senão ela fica sobreposta aos números da semana.
+                    const y0 = escalaX.bottom + 8;
+                    const cores = ['#EAF2FC', '#FFFFFF'];
+                    ctxDesenho.save();
+                    gruposMeses.forEach((g, idx) => {
+                        let left = escalaX.getPixelForValue(g.inicio) - larguraColuna / 2;
+                        let right = escalaX.getPixelForValue(g.fim) + larguraColuna / 2;
+                        ctxDesenho.fillStyle = cores[idx % 2];
+                        ctxDesenho.fillRect(left, y0, right - left, alturaFaixa);
+                        ctxDesenho.strokeStyle = '#CBD5E0';
+                        ctxDesenho.lineWidth = 1;
+                        ctxDesenho.strokeRect(left, y0, right - left, alturaFaixa);
+                        ctxDesenho.fillStyle = '#4A5568';
+                        ctxDesenho.font = '600 10px Segoe UI, sans-serif';
+                        ctxDesenho.textAlign = 'center';
+                        ctxDesenho.textBaseline = 'middle';
+                        ctxDesenho.fillText(`${g.mes}/${String(g.ano).slice(-2)}`, (left + right) / 2, y0 + alturaFaixa / 2);
+
+                        // Linha vertical na virada de mês, descendo desde o início dos rótulos de
+                        // semana até a faixa — separa visualmente as semanas de cada mês (como no
+                        // exemplo de referência), não só a caixinha da faixa em si.
+                        if (idx > 0) {
+                            ctxDesenho.strokeStyle = '#94A3B8';
+                            ctxDesenho.lineWidth = 1;
+                            ctxDesenho.beginPath();
+                            ctxDesenho.moveTo(left, chart.chartArea.bottom);
+                            ctxDesenho.lineTo(left, y0 + alturaFaixa);
+                            ctxDesenho.stroke();
+                        }
+                    });
+                    ctxDesenho.restore();
+                }
+            };
+
+            graficoCurvaS = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Planejado',
+                            data: plan,
+                            borderColor: '#2E86DE',
+                            backgroundColor: '#2E86DE',
+                            borderDash: [6, 4],
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#2E86DE',
+                            fill: false,
+                            spanGaps: false,
+                            datalabels: {
+                                display: (c) => indicesPlanejadoRotulo.has(c.dataIndex),
+                                align: 'top',
+                                anchor: 'center',
+                                backgroundColor: '#D6EAF8',
+                                color: '#1A1A1B',
+                                borderRadius: 4,
+                                padding: { top: 3, bottom: 3, left: 5, right: 5 },
+                                font: { size: 10, weight: '700' },
+                                formatter: rotuloPct
+                            }
+                        },
+                        {
+                            label: 'Avanço Real',
+                            data: real,
+                            borderColor: '#E30613',
+                            backgroundColor: '#E30613',
+                            borderWidth: 3,
+                            pointRadius: (c) => c.dataIndex === idxUltimoReal ? 6 : 3,
+                            pointHoverRadius: (c) => c.dataIndex === idxUltimoReal ? 8 : 4,
+                            pointBackgroundColor: '#E30613',
+                            fill: false,
+                            spanGaps: false,
+                            datalabels: {
+                                display: (c) => c.dataIndex === idxUltimoReal,
+                                align: 'bottom',
+                                anchor: 'center',
+                                backgroundColor: '#E30613',
+                                color: '#FFFFFF',
+                                borderRadius: 4,
+                                padding: { top: 3, bottom: 3, left: 5, right: 5 },
+                                font: { size: 11, weight: '700' },
+                                formatter: rotuloPct
+                            }
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    layout: { padding: { top: 20, bottom: 38 } },
+                    scales: {
+                        y: { min: 0, max: 120, ticks: { callback: v => `${v}%` }, grid: { color: '#EDF2F7' } },
+                        x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 90, font: { size: 13, weight: 'bold' } }, grid: { display: true, color: '#F4F5F7' } }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 13, weight: '700' } } },
+                        tooltip: { callbacks: { label: c => `${c.dataset.label}: ${rotuloPct(c.raw) || '-'}` } }
+                    }
+                },
+                plugins: [ChartDataLabels, pluginFaixaMeses]
+            });
+        }
+
+        // Agrupa uma lista de rótulos "SEMANA/ANO" (na ordem exibida no gráfico) em blocos de
+        // meses consecutivos, usada para desenhar a faixa de meses sob o eixo X da Curva "S".
+        function calcularGruposMeses(labelsSemana) {
+            let grupos = [];
+            labelsSemana.forEach((lbl, i) => {
+                let { semana, ano } = extrairSemanaEAno(lbl);
+                if (!semana || !ano) return;
+                let mes = nomeMesDaSemana(parseInt(semana, 10), parseInt(ano, 10));
+                let ultimo = grupos[grupos.length - 1];
+                if (ultimo && ultimo.mes === mes && ultimo.ano === ano) {
+                    ultimo.fim = i;
+                } else {
+                    grupos.push({ inicio: i, fim: i, mes, ano });
+                }
+            });
+            return grupos;
+        }
+
+        // Retorna o nome do mês (capitalizado) a que pertence uma semana ISO 8601 — usa a
+        // quinta-feira da semana como referência, padrão ISO 8601 (mesmo critério já usado por
+        // semanaISOdeData/dataDeSemanaISO no resto do app).
+        function nomeMesDaSemana(semana, ano) {
+            const MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            let jan4 = new Date(Date.UTC(ano, 0, 4));
+            let diaJan4 = jan4.getUTCDay() || 7;
+            let segSemana1 = new Date(jan4);
+            segSemana1.setUTCDate(jan4.getUTCDate() - diaJan4 + 1);
+            let seg = new Date(segSemana1);
+            seg.setUTCDate(segSemana1.getUTCDate() + (semana - 1) * 7);
+            let qui = new Date(seg);
+            qui.setUTCDate(seg.getUTCDate() + 3);
+            return MESES_ABREV[qui.getUTCMonth()];
         }
 
         function TabProgramacaoCapacitada(t) {
