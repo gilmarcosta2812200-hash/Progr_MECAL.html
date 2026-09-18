@@ -71,12 +71,13 @@
         main { padding: 20px 40px 40px 40px; }
 
         .recurso-bloco { background: white; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; page-break-inside: avoid; margin-bottom: 20px; }
-        .recurso-tarja { background-color: #1A1A1B; color: white; padding: 10px 15px; font-size: 13px; font-weight: 700; border-left: 5px solid var(--moreno-red); display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
-        .recurso-tarja:hover { background-color: #2D2D35; }
+        .recurso-header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-left: 5px solid var(--moreno-red); cursor: pointer; transition: background 0.2s; background: white; }
+        .recurso-header-row:hover { background-color: #F8FAFC; }
+        .recurso-tarja { display: inline-flex; align-items: center; gap: 8px; background-color: #1A1A1B; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; }
         .recurso-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; padding: 15px; background-color: #F8FAFC; transition: all 0.3s ease-in-out; }
         
         /* Aumentando a fonte do 1 op(s) 2x */
-        .op-count { font-weight: 900; color: #1A1A1B; background-color: #FFFFFF; padding: 2px 8px; border-radius: 4px; font-size: 20px; } 
+        .op-count { font-weight: 900; color: #1A1A1B; background-color: #F1F3F6; border: 1px solid #E2E8F0; padding: 2px 10px; border-radius: 4px; font-size: 16px; } 
         
         .kanban-card { background: white; border: 1px solid var(--border-color); border-left: 4px solid #A0AEC0; border-radius: 6px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 8px; position: relative; }
         .kanban-card.status-finalizado { background-color: #DEF7EC !important; color: #03543F !important; border-left-color: #31C48D !important; }
@@ -101,6 +102,37 @@
         .tabela-base th { background-color: #EDF2F7; color: #4A5568; font-weight: 700; padding: 12px; text-transform: uppercase; font-size: 11px; border-bottom: 2px solid var(--border-color); }
         .tabela-base td { padding: 12px; border-bottom: 1px solid var(--border-color); }
         .row-finalizado { background-color: #DEF7EC !important; color: #03543F !important; font-weight: 600; }
+        .badge-status-rel { display: inline-block; font-weight: 700; font-size: 10px; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Aba 6 — Relatório de Programação por Recurso */
+        .rel-prog-cabecalho { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 18px 25px; margin-bottom: 20px; border-bottom: 3px solid var(--moreno-red); }
+        .rel-prog-titulo { font-size: 15px; font-weight: 800; text-transform: uppercase; color: var(--moreno-black); margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--border-color); }
+        .rel-prog-subtitulo { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; }
+
+        /* Gantt de Programação por Recurso (aba Programação) */
+        .gantt-wrap { background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto; margin-bottom: 20px; }
+        .gantt-grid { display: grid; min-width: max-content; }
+        .gantt-header-row, .gantt-mes-row, .gantt-row { display: grid; grid-template-columns: 260px repeat(var(--gantt-n-sem), minmax(150px, 1fr)); align-items: stretch; }
+        .gantt-header-row { position: sticky; top: 0; background: white; z-index: 3; border-bottom: 2px solid var(--border-color); }
+        .gantt-col-fixa { padding: 10px 14px; font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; border-right: 1px solid var(--border-color); position: sticky; left: 0; background: white; z-index: 4; }
+        .gantt-header-row .semana-col-header { padding: 8px 4px; text-align: center; font-size: 13px; font-weight: 800; border-right: 1px solid #F0F2F5; }
+        .gantt-header-row .semana-col-header .ano { display: block; font-size: 10px; color: #A0AEC0; font-weight: 700; }
+        .gantt-mes-row { position: sticky; top: 42px; z-index: 3; }
+        .mes-cell { text-align: center; font-size: 11px; font-weight: 700; color: #4A5568; padding: 4px 2px; border-right: 1px solid #F0F2F5; border-bottom: 2px solid #CBD5E0; }
+        .mes-cell.par { background: #EAF2FC; }
+        .mes-cell.impar { background: #FFFFFF; }
+        .gantt-row { border-bottom: 1px solid #F0F2F5; }
+        .gantt-row:nth-child(odd) .gantt-col-fixa { background: #FAFBFC; }
+        .gantt-semana-cell { padding: 5px; border-right: 1px solid #F0F2F5; display: flex; flex-direction: column; gap: 3px; justify-content: center; }
+        .gantt-op-bar { border-radius: 4px; padding: 3px 7px; font-size: 11px; font-weight: 700; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+        .gantt-op-bar.plan { background: #2E86DE; }
+        .gantt-op-bar.exec { background: #31C48D; color: #05371F; }
+        .gantt-op-bar.mais { background: #EDF2F7; color: #4A5568; text-align: center; cursor: pointer; }
+        .gantt-op-bar:hover { filter: brightness(0.92); }
+
+        /* Foco de célula (destaque de linha/coluna ao passar o mouse) — Gantt e Matriz Disp. */
+        .foco-linha-matriz { box-shadow: inset 0 0 0 999px rgba(255, 179, 0, 0.28); }
+        .foco-linha-gantt { background-color: #FFF3CD !important; }
         .cell-relative { position: relative; }
         .green-dot-table { position: absolute; top: 15px; right: 15px; width: 8px; height: 8px; background-color: #31C48D; border-radius: 50%; }
 
@@ -143,17 +175,8 @@
         .clientes-kpi.kpi-restante { border-left-color: var(--moreno-black); }
         .clientes-kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.3px; }
         .clientes-kpi-valor { font-size: 22px; font-weight: 800; color: var(--moreno-black); margin-top: 2px; }
-        .clientes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 520px; overflow-y: auto; padding-right: 4px; }
-        @media (max-width: 1200px) { .clientes-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 700px) { .clientes-grid { grid-template-columns: 1fr; } }
-        .cliente-item { display: flex; flex-direction: column; gap: 7px; background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; }
-        .cliente-numeros { flex: 0 0 68px; font-size: 14px; color: var(--text-main); font-weight: 800; text-align: right; }
-        .cliente-nome { font-size: 12px; font-weight: 800; color: var(--moreno-black); text-transform: uppercase; line-height: 1.3; white-space: normal; word-break: break-word; }
-        .cliente-bar-row { display: flex; align-items: center; gap: 10px; }
-        .cliente-barra-wrap { flex: 1; height: 20px; background: #E2E8F0; border-radius: 10px; overflow: visible; position: relative; }
-        .cliente-barra { height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; transition: width 0.3s ease; overflow: hidden; }
-        .cliente-barra-pct { font-size: 10px; font-weight: 800; color: white; text-shadow: 0 1px 1px rgba(0,0,0,0.25); white-space: nowrap; }
-        .cliente-barra-pct.pct-fora { color: var(--text-main); text-shadow: none; padding-left: 6px; }
+        /* (o antigo grid de cards por cliente foi substituído por um gráfico Chart.js — ver
+           RenderizarGraficoClientes) */
         .cap-kpi-amarelo .cap-kpi-valor { color: #B8860B; }
         .cap-kpi-verde { border-left-color: #1E7B34; }
         .cap-kpi-verde .cap-kpi-valor { color: #1E7B34; }
@@ -191,6 +214,12 @@
         .matriz-table th:first-child { text-align: left; padding-left: 15px; left: 0; z-index: 4; border-right: 1px solid #EDF2F7; }
         .matriz-table td { padding: 10px 5px; text-align: center; font-weight: 700; border: 2px solid white; cursor: help; position: relative; }
         .matriz-table td:first-child { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; position: sticky; left: 0; background: white; z-index: 1; cursor: default;}
+
+        /* Matriz: faixa de meses sob os cabeçalhos de semana — mesmo esquema da Curva "S" */
+        .matriz-linha-meses th { position: sticky; top: 44px; z-index: 2; padding: 5px 4px; font-size: 10px; font-weight: 700; color: #4A5568; border-bottom: 2px solid #CBD5E0; box-shadow: none; }
+        .matriz-linha-meses th.matriz-mes-header.mes-par { background-color: #EAF2FC; }
+        .matriz-linha-meses th.matriz-mes-header.mes-impar { background-color: #FFFFFF; }
+        .matriz-linha-meses th:first-child { top: 44px; background: white; border-right: 1px solid #EDF2F7; }
         
         .cell-livre { background-color: #F8F9FA; color: #A0AEC0; }
         .cell-ok { background-color: #C6F6D5; color: #22543D; }
@@ -355,9 +384,9 @@
 
     <div class="navigation-tabs">
         <button id="navKanban" class="nav-btn active" onclick="TrocarAba('KANBAN')"><i class="fa-solid fa-table-columns"></i> 1. Kanban</button>
-        <button id="navMatriz" class="nav-btn" onclick="TrocarAba('MATRIZ')"><i class="fa-solid fa-table-cells"></i> 2. Matriz Disp.</button>
-        <button id="navTabela" class="nav-btn" onclick="TrocarAba('TABELA')"><i class="fa-solid fa-database"></i> 3. CARTEIRA GERAL (USI)</button>
-        <button id="navCapacitada" class="nav-btn" onclick="TrocarAba('CAPACITADA')"><i class="fa-solid fa-robot"></i> 4. Program. Capacitada</button>
+        <button id="navRelProg" class="nav-btn" onclick="TrocarAba('REL_PROG')"><i class="fa-solid fa-file-lines"></i> 2. Programação</button>
+        <button id="navMatriz" class="nav-btn" onclick="TrocarAba('MATRIZ')"><i class="fa-solid fa-table-cells"></i> 3. Matriz Disp.</button>
+        <button id="navTabela" class="nav-btn" onclick="TrocarAba('TABELA')"><i class="fa-solid fa-database"></i> 4. CARTEIRA GERAL (USI)</button>
         <button id="navCurvaS" class="nav-btn" onclick="TrocarAba('CURVA_S')"><i class="fa-solid fa-chart-line"></i> 5. Curva "S" Entressafra</button>
     </div>
 
@@ -1375,12 +1404,12 @@
         function TrocarAba(tipo) {
             layout = tipo;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            let btnId = {'KANBAN':'navKanban', 'TABELA':'navTabela', 'MATRIZ':'navMatriz', 'CAPACITADA':'navCapacitada', 'CURVA_S':'navCurvaS'}[tipo];
+            let btnId = {'KANBAN':'navKanban', 'TABELA':'navTabela', 'MATRIZ':'navMatriz', 'CURVA_S':'navCurvaS', 'REL_PROG':'navRelProg'}[tipo];
             if(document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
             
             document.getElementById('wrapperBusca').style.display = ['KANBAN','TABELA'].includes(tipo) ? 'block' : 'none';
             document.getElementById('wrapFiltroRecursoMatriz').style.display = tipo === 'MATRIZ' ? 'block' : 'none';
-            document.getElementById('wrapFiltroGeral').style.display = ['KANBAN','MATRIZ'].includes(tipo) ? 'flex' : 'none';
+            document.getElementById('wrapFiltroGeral').style.display = ['KANBAN','MATRIZ','REL_PROG'].includes(tipo) ? 'flex' : 'none';
             document.getElementById('wrapFiltroKanban').style.display = tipo === 'KANBAN' ? 'flex' : 'none';
             document.getElementById('wrapFiltroMatriz').style.display = tipo === 'MATRIZ' ? 'flex' : 'none';
             document.getElementById('wrapFiltroCapacitada').style.display = tipo === 'CAPACITADA' ? 'flex' : 'none';
@@ -1449,8 +1478,15 @@
             
             if(layout === "MATRIZ") TabMatriz(trg);
 
-            if(layout === "CAPACITADA") TabProgramacaoCapacitada(trg);
+            // Aba "Program. Capacitada" removida do menu; a função TabProgramacaoCapacitada
+            // continua no código (sem uso) caso queira reativá-la no futuro.
             if(layout === "CURVA_S") TabCurvaS(trg);
+            if(layout === "REL_PROG") {
+                let sem = document.getElementById('filtroSemanaGeral').value;
+                let d = BASE_PROD;
+                if(sem !== "TODAS") d = d.filter(x => x.SEMANA === sem);
+                TabRelatorioProgramacao(trg, d, sem);
+            }
         }
 
         function TabKanbanOperacoes(t, d) {
@@ -1466,8 +1502,8 @@
                 let blockId = `grade-rec-${index}`;
                 
                 html += `<div class="recurso-bloco">
-                            <div class="recurso-tarja" onclick="AlternarRecurso('${blockId}')" title="Clique para ocultar/mostrar operações">
-                                <span><i id="icon-${blockId}" class="fa-solid fa-chevron-up"></i> &nbsp; <i class="fa-solid fa-industry"></i> &nbsp;${rec.fullStr}</span>
+                            <div class="recurso-header-row" onclick="AlternarRecurso('${blockId}')" title="Clique para ocultar/mostrar operações">
+                                <span class="recurso-tarja"><i id="icon-${blockId}" class="fa-solid fa-chevron-up"></i> <i class="fa-solid fa-industry"></i> ${rec.fullStr}</span>
                                 <span class="op-count">${itens.length} op(s)</span>
                             </div>
                             <div class="recurso-cards-grid" id="${blockId}">`;
@@ -1496,7 +1532,239 @@
             t.innerHTML = recursosMapeados.length ? html+'</div>' : '<div class="state-empty"><p>Nenhuma ordem de produção atende aos critérios deste filtro.</p></div>';
         }
 
+        // Aba 6 — Relatório de Programação por Recurso: réplica em tela do relatório em PDF
+        // já usado pela empresa (KPIs da semana + detalhamento por recurso + análise consolidada
+        // por cliente e por item). Usa a mesma base (BASE_PROD) e o mesmo filtro de semana do Kanban.
+        // Gantt de Programação por Recurso — mostra as próximas semanas (a partir da semana
+        // travada/atual), com o descritivo de cada operação dentro da barra. Reaproveita
+        // MATRIZ_CARGA/INDICE_CELULA (mesma fonte da Matriz de Disponibilidade) e o MESMO modal
+        // de detalhes já usado lá (clique na barra abre a lista completa de operações da célula).
+        function MontarGanttProgramacao() {
+            let chaves = Object.keys(MATRIZ_CARGA);
+            if (!chaves.length) return '<div class="state-empty" style="padding:20px 0;"><p>Sem dados de capacidade disponíveis para montar o Gantt.</p></div>';
+
+            let semsTodas = MATRIZ_CARGA[chaves[0]].semanas; // ex: "SEM 38/2026", em ordem
+            let idxInicio = 0;
+            let numSemAtual = (SEMANA_TRAVADA_I2.match(/\d+/) || [])[0];
+            if (numSemAtual) {
+                let achado = semsTodas.findIndex(s => s.startsWith(`SEM ${numSemAtual}/`));
+                if (achado !== -1) idxInicio = achado;
+            }
+            // Mostra da semana atual até a ÚLTIMA semana disponível na planilha — sem limite fixo
+            // de janela; a navegação até semanas mais distantes é feita por scroll horizontal
+            // (o wrapper já tem overflow-x:auto).
+            let semsJanela = semsTodas.slice(idxInicio);
+            if (!semsJanela.length) return '<div class="state-empty" style="padding:20px 0;"><p>Não há semanas futuras suficientes na planilha para montar o Gantt.</p></div>';
+
+            // Monta, por recurso, a lista de operações de cada semana da janela — só entram
+            // recursos com pelo menos 1 operação programada no período (evita linhas vazias).
+            let recursosGantt = [];
+            chaves.forEach(cc => {
+                let m = MATRIZ_CARGA[cc];
+                let codRecursoNorm = normalizarRecurso(cc);
+                let semanasData = semsJanela.map(s => {
+                    let { semana: sNum, ano: sAno } = extrairSemanaEAno(s, '2026');
+                    let ops = INDICE_CELULA[`${codRecursoNorm}_${sNum}_${sAno}`] || [];
+                    let idxOriginal = semsTodas.indexOf(s);
+                    let cap = m.capacidade[idxOriginal] || 1;
+                    let carga = ops.reduce((acc, op) => acc + (Number(op.hrPrev) || 0), 0);
+                    let pct = Math.round((carga / cap) * 100);
+                    return { semana: sNum, ano: sAno, ops, pct, cap };
+                });
+                let totalOps = semanasData.reduce((acc, s) => acc + s.ops.length, 0);
+                if (totalOps > 0) recursosGantt.push({ cc, nome: m.nome, semanas: semanasData, totalOps });
+            });
+            if (!recursosGantt.length) return '<div class="state-empty" style="padding:20px 0;"><p>Nenhum recurso com operações programadas nas próximas semanas.</p></div>';
+            recursosGantt.sort((a, b) => b.totalOps - a.totalOps);
+
+            let gruposMeses = calcularGruposMeses(semsJanela.map(s => {
+                let { semana, ano } = extrairSemanaEAno(s, '2026');
+                return `${semana}/${ano}`;
+            }));
+
+            const MAX_BARRAS_VISIVEIS = 3;
+
+            let html = `<div class="gantt-wrap"><div class="gantt-grid" style="--gantt-n-sem:${semsJanela.length};">`;
+
+            // Cabeçalho de semanas
+            html += `<div class="gantt-header-row"><div class="gantt-col-fixa">Recurso</div>`;
+            semsJanela.forEach(s => {
+                let { semana, ano } = extrairSemanaEAno(s, '2026');
+                html += `<div class="semana-col-header">${semana}<span class="ano">${ano}</span></div>`;
+            });
+            html += `</div>`;
+
+            // Faixa de meses
+            html += `<div class="gantt-mes-row"><div class="gantt-col-fixa"></div>`;
+            semsJanela.forEach((s, i) => {
+                let grupo = gruposMeses.find(g => i >= g.inicio && i <= g.fim);
+                if (grupo.inicio === i) {
+                    let idxGrupo = gruposMeses.indexOf(grupo);
+                    html += `<div class="mes-cell ${idxGrupo % 2 === 0 ? 'par' : 'impar'}" style="grid-column: span ${grupo.fim - grupo.inicio + 1};">${grupo.mes}/${String(grupo.ano).slice(-2)}</div>`;
+                }
+            });
+            html += `</div>`;
+
+            // Linhas de recurso
+            recursosGantt.forEach(r => {
+                html += `<div class="gantt-row"><div class="gantt-col-fixa">${escapeHtml(r.nome)}</div>`;
+                r.semanas.forEach(s => {
+                    let nomeSeguro = String(r.nome || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    let dataAttrs = ` data-recurso-id="${r.cc}" data-recurso-nome="${nomeSeguro}" data-semana-num="${s.semana}" data-ano="${s.ano}" data-pct="${s.pct}" data-cap="${s.cap}"`;
+                    html += `<div class="gantt-semana-cell">`;
+                    s.ops.slice(0, MAX_BARRAS_VISIVEIS).forEach(op => {
+                        let executada = !!op.baixado;
+                        let rotulo = `#${op.cod || '—'} · ${op.operacao || op.descricao || 'Sem descrição'}`;
+                        html += `<div class="gantt-op-bar matriz-cell-click ${executada ? 'exec' : 'plan'}"${dataAttrs} title="${escapeHtml(rotulo)} — ${escapeHtml(op.cliente || '')}">${escapeHtml(rotulo)}</div>`;
+                    });
+                    if (s.ops.length > MAX_BARRAS_VISIVEIS) {
+                        html += `<div class="gantt-op-bar mais matriz-cell-click"${dataAttrs}>+${s.ops.length - MAX_BARRAS_VISIVEIS} mais</div>`;
+                    }
+                    html += `</div>`;
+                });
+                html += `</div>`;
+            });
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        function TabRelatorioProgramacao(t, d, semanaFiltro) {
+            if (!d.length) {
+                t.innerHTML = '<div class="state-empty"><p>Nenhuma ordem de produção atende aos critérios deste filtro.</p></div>';
+                return;
+            }
+
+            const isExecutada = x => String(x.REALIZADO).toUpperCase().includes("FINALIZADO") || String(x.REALIZADO).toUpperCase() === "M";
+            let totalOps = d.length;
+            let executadas = d.filter(isExecutada).length;
+            let aderenciaAtual = totalOps > 0 ? Math.round((executadas / totalOps) * 100) : 0;
+            let recursosMapeados = new Set(d.map(x => x.RECURSO)).size;
+            let semanaTxt = semanaFiltro === 'TODAS' ? 'Visão completa' : semanaFiltro;
+
+            let htmlKpis = `
+                <div class="cap-kpis-grid" style="margin-bottom:20px;">
+                    <div class="cap-kpi-card cap-kpi-azul">
+                        <div class="cap-kpi-label">Operações Planejadas</div>
+                        <div class="cap-kpi-valor">${totalOps}</div>
+                    </div>
+                    <div class="cap-kpi-card cap-kpi-verde">
+                        <div class="cap-kpi-label">Operações Executadas</div>
+                        <div class="cap-kpi-valor">${executadas}</div>
+                    </div>
+                    <div class="cap-kpi-card">
+                        <div class="cap-kpi-label">Aderência Atual</div>
+                        <div class="cap-kpi-valor">${aderenciaAtual}%</div>
+                    </div>
+                    <div class="cap-kpi-card cap-kpi-danger">
+                        <div class="cap-kpi-label">Meta Aderência Global</div>
+                        <div class="cap-kpi-valor">100%</div>
+                    </div>
+                    <div class="cap-kpi-card cap-kpi-amarelo">
+                        <div class="cap-kpi-label">Recursos Mapeados</div>
+                        <div class="cap-kpi-valor">${recursosMapeados}</div>
+                    </div>
+                </div>`;
+
+            // Detalhamento por recurso — mesmo agrupamento/ordenação do Kanban (por código do recurso).
+            // DESCR_RECURSO já vem da planilha no formato "NOME - [código]", então é usado direto,
+            // sem concatenar o código de novo (evita duplicar, ex: "SOLDA - [84] - [84]").
+            let recursosUnicos = [...new Set(d.map(x => JSON.stringify({
+                codClean: x.RECURSO,
+                fullStr: x.DESCR_RECURSO || (x.RECURSO ? `SEM MÁQUINA DEFINIDA - [${x.RECURSO}]` : 'SEM MÁQUINA DEFINIDA')
+            })))].map(str => JSON.parse(str)).sort((a, b) => String(a.codClean).localeCompare(String(b.codClean)));
+
+            let htmlDetalhe = `<h3 class="rel-prog-titulo">Detalhamento das Ordens Programadas por Recurso</h3>`;
+            recursosUnicos.forEach((rec, index) => {
+                let itens = d.filter(x => x.RECURSO === rec.codClean);
+                let blockId = `rel-rec-${index}`;
+                htmlDetalhe += `
+                    <div class="recurso-bloco">
+                        <div class="recurso-header-row" onclick="AlternarRecurso('${blockId}')" title="Clique para ocultar/mostrar operações">
+                            <span class="recurso-tarja"><i id="icon-${blockId}" class="fa-solid fa-chevron-up"></i> <i class="fa-solid fa-industry"></i> ${escapeHtml(rec.fullStr)}</span>
+                            <span class="op-count">${itens.length} op(s)</span>
+                        </div>
+                        <div id="${blockId}" style="display:block;">
+                            <table class="tabela-base">
+                                <thead><tr><th>Código</th><th>Item / Produto</th><th>Descrição da Operação</th><th>Cliente</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    ${itens.map(i => `
+                                        <tr class="${isExecutada(i) ? 'row-finalizado' : ''}">
+                                            <td>#${escapeHtml(i.COD || '—')}</td>
+                                            <td>${escapeHtml(i.DESCRICAO || '—')}</td>
+                                            <td>${escapeHtml(i.OPERACAO || '—')}</td>
+                                            <td>${escapeHtml(i.CLIENTE || '—')}</td>
+                                            <td><span class="badge-status-rel" style="background:${isExecutada(i) ? '#31C48D' : '#EDF2F7'}; color:${isExecutada(i) ? '#1A1A1B' : '#4A5568'};">${isExecutada(i) ? 'EXECUTADA' : 'PLANEJADA'}</span></td>
+                                        </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            });
+
+            // Análise consolidada por Cliente e por Item/Componente
+            function agrupar(campo) {
+                let mapa = {};
+                d.forEach(x => { let k = x[campo] || 'Não informado'; mapa[k] = (mapa[k] || 0) + 1; });
+                return Object.entries(mapa).sort((a, b) => b[1] - a[1]);
+            }
+            let porCliente = agrupar('CLIENTE');
+            let porItem = agrupar('DESCRICAO');
+
+            function tabelaConsolidada(titulo, linhas) {
+                return `
+                    <div style="flex:1; min-width:320px;">
+                        <h4 class="rel-prog-subtitulo">${titulo}</h4>
+                        <table class="tabela-base">
+                            <thead><tr><th>${titulo}</th><th>Qtd. Ordens</th><th>% Total</th></tr></thead>
+                            <tbody>
+                                ${linhas.map(([nome, qtd]) => `
+                                    <tr>
+                                        <td>${escapeHtml(nome)}</td>
+                                        <td>${qtd}</td>
+                                        <td>${((qtd / totalOps) * 100).toFixed(1)}%</td>
+                                    </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>`;
+            }
+
+            let htmlConsolidado = `
+                <h3 class="rel-prog-titulo">Análise Consolidada por Cliente &amp; Carga de Trabalho</h3>
+                <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                    ${tabelaConsolidada('Cliente / Usina', porCliente)}
+                    ${tabelaConsolidada('Item / Componente Principal', porItem)}
+                </div>`;
+
+            t.innerHTML = `
+                <div class="rel-prog-cabecalho">
+                    <div class="curva-s-logo">
+                        <i class="fa-solid fa-gear"></i>
+                        <div class="logo-txt">FUNDIÇÃO<span>MORENO</span></div>
+                    </div>
+                    <div class="curva-s-title">Relatório de Programação por Recurso<br>${escapeHtml(semanaTxt)}</div>
+                </div>
+                ${htmlKpis}
+                <h3 class="rel-prog-titulo">Gantt de Programação por Recurso — Próximas Semanas</h3>
+                ${MontarGanttProgramacao()}
+                ${htmlDetalhe}
+                ${htmlConsolidado}
+            `;
+        }
+
         function TabCarteiraGeral(t, data) {
+            // Prazo Fundido / Prazo Entrega vêm da planilha como serial do Excel (ex: 46254) —
+            // converte para DD/MM/AAAA; se já vier como texto de data (não numérico), mantém como está.
+            function formatarPrazo(val) {
+                if (val === null || val === undefined || val === '') return '—';
+                let n = Number(val);
+                if (!isNaN(n) && n > 20000 && n < 80000) {
+                    let d = dataDeSerialExcel(n);
+                    if (d) return formatarDataBR(d);
+                }
+                return String(val);
+            }
+
             let linesHtml = '';
             data.forEach(item => {
                 let statusUpper = String(item.STATUS).toUpperCase();
@@ -1513,8 +1781,8 @@
                     <td>${item.QTD || '—'}</td>
                     <td>${item.SUB_GRUPO || '—'}</td>
                     <td>${item.SETOR_VENDA || '—'}</td>
-                    <td>${item.PRAZO_FUNDIDO || '—'}</td>
-                    <td>${item.PRAZO_ENTREGA || '—'}</td>
+                    <td>${formatarPrazo(item.PRAZO_FUNDIDO)}</td>
+                    <td>${formatarPrazo(item.PRAZO_ENTREGA)}</td>
                     <td>${item.MES ? item.MES.toUpperCase() : '—'}</td>
                     <td class="cell-relative">${item.STATUS || '—'}${bolinhaVerde}</td>
                 </tr>`;
@@ -1568,11 +1836,15 @@
             if(idxIni === -1) idxIni = 0;
             if(idxFim === -1 || idxFim < idxIni) idxFim = sems.length - 1;
             let semsFiltradas = sems.slice(idxIni, idxFim + 1);
-            
+            let gruposMesesMatriz = calcularGruposMeses(semsFiltradas);
+            let linhaMeses = `<tr class="matriz-linha-meses"><th></th>${gruposMesesMatriz.map((g, idx) =>
+                `<th colspan="${g.fim - g.inicio + 1}" class="matriz-mes-header ${idx % 2 === 0 ? 'mes-par' : 'mes-impar'}">${g.mes}/${String(g.ano).slice(-2)}</th>`
+            ).join('')}</tr>`;
+
             let htmlTable = `<table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => {
                 let { semana: wSem, ano: wAno } = extrairSemanaEAno(s, '2026');
                 return `<th><span class="th-semana">${wSem}</span><span class="th-ano">${wAno}</span></th>`;
-            }).join('')}</tr></thead><tbody>`;
+            }).join('')}</tr>${linhaMeses}</thead><tbody>`;
 
             chaves.forEach(cc => {
                 let m = MATRIZ_CARGA[cc]; 
@@ -1676,12 +1948,12 @@
             document.getElementById('curvaSAte').value = idxAte;
 
             DesenharGraficoCurvaS(idxDe, idxAte);
-            RenderizarGridClientes();
+            RenderizarGraficoClientes();
         }
 
         // Monta o "casco" do dashboard "Avanço Físico por Cliente" (cabeçalho, busca e KPIs).
-        // O grid de clientes em si (que muda com a busca) é preenchido à parte por
-        // RenderizarGridClientes(), para não precisar remontar tudo a cada tecla digitada.
+        // O gráfico em si (que muda com a busca) é preenchido à parte por
+        // RenderizarGraficoClientes(), para não precisar remontar tudo a cada tecla digitada.
         function MontarDashboardClientesHtml() {
             if (!AVANCO_CLIENTES.length) {
                 return `
@@ -1699,7 +1971,7 @@
                 <div class="clientes-card">
                     <div class="clientes-header">
                         <h3><i class="fa-solid fa-industry"></i> Avanço Físico por Cliente</h3>
-                        <input type="text" id="buscaClientesCurvaS" class="search-field" style="max-width:280px;" placeholder="🔍 Buscar cliente/usina..." oninput="RenderizarGridClientes()">
+                        <input type="text" id="buscaClientesCurvaS" class="search-field" style="max-width:280px;" placeholder="🔍 Buscar cliente/usina..." oninput="RenderizarGraficoClientes()">
                     </div>
                     <div class="clientes-kpis">
                         <div class="clientes-kpi">
@@ -1715,47 +1987,148 @@
                             <div class="clientes-kpi-valor">${aConcluir}</div>
                         </div>
                     </div>
-                    <div class="clientes-grid" id="gridClientesCurvaS"></div>
+                    <div id="clientesChartWrap" style="position:relative;"><canvas id="clientesChart"></canvas></div>
                 </div>`;
         }
 
-        // Preenche/atualiza só a lista de clientes (aplica a busca e ordena por % concluído
-        // crescente, para destacar primeiro quem ainda está com pendência).
-        function RenderizarGridClientes() {
-            let grid = document.getElementById('gridClientesCurvaS');
-            if (!grid) return;
+        // Preenche/atualiza o gráfico de barras horizontais empilhadas (% Concluída x % A Concluir)
+        // — aplica a busca e ordena por % concluído decrescente (do maior pro menor).
+        let graficoClientes = null;
+        function RenderizarGraficoClientes() {
+            let wrap = document.getElementById('clientesChartWrap');
+            if (!wrap) return;
 
             let busca = normalizarTexto(document.getElementById('buscaClientesCurvaS')?.value || '');
             let lista = AVANCO_CLIENTES
                 .filter(c => !busca || normalizarTexto(c.nome).includes(busca))
-                .sort((a, b) => a.pct - b.pct || a.nome.localeCompare(b.nome));
+                .sort((a, b) => b.pct - a.pct);
+
+            if (graficoClientes) { graficoClientes.destroy(); graficoClientes = null; }
 
             if (!lista.length) {
-                grid.innerHTML = '<div class="state-empty" style="grid-column:1/-1; padding:15px 0;"><p>Nenhum cliente encontrado.</p></div>';
+                wrap.innerHTML = '<div class="state-empty" style="padding:15px 0;"><p>Nenhum cliente encontrado.</p></div>';
                 return;
             }
 
-            grid.innerHTML = lista.map(c => {
-                let pct = Math.min(100, Math.round(c.pct * 10) / 10);
-                // Barra sempre azul (mesmo tom do "Planejado" da Curva "S") — sem cores de status,
-                // card sempre branco.
-                let corBarra = '#2E86DE';
-                let pctTxt = `${pct % 1 === 0 ? pct.toFixed(0) : pct.toFixed(1)}%`;
-                let labelDentro = pct >= 22; // rótulo cabe dentro da barra só se ela tiver largura suficiente
-                return `
-                    <div class="cliente-item" title="${escapeHtml(c.nome)}: ${c.final} de ${c.progr} rolos finalizados • ${pctTxt} concluído (por operações)">
-                        <div class="cliente-nome">${escapeHtml(c.nome)}</div>
-                        <div class="cliente-bar-row">
-                            <div class="cliente-numeros">${c.final}/${c.progr}</div>
-                            <div class="cliente-barra-wrap">
-                                <div class="cliente-barra" style="width:${pct}%; background-color:${corBarra};">
-                                    ${labelDentro ? `<span class="cliente-barra-pct">${pctTxt}</span>` : ''}
-                                </div>
-                                ${!labelDentro ? `<span class="cliente-barra-pct pct-fora" style="position:absolute; left:${pct}%; top:50%; transform:translateY(-50%);">${pctTxt}</span>` : ''}
-                            </div>
-                        </div>
-                    </div>`;
-            }).join('');
+            // Altura dinâmica: uma faixa por cliente, pra barra não ficar espremida com muitos clientes.
+            wrap.innerHTML = '<canvas id="clientesChart"></canvas>';
+            wrap.style.height = `${Math.max(240, lista.length * 40 + 50)}px`;
+
+            let concluida = lista.map(c => Math.round(Math.min(100, c.pct) * 10) / 10);
+            let aConcluirPct = concluida.map(v => Math.round((100 - v) * 10) / 10);
+            let aConcluirRolos = lista.map(c => Math.max(0, c.progr - c.final));
+
+            let ctx = document.getElementById('clientesChart');
+
+            // Desenha o nome do cliente dentro de um "selo" preto (mesmo estilo já usado no
+            // nome do recurso do Gantt/Kanban) — o texto padrão do eixo Y fica invisível
+            // (ticks.color:'transparent', mas com a MESMA fonte, só pra reservar o espaço) e este
+            // plugin desenha o selo + "(N a concluir)" por cima, alinhados à área do gráfico.
+            const pluginNomesClientes = {
+                id: 'nomesClientes',
+                afterDraw(chart) {
+                    const yScale = chart.scales.y;
+                    const c2d = chart.ctx;
+                    const alturaSelo = 22;
+                    c2d.save();
+                    c2d.textBaseline = 'middle';
+                    lista.forEach((c, i) => {
+                        const y = yScale.getPixelForTick(i);
+                        const xLimite = chart.chartArea.left - 10;
+
+                        c2d.font = 'bold 13px Segoe UI, sans-serif';
+                        const nomeTexto = c.nome;
+                        const larguraNome = c2d.measureText(nomeTexto).width;
+                        const padX = 10;
+                        const larguraSelo = larguraNome + padX * 2;
+                        const xSeloDir = xLimite;
+                        const xSeloEsq = xSeloDir - larguraSelo;
+                        const r = alturaSelo / 2;
+
+                        c2d.fillStyle = '#1A1A1B';
+                        c2d.beginPath();
+                        c2d.moveTo(xSeloEsq + r, y - alturaSelo / 2);
+                        c2d.arcTo(xSeloDir, y - alturaSelo / 2, xSeloDir, y + alturaSelo / 2, r);
+                        c2d.arcTo(xSeloDir, y + alturaSelo / 2, xSeloEsq, y + alturaSelo / 2, r);
+                        c2d.arcTo(xSeloEsq, y + alturaSelo / 2, xSeloEsq, y - alturaSelo / 2, r);
+                        c2d.arcTo(xSeloEsq, y - alturaSelo / 2, xSeloDir, y - alturaSelo / 2, r);
+                        c2d.closePath();
+                        c2d.fill();
+
+                        c2d.fillStyle = '#FFFFFF';
+                        c2d.textAlign = 'center';
+                        c2d.fillText(nomeTexto, xSeloEsq + larguraSelo / 2, y + 1);
+
+                        c2d.font = '600 12px Segoe UI, sans-serif';
+                        c2d.fillStyle = '#4A5568';
+                        c2d.textAlign = 'right';
+                        c2d.fillText(`(${aConcluirRolos[i]} a concluir)`, xSeloEsq - 8, y + 1);
+                    });
+                    c2d.restore();
+                }
+            };
+
+            graficoClientes = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    // Rótulo "real" (usado só pro Chart.js reservar o espaço e pro tooltip/título) —
+                    // o desenho visível é feito pelo plugin nomesClientes, acima.
+                    labels: lista.map((c, i) => `${c.nome}  (${aConcluirRolos[i]} a concluir)`),
+                    datasets: [
+                        {
+                            label: '% Concluída',
+                            data: concluida,
+                            backgroundColor: '#2E86DE',
+                            stack: 'total',
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.9,
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'right',
+                                offset: 4,
+                                color: '#4A5568',
+                                font: { size: 13, weight: '800' },
+                                formatter: (v) => `${v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)}%`
+                            }
+                        },
+                        {
+                            label: '% A Concluir',
+                            data: aConcluirPct,
+                            backgroundColor: '#E2E8F0',
+                            stack: 'total',
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.9,
+                            datalabels: { display: false }
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, min: 0, max: 100, ticks: { callback: v => `${v}%` }, grid: { color: '#F0F2F5' } },
+                        y: { stacked: true, ticks: { color: 'transparent', font: { size: 13, weight: '700' } }, grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 14, weight: '700' } } },
+                        tooltip: {
+                            titleFont: { size: 15, weight: '800' },
+                            bodyFont: { size: 14 },
+                            padding: 10,
+                            callbacks: {
+                                title: (items) => lista[items[0].dataIndex].nome,
+                                label: (item) => {
+                                    let c = lista[item.dataIndex];
+                                    if (item.datasetIndex === 0) return `Concluída: ${c.final}/${c.progr} rolos (${concluida[item.dataIndex]}%)`;
+                                    return `A concluir: ${aConcluirRolos[item.dataIndex]} rolos (${aConcluirPct[item.dataIndex]}%)`;
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels, pluginNomesClientes]
+            });
         }
 
         function AoMudarPeriodoCurvaS() {
@@ -1796,6 +2169,12 @@
                         ultimoMostrado = v;
                     }
                 });
+                // Garante rótulo sempre no último ponto válido do período exibido, mesmo que ele
+                // não tenha subido 5 pontos desde o último rótulo mostrado — sem isso, o fechamento
+                // em 100% (platô no fim da curva) podia ficar sem rótulo nenhum.
+                for (let i = valores.length - 1; i >= 0; i--) {
+                    if (valores[i] !== null && valores[i] !== undefined) { indices.add(i); break; }
+                }
                 return indices;
             }
             let indicesPlanejadoRotulo = indicesRotuloMultiplo5(plan);
@@ -1867,7 +2246,8 @@
                             backgroundColor: '#2E86DE',
                             borderDash: [6, 4],
                             borderWidth: 2,
-                            pointRadius: 3,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
                             pointBackgroundColor: '#2E86DE',
                             fill: false,
                             spanGaps: false,
@@ -1879,7 +2259,7 @@
                                 color: '#1A1A1B',
                                 borderRadius: 4,
                                 padding: { top: 3, bottom: 3, left: 5, right: 5 },
-                                font: { size: 10, weight: '700' },
+                                font: { size: 13, weight: '700' },
                                 formatter: rotuloPct
                             }
                         },
@@ -1889,22 +2269,14 @@
                             borderColor: '#E30613',
                             backgroundColor: '#E30613',
                             borderWidth: 3,
-                            pointRadius: (c) => c.dataIndex === idxUltimoReal ? 6 : 3,
-                            pointHoverRadius: (c) => c.dataIndex === idxUltimoReal ? 8 : 4,
+                            pointRadius: (c) => c.dataIndex === idxUltimoReal ? 4 : 0,
+                            pointHoverRadius: (c) => c.dataIndex === idxUltimoReal ? 6 : 4,
                             pointBackgroundColor: '#E30613',
                             fill: false,
                             spanGaps: false,
-                            datalabels: {
-                                display: (c) => c.dataIndex === idxUltimoReal,
-                                align: 'bottom',
-                                anchor: 'center',
-                                backgroundColor: '#E30613',
-                                color: '#FFFFFF',
-                                borderRadius: 4,
-                                padding: { top: 3, bottom: 3, left: 5, right: 5 },
-                                font: { size: 11, weight: '700' },
-                                formatter: rotuloPct
-                            }
+                            // Só o Planejado leva rótulo de dado no gráfico (conforme o modelo de
+                            // referência) — o Avanço Real fica só com a linha/marcador, sem caixinha.
+                            datalabels: { display: false }
                         }
                     ]
                 },
@@ -1914,8 +2286,8 @@
                     interaction: { mode: 'index', intersect: false },
                     layout: { padding: { top: 20, bottom: 38 } },
                     scales: {
-                        y: { min: 0, max: 120, ticks: { callback: v => `${v}%` }, grid: { color: '#EDF2F7' } },
-                        x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 90, font: { size: 13, weight: 'bold' } }, grid: { display: true, color: '#F4F5F7' } }
+                        y: { min: 0, max: 120, ticks: { callback: v => `${v}%` }, grid: { color: '#DCE3EC', lineWidth: 1 } },
+                        x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 90, font: { size: 13, weight: 'bold' } }, grid: { display: true, color: '#DCE3EC', lineWidth: 1 } }
                     },
                     plugins: {
                         legend: { position: 'top', labels: { font: { size: 13, weight: '700' } } },
@@ -2251,6 +2623,34 @@
             if (e.key === 'Escape' && matrizModalEl && matrizModalEl.classList.contains('is-open')) {
                 fecharModalMatriz();
             }
+        });
+
+        // Foco de linha (só horizontal, sem coluna) — Matriz de Disponibilidade. Usa uma sombra
+        // interna semi-transparente (em vez de sobrescrever o background), pra não apagar as
+        // cores de ocupação (verde/amarelo/vermelho) das células — só realça por cima delas.
+        document.addEventListener('mouseover', (e) => {
+            const td = e.target.closest('.matriz-table td, .matriz-table th');
+            if (!td) return;
+            Array.from(td.closest('tr').children).forEach(c => c.classList.add('foco-linha-matriz'));
+        });
+        document.addEventListener('mouseout', (e) => {
+            const td = e.target.closest('.matriz-table td, .matriz-table th');
+            if (!td) return;
+            td.closest('table').querySelectorAll('.foco-linha-matriz').forEach(el => el.classList.remove('foco-linha-matriz'));
+        });
+
+        // Foco de linha no Gantt de Programação — só horizontal (sem coluna). A classe vai em
+        // cada célula da linha (não no container), senão o fundo próprio de cada célula (branco,
+        // sticky etc.) esconderia o destaque.
+        document.addEventListener('mouseover', (e) => {
+            const linha = e.target.closest('.gantt-wrap .gantt-row');
+            if (!linha) return;
+            Array.from(linha.children).forEach(c => c.classList.add('foco-linha-gantt'));
+        });
+        document.addEventListener('mouseout', (e) => {
+            const linha = e.target.closest('.gantt-wrap .gantt-row');
+            if (!linha) return;
+            linha.closest('.gantt-wrap').querySelectorAll('.foco-linha-gantt').forEach(el => el.classList.remove('foco-linha-gantt'));
         });
     </script>
 </body>
