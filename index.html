@@ -111,24 +111,43 @@
 
         /* Gantt de Programação por Recurso (aba Programação) */
         .gantt-wrap { background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto; margin-bottom: 20px; }
-        .gantt-grid { display: grid; min-width: max-content; }
-        .gantt-header-row, .gantt-mes-row, .gantt-row { display: grid; grid-template-columns: 260px repeat(var(--gantt-n-sem), minmax(150px, 1fr)); align-items: stretch; }
-        .gantt-header-row { position: sticky; top: 0; background: white; z-index: 3; border-bottom: 2px solid var(--border-color); }
-        .gantt-col-fixa { padding: 10px 14px; font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; border-right: 1px solid var(--border-color); position: sticky; left: 0; background: white; z-index: 4; }
-        .gantt-header-row .semana-col-header { padding: 8px 4px; text-align: center; font-size: 13px; font-weight: 800; border-right: 1px solid #F0F2F5; }
-        .gantt-header-row .semana-col-header .ano { display: block; font-size: 10px; color: #A0AEC0; font-weight: 700; }
-        .gantt-mes-row { position: sticky; top: 42px; z-index: 3; }
-        .mes-cell { text-align: center; font-size: 11px; font-weight: 700; color: #4A5568; padding: 4px 2px; border-right: 1px solid #F0F2F5; border-bottom: 2px solid #CBD5E0; }
+        /* Grid ÚNICO (não "grid de grids"): todas as linhas são filhas diretas de .gantt-grid,
+           o que permite à célula de categoria usar grid-row:span pra cobrir várias linhas de
+           recurso (equivalente ao rowspan da Matriz). As linhas (.gantt-header-row/.gantt-mes-row/
+           .gantt-row) viram display:contents — continuam existindo no DOM (pra hover/clique por
+           delegação), mas não geram caixa própria; os filhos delas é que viram itens do grid. Como
+           não há mais uma "linha" com caixa própria pra ficar sticky, cada célula fixa (categoria,
+           nome do recurso, cabeçalho de semana, faixa de mês) declara sua própria posição sticky.
+        */
+        .gantt-grid { display: grid; min-width: max-content; grid-template-columns: 34px 260px repeat(var(--gantt-n-sem), minmax(150px, 1fr)); }
+        .gantt-header-row, .gantt-mes-row, .gantt-row { display: contents; }
+        .gantt-col-fixa-categoria { position: sticky; left: 0; z-index: 4; background: white; border-right: 1px solid var(--border-color); }
+        .gantt-col-fixa { padding: 10px 14px; font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; border-right: 1px solid var(--border-color); position: sticky; left: 34px; background: white; z-index: 4; border-bottom: 1px solid #F0F2F5; }
+        .gantt-col-fixa.topo-cab, .gantt-col-fixa-categoria.topo-cab { position: sticky; top: 0; z-index: 6; border-bottom: 2px solid var(--border-color); }
+        .gantt-col-fixa.topo-mes, .gantt-col-fixa-categoria.topo-mes { position: sticky; top: 42px; z-index: 5; }
+        .semana-col-header { position: sticky; top: 0; z-index: 3; background: white; padding: 8px 4px; text-align: center; font-size: 13px; font-weight: 800; border-right: 1px solid #F0F2F5; border-bottom: 2px solid var(--border-color); }
+        .semana-col-header .ano { display: block; font-size: 10px; color: #A0AEC0; font-weight: 700; }
+        .mes-cell { position: sticky; top: 42px; z-index: 2; text-align: center; font-size: 11px; font-weight: 700; color: #4A5568; padding: 4px 2px; border-right: 1px solid #F0F2F5; border-bottom: 2px solid #CBD5E0; }
         .mes-cell.par { background: #EAF2FC; }
         .mes-cell.impar { background: #FFFFFF; }
-        .gantt-row { border-bottom: 1px solid #F0F2F5; }
-        .gantt-row:nth-child(odd) .gantt-col-fixa { background: #FAFBFC; }
-        .gantt-semana-cell { padding: 5px; border-right: 1px solid #F0F2F5; display: flex; flex-direction: column; gap: 3px; justify-content: center; }
+        .gantt-categoria-cell { position: sticky; left: 0; z-index: 2; background: #F8FAFC; border-right: 1px solid #E2E8F0; border-bottom: 1px solid #F0F2F5; display: flex; align-items: center; justify-content: center; padding: 4px 2px; }
+        .gantt-categoria-cell span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; font-weight: 800; letter-spacing: 0.5px; color: #4A5568; text-transform: uppercase; white-space: nowrap; }
+        .gantt-semana-cell { padding: 5px; border-right: 1px solid #F0F2F5; border-bottom: 1px solid #F0F2F5; display: flex; flex-direction: column; gap: 3px; justify-content: center; }
         .gantt-op-bar { border-radius: 4px; padding: 3px 7px; font-size: 11px; font-weight: 700; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
         .gantt-op-bar.plan { background: #2E86DE; }
         .gantt-op-bar.exec { background: #31C48D; color: #05371F; }
         .gantt-op-bar.mais { background: #EDF2F7; color: #4A5568; text-align: center; cursor: pointer; }
         .gantt-op-bar:hover { filter: brightness(0.92); }
+        .gantt-op-bar .op-cliente { opacity: 0.85; font-weight: 600; }
+        .gantt-col-fixa.fim-setor, .gantt-semana-cell.fim-setor, .gantt-categoria-cell.fim-setor { border-bottom: 3px solid #1A1A1B; }
+
+        /* Semanas passadas no Gantt (histórico) — visual "apagado" pra distinguir do que ainda
+           vai acontecer; a semana atual ganha uma marcação de referência. */
+        .semana-col-header.semana-passada { color: #A0AEC0; background: #FAFBFC; }
+        .semana-col-header.semana-atual { color: white; background: var(--moreno-red); }
+        .semana-col-header.semana-atual .ano { color: #FFD9DC; }
+        .gantt-semana-cell.semana-passada { background: #FAFBFC; }
+        .gantt-semana-cell.semana-passada .gantt-op-bar { opacity: 0.55; }
 
         /* Foco de célula (destaque de linha/coluna ao passar o mouse) — Gantt e Matriz Disp. */
         .foco-linha-matriz { box-shadow: inset 0 0 0 999px rgba(255, 179, 0, 0.28); }
@@ -211,15 +230,23 @@
         .matriz-table th { background-color: white; color: #718096; padding: 12px 5px; font-weight: 600; text-align: center; border-bottom: 2px solid #EDF2F7; position: sticky; top: 0; z-index: 3; box-shadow: 0 1px 0 0 #EDF2F7; }
         .matriz-table th .th-semana { display: block; font-weight: 800; font-size: 12px; color: #1A1A1B; line-height: 1.3; }
         .matriz-table th .th-ano { display: block; font-size: 9px; color: #A0AEC0; font-weight: 700; line-height: 1.2; }
-        .matriz-table th:first-child { text-align: left; padding-left: 15px; left: 0; z-index: 4; border-right: 1px solid #EDF2F7; }
         .matriz-table td { padding: 10px 5px; text-align: center; font-weight: 700; border: 2px solid white; cursor: help; position: relative; }
-        .matriz-table td:first-child { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; position: sticky; left: 0; background: white; z-index: 1; cursor: default;}
+
+        /* Colunas fixas (sticky) da esquerda: 1ª = categoria do recurso, 2ª = nome do recurso.
+           Usa classes (não :first-child) porque o rowspan da categoria faz a posição do <td> do
+           nome variar de linha pra linha — :first-child ficaria inconsistente. */
+        .th-categoria-col { text-align: center; left: 0; z-index: 4; width: 34px; border-right: 1px solid #EDF2F7; }
+        .th-recurso-col { text-align: left; padding-left: 15px; left: 34px; z-index: 4; border-right: 1px solid #EDF2F7; }
+        .categoria-recurso-cell { text-align: center; position: sticky; left: 0; z-index: 2; background: #F8FAFC; border-right: 1px solid #E2E8F0; padding: 4px 2px; cursor: default; }
+        .categoria-recurso-cell span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; font-weight: 800; letter-spacing: 0.5px; color: #4A5568; text-transform: uppercase; white-space: nowrap; }
+        .recurso-nome-cell { text-align: left; padding-left: 15px; border-right: 1px solid #EDF2F7; color: #4A5568; font-weight: 600; text-transform: uppercase; position: sticky; left: 34px; background: white; z-index: 1; cursor: default; }
+        .matriz-table td.fim-setor, .matriz-table .categoria-recurso-cell.fim-setor { border-bottom: 3px solid #1A1A1B; }
 
         /* Matriz: faixa de meses sob os cabeçalhos de semana — mesmo esquema da Curva "S" */
         .matriz-linha-meses th { position: sticky; top: 44px; z-index: 2; padding: 5px 4px; font-size: 10px; font-weight: 700; color: #4A5568; border-bottom: 2px solid #CBD5E0; box-shadow: none; }
         .matriz-linha-meses th.matriz-mes-header.mes-par { background-color: #EAF2FC; }
         .matriz-linha-meses th.matriz-mes-header.mes-impar { background-color: #FFFFFF; }
-        .matriz-linha-meses th:first-child { top: 44px; background: white; border-right: 1px solid #EDF2F7; }
+        .matriz-linha-meses th.th-categoria-col, .matriz-linha-meses th.th-recurso-col { top: 44px; background: white; }
         
         .cell-livre { background-color: #F8F9FA; color: #A0AEC0; }
         .cell-ok { background-color: #C6F6D5; color: #22543D; }
@@ -417,6 +444,65 @@
         const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/gilmarcosta2812200-hash/Progr_MECAL.html/main/PROG.%20SEMANAL_TESTE.xlsx";
 
         let BASE_PROD = [];
+        let ULTIMAS_ABAS_PLANILHA = []; // nomes das abas da última planilha carregada — usado para
+                                        // diagnosticar quando uma aba esperada (ex: Curva "S") não é encontrada.
+
+        // Agrupamento/ordem de recursos por categoria (Matriz de Disponibilidade e Programação),
+        // conforme a planilha de referência do usuário. A ordem do array é a ordem de exibição
+        // dentro de cada categoria (não é alfabética nem numérica — é a ordem manual definida na
+        // planilha). Resources cujo código não está aqui caem em "OUTROS", ao final, ordenados
+        // pelo código (comportamento anterior), para nada ficar oculto.
+        const ORDEM_CATEGORIAS_RECURSO = ['MONTAGEM', 'TORNO HORIZONTAL', 'FURADEIRA', 'SOLDAGEM', 'BROQUEADORA', 'PLAINA', 'FRESADORA', 'MANDRILHADORA', 'OUTROS'];
+        const CATEGORIA_POR_CODIGO_RECURSO = {
+            '90': 'MONTAGEM', '92': 'MONTAGEM', '89': 'MONTAGEM',
+            '120': 'TORNO HORIZONTAL', '117': 'TORNO HORIZONTAL', '118': 'TORNO HORIZONTAL', '121': 'TORNO HORIZONTAL',
+            '394': 'TORNO HORIZONTAL', '328': 'TORNO HORIZONTAL', '561': 'TORNO HORIZONTAL', '609': 'TORNO HORIZONTAL', '393': 'TORNO HORIZONTAL',
+            '613': 'FURADEIRA', '112': 'FURADEIRA', '113': 'FURADEIRA',
+            '84': 'SOLDAGEM', '91': 'SOLDAGEM', '105': 'SOLDAGEM', '664': 'SOLDAGEM', '166': 'SOLDAGEM',
+            '600': 'SOLDAGEM', '601': 'SOLDAGEM', '602': 'SOLDAGEM', '608': 'SOLDAGEM', '617': 'SOLDAGEM', '620': 'SOLDAGEM',
+            '621': 'SOLDAGEM', '544': 'SOLDAGEM', '545': 'SOLDAGEM', '605': 'SOLDAGEM', '606': 'SOLDAGEM',
+            '489': 'BROQUEADORA', '490': 'BROQUEADORA', '99': 'BROQUEADORA',
+            '106': 'PLAINA', '107': 'PLAINA', '374': 'PLAINA',
+            '560': 'FRESADORA', '610': 'FRESADORA', '670': 'FRESADORA', '671': 'FRESADORA',
+            '151': 'MANDRILHADORA', '102': 'MANDRILHADORA', '284': 'MANDRILHADORA', '433': 'MANDRILHADORA',
+            '493': 'MANDRILHADORA', '210': 'MANDRILHADORA', '327': 'MANDRILHADORA'
+        };
+        // Ordem manual dentro de cada categoria (índice = posição de exibição).
+        const ORDEM_MANUAL_CODIGO_RECURSO = ['90', '92', '89', '120', '117', '118', '121', '394', '328', '561', '609', '393',
+            '613', '112', '113', '84', '91', '105', '664', '166', '600', '601', '602', '608', '617', '620', '621', '544', '545', '605', '606',
+            '489', '490', '99', '106', '107', '374', '560', '610', '670', '671', '151', '102', '284', '433', '493', '210', '327'];
+
+        function categoriaDoRecurso(cc) {
+            return CATEGORIA_POR_CODIGO_RECURSO[String(cc)] || 'OUTROS';
+        }
+
+        // Ordena uma lista de códigos de recurso por: 1) ordem da categoria (ORDEM_CATEGORIAS_RECURSO),
+        // 2) ordem manual dentro da categoria (ORDEM_MANUAL_CODIGO_RECURSO) — recursos sem posição
+        // manual (categoria OUTROS) ficam ordenados por código no final de OUTROS.
+        function ordenarPorCategoriaRecurso(codigos) {
+            return [...codigos].sort((a, b) => {
+                let catA = categoriaDoRecurso(a), catB = categoriaDoRecurso(b);
+                let idxCatA = ORDEM_CATEGORIAS_RECURSO.indexOf(catA), idxCatB = ORDEM_CATEGORIAS_RECURSO.indexOf(catB);
+                if (idxCatA !== idxCatB) return idxCatA - idxCatB;
+                let idxA = ORDEM_MANUAL_CODIGO_RECURSO.indexOf(String(a)), idxB = ORDEM_MANUAL_CODIGO_RECURSO.indexOf(String(b));
+                if (idxA !== -1 || idxB !== -1) return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+                return parseInt(a) - parseInt(b);
+            });
+        }
+
+        // Agrupa uma lista JÁ ORDENADA por categoria (ordenarPorCategoriaRecurso) em blocos
+        // consecutivos {categoria, inicio, fim} — usado para desenhar a coluna de categoria com
+        // rowspan (Matriz) ou grid-row:span (Gantt).
+        function agruparPorCategoriaConsecutiva(codigosOrdenados) {
+            let grupos = [];
+            codigosOrdenados.forEach((cc, i) => {
+                let cat = categoriaDoRecurso(cc);
+                let ultimo = grupos[grupos.length - 1];
+                if (ultimo && ultimo.categoria === cat) ultimo.fim = i;
+                else grupos.push({ categoria: cat, inicio: i, fim: i });
+            });
+            return grupos;
+        }
         let MATRIZ_CARGA = {};
         let CARTEIRA_DATA = [];
         let BASE_NORMALIZADA = []; // Base saneada (tipos/chaves consistentes) usada para embutir operações nas células
@@ -1114,19 +1200,34 @@
 
         function ProcessarPlanilha(wb) {
             let sBase, sPlan, sCarteira, sBaseMatriz, sBaseEixo, sCapInst, sCurvaS, sAvancoClientes;
+            ULTIMAS_ABAS_PLANILHA = wb.SheetNames.slice();
 
             // sBase alimenta o KANBAN, os KPIs e o filtro de semana geral — este é o comportamento
             // ORIGINAL do sistema (restaurado): prioriza a aba "PROGRAMAÇÃO" (que tem FINALIZADO?,
             // SEM. PROG.) e cai para "BASE" só se PROGRAMAÇÃO não existir. NÃO MEXER nesta lógica,
             // pois o Kanban depende dela para status de operações finalizadas/planejadas da semana.
+            //
+            // A aba da Curva "S" é resolvida em duas passadas com prioridade — não dá pra achar
+            // no mesmo forEach que as outras (BASE, etc.), porque um match "fraco" (só "CURVAS")
+            // pode vir DEPOIS do match "forte" ("CALCULOS") na ordem das abas e sobrescrever a
+            // referência certa. Foi exatamente isso que quebrou: a planilha ganhou uma aba nova,
+            // "BaseCurvaS Entressafra 2026-2027" (que também contém "CURVAS" após normalizar),
+            // posicionada DEPOIS de "CALCULOS (Base_Curva S)" — cada atualização, a passada única
+            // de antes ia sobrescrevendo sCurvaS com essa aba nova (de estrutura diferente),
+            // fazendo a extração falhar e mostrar "não encontrada". Com prioridade em duas
+            // passadas, "CALCULOS" sempre vence quando existir, não importa a ordem das abas.
+            let sCurvaSCalculos = null, sCurvaSGenerica = null;
             wb.SheetNames.forEach(n => {
                 let normName = normalizarTexto(n);
-                // "CALCULOS (Base_Curva S)" e "% Concluída Clientes" são checadas e "reservadas"
-                // ANTES da regra genérica de "BASE" — sem isso, "Base_Curva" (que contém a
-                // substring "BASE" após normalizar) acaba sobrescrevendo sBase e quebra o Kanban
-                // (é exatamente o bug que fazia "SEMANA: NÃO IDENTIFICADA" e 0 operações).
-                if(normName.includes("CALCULOS") || normName.includes("CURVAS")) { sCurvaS = wb.Sheets[n]; return; }
+                if (normName.includes("CALCULOS")) sCurvaSCalculos = wb.Sheets[n];
+                else if (normName.includes("CURVAS")) sCurvaSGenerica = wb.Sheets[n];
+            });
+            sCurvaS = sCurvaSCalculos || sCurvaSGenerica;
+
+            wb.SheetNames.forEach(n => {
+                let normName = normalizarTexto(n);
                 if(normName.includes("CONCLUIDACLIENTES") || (normName.includes("CONCLUID") && normName.includes("CLIENTE"))) { sAvancoClientes = wb.Sheets[n]; return; }
+                if(normName.includes("CALCULOS") || normName.includes("CURVAS")) return; // já resolvido acima
                 if(normName.includes("PROGRAMACAO") || normName.includes("BASE")) sBase = wb.Sheets[n];
                 if(normName.includes("PLANEJ")) sPlan = wb.Sheets[n];
                 if(normName.includes("CARTEIRAGERAL") || normName.includes("USI")) sCarteira = wb.Sheets[n];
@@ -1544,22 +1645,25 @@
             if (!chaves.length) return '<div class="state-empty" style="padding:20px 0;"><p>Sem dados de capacidade disponíveis para montar o Gantt.</p></div>';
 
             let semsTodas = MATRIZ_CARGA[chaves[0]].semanas; // ex: "SEM 38/2026", em ordem
-            let idxInicio = 0;
+            let idxSemanaAtual = 0;
             let numSemAtual = (SEMANA_TRAVADA_I2.match(/\d+/) || [])[0];
             if (numSemAtual) {
                 let achado = semsTodas.findIndex(s => s.startsWith(`SEM ${numSemAtual}/`));
-                if (achado !== -1) idxInicio = achado;
+                if (achado !== -1) idxSemanaAtual = achado;
             }
-            // Mostra da semana atual até a ÚLTIMA semana disponível na planilha — sem limite fixo
-            // de janela; a navegação até semanas mais distantes é feita por scroll horizontal
-            // (o wrapper já tem overflow-x:auto).
-            let semsJanela = semsTodas.slice(idxInicio);
-            if (!semsJanela.length) return '<div class="state-empty" style="padding:20px 0;"><p>Não há semanas futuras suficientes na planilha para montar o Gantt.</p></div>';
+            // Mostra a linha do tempo INTEIRA (semanas passadas + futuras) — as passadas ficam
+            // com um visual "apagado" (histórico) e o scroll já abre direto na semana atual
+            // (ver AposRenderizarGanttProgramacao). A navegação pra semanas mais distantes,
+            // passadas ou futuras, é feita por scroll horizontal (o wrapper tem overflow-x:auto).
+            let semsJanela = semsTodas;
+            if (!semsJanela.length) return '<div class="state-empty" style="padding:20px 0;"><p>Não há semanas suficientes na planilha para montar o Gantt.</p></div>';
 
             // Monta, por recurso, a lista de operações de cada semana da janela — só entram
             // recursos com pelo menos 1 operação programada no período (evita linhas vazias).
+            // A ordem segue a categorização da planilha de referência (ordenarPorCategoriaRecurso),
+            // não mais "quem tem mais operações primeiro".
             let recursosGantt = [];
-            chaves.forEach(cc => {
+            ordenarPorCategoriaRecurso(chaves).forEach(cc => {
                 let m = MATRIZ_CARGA[cc];
                 let codRecursoNorm = normalizarRecurso(cc);
                 let semanasData = semsJanela.map(s => {
@@ -1575,7 +1679,10 @@
                 if (totalOps > 0) recursosGantt.push({ cc, nome: m.nome, semanas: semanasData, totalOps });
             });
             if (!recursosGantt.length) return '<div class="state-empty" style="padding:20px 0;"><p>Nenhum recurso com operações programadas nas próximas semanas.</p></div>';
-            recursosGantt.sort((a, b) => b.totalOps - a.totalOps);
+
+            // Agrupa por categoria consecutiva (já vem ordenado acima) pra desenhar a coluna de
+            // categoria com grid-row:span cobrindo as linhas do grupo.
+            let gruposCategoriaGantt = agruparPorCategoriaConsecutiva(recursosGantt.map(r => r.cc));
 
             let gruposMeses = calcularGruposMeses(semsJanela.map(s => {
                 let { semana, ano } = extrairSemanaEAno(s, '2026');
@@ -1584,38 +1691,56 @@
 
             const MAX_BARRAS_VISIVEIS = 3;
 
-            let html = `<div class="gantt-wrap"><div class="gantt-grid" style="--gantt-n-sem:${semsJanela.length};">`;
+            let html = `<div class="gantt-wrap" id="ganttWrapPrincipal"><div class="gantt-grid" style="--gantt-n-sem:${semsJanela.length};">`;
 
-            // Cabeçalho de semanas
-            html += `<div class="gantt-header-row"><div class="gantt-col-fixa">Recurso</div>`;
-            semsJanela.forEach(s => {
+            // Cabeçalho de semanas — a semana atual ganha um id (usado só pra rolar o scroll até
+            // ela logo depois de montar o HTML) e as semanas passadas ficam com visual "histórico".
+            html += `<div class="gantt-header-row"><div class="gantt-col-fixa-categoria topo-cab"></div><div class="gantt-col-fixa topo-cab">Recurso</div>`;
+            semsJanela.forEach((s, i) => {
                 let { semana, ano } = extrairSemanaEAno(s, '2026');
-                html += `<div class="semana-col-header">${semana}<span class="ano">${ano}</span></div>`;
+                let idAtual = i === idxSemanaAtual ? ' id="ganttColunaSemanaAtual"' : '';
+                html += `<div class="semana-col-header${i < idxSemanaAtual ? ' semana-passada' : ''}${i === idxSemanaAtual ? ' semana-atual' : ''}"${idAtual}>${semana}<span class="ano">${ano}</span></div>`;
             });
             html += `</div>`;
 
             // Faixa de meses
-            html += `<div class="gantt-mes-row"><div class="gantt-col-fixa"></div>`;
+            html += `<div class="gantt-mes-row"><div class="gantt-col-fixa-categoria topo-mes"></div><div class="gantt-col-fixa topo-mes"></div>`;
             semsJanela.forEach((s, i) => {
                 let grupo = gruposMeses.find(g => i >= g.inicio && i <= g.fim);
-                if (grupo.inicio === i) {
+                if (grupo && grupo.inicio === i) {
                     let idxGrupo = gruposMeses.indexOf(grupo);
                     html += `<div class="mes-cell ${idxGrupo % 2 === 0 ? 'par' : 'impar'}" style="grid-column: span ${grupo.fim - grupo.inicio + 1};">${grupo.mes}/${String(grupo.ano).slice(-2)}</div>`;
+                } else if (!grupo) {
+                    html += `<div class="mes-cell"></div>`;
                 }
             });
             html += `</div>`;
 
             // Linhas de recurso
-            recursosGantt.forEach(r => {
-                html += `<div class="gantt-row"><div class="gantt-col-fixa">${escapeHtml(r.nome)}</div>`;
-                r.semanas.forEach(s => {
+            recursosGantt.forEach((r, i) => {
+                // Última linha do grupo de categoria: travessão grosso separando os setores,
+                // igual à Matriz de Disponibilidade — vale pra todo mundo, não só um setor.
+                let ultimaLinhaDoGrupo = gruposCategoriaGantt.some(g => g.fim === i);
+                let classeFimSetor = ultimaLinhaDoGrupo ? ' fim-setor' : '';
+                html += `<div class="gantt-row">`;
+                // Célula de categoria: só desenha no primeiro recurso do grupo, com grid-row:span
+                // cobrindo o bloco inteiro (mesmo esquema visual da Matriz de Disponibilidade).
+                let grupoCat = gruposCategoriaGantt.find(g => g.inicio === i);
+                if (grupoCat) {
+                    html += `<div class="gantt-categoria-cell${grupoCat.fim === i ? ' fim-setor' : ''}" style="grid-row: span ${grupoCat.fim - grupoCat.inicio + 1};"><span>${escapeHtml(grupoCat.categoria)}</span></div>`;
+                }
+                html += `<div class="gantt-col-fixa${classeFimSetor}">${escapeHtml(r.nome)}</div>`;
+                r.semanas.forEach((s, iSem) => {
                     let nomeSeguro = String(r.nome || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     let dataAttrs = ` data-recurso-id="${r.cc}" data-recurso-nome="${nomeSeguro}" data-semana-num="${s.semana}" data-ano="${s.ano}" data-pct="${s.pct}" data-cap="${s.cap}"`;
-                    html += `<div class="gantt-semana-cell">`;
+                    let classePassada = iSem < idxSemanaAtual ? ' semana-passada' : '';
+                    html += `<div class="gantt-semana-cell${classePassada}${classeFimSetor}">`;
                     s.ops.slice(0, MAX_BARRAS_VISIVEIS).forEach(op => {
                         let executada = !!op.baixado;
-                        let rotulo = `#${op.cod || '—'} · ${op.operacao || op.descricao || 'Sem descrição'}`;
-                        html += `<div class="gantt-op-bar matriz-cell-click ${executada ? 'exec' : 'plan'}"${dataAttrs} title="${escapeHtml(rotulo)} — ${escapeHtml(op.cliente || '')}">${escapeHtml(rotulo)}</div>`;
+                        let descOperacao = op.operacao || op.descricao || 'Sem descrição';
+                        let rotulo = `#${op.cod || '—'} · ${descOperacao}`;
+                        let rotuloComCliente = op.cliente ? `${rotulo} · ${op.cliente}` : rotulo;
+                        html += `<div class="gantt-op-bar matriz-cell-click ${executada ? 'exec' : 'plan'}"${dataAttrs} title="${escapeHtml(rotuloComCliente)}">#${escapeHtml(String(op.cod || '—'))} · ${escapeHtml(descOperacao)}${op.cliente ? ` · <span class="op-cliente">${escapeHtml(op.cliente)}</span>` : ''}</div>`;
                     });
                     if (s.ops.length > MAX_BARRAS_VISIVEIS) {
                         html += `<div class="gantt-op-bar mais matriz-cell-click"${dataAttrs}>+${s.ops.length - MAX_BARRAS_VISIVEIS} mais</div>`;
@@ -1745,11 +1870,16 @@
                     <div class="curva-s-title">Relatório de Programação por Recurso<br>${escapeHtml(semanaTxt)}</div>
                 </div>
                 ${htmlKpis}
-                <h3 class="rel-prog-titulo">Gantt de Programação por Recurso — Próximas Semanas</h3>
+                <h3 class="rel-prog-titulo">Gantt de Programação por Recurso — Histórico e Próximas Semanas</h3>
                 ${MontarGanttProgramacao()}
                 ${htmlDetalhe}
                 ${htmlConsolidado}
             `;
+            // Abre o Gantt já na semana atual (a linha do tempo agora inclui o histórico
+            // completo antes dela) — sem isso, o scroll começaria lá na primeira semana da
+            // planilha, exigindo rolar bastante pra ver a semana de hoje.
+            let colunaAtual = document.getElementById('ganttColunaSemanaAtual');
+            if (colunaAtual) colunaAtual.scrollIntoView({ inline: 'start', block: 'nearest' });
         }
 
         function TabCarteiraGeral(t, data) {
@@ -1814,7 +1944,7 @@
         }
 
         function TabMatriz(t) {
-            let chaves = Object.keys(MATRIZ_CARGA).sort((a,b) => parseInt(a) - parseInt(b));
+            let chaves = ordenarPorCategoriaRecurso(Object.keys(MATRIZ_CARGA));
             if (chaves.length === 0) { t.innerHTML = '<div class="state-empty"><p>Sem dados de capacidade disponíveis.</p></div>'; return; }
 
             // Filtro de Recursos: aplica o texto digitado em "Filtrar recursos por
@@ -1828,6 +1958,8 @@
             }
             if (chaves.length === 0) { t.innerHTML = '<div class="state-empty"><p>Nenhum recurso encontrado para o filtro informado.</p></div>'; return; }
 
+            let gruposCategoria = agruparPorCategoriaConsecutiva(chaves);
+
             let sems = MATRIZ_CARGA[Object.keys(MATRIZ_CARGA)[0]].semanas;
             let valIni = document.getElementById('filtroMatrizInicio').value;
             let valFim = document.getElementById('filtroMatrizFim').value;
@@ -1837,25 +1969,37 @@
             if(idxFim === -1 || idxFim < idxIni) idxFim = sems.length - 1;
             let semsFiltradas = sems.slice(idxIni, idxFim + 1);
             let gruposMesesMatriz = calcularGruposMeses(semsFiltradas);
-            let linhaMeses = `<tr class="matriz-linha-meses"><th></th>${gruposMesesMatriz.map((g, idx) =>
+            let linhaMeses = `<tr class="matriz-linha-meses"><th class="th-categoria-col"></th><th class="th-recurso-col"></th>${gruposMesesMatriz.map((g, idx) =>
                 `<th colspan="${g.fim - g.inicio + 1}" class="matriz-mes-header ${idx % 2 === 0 ? 'mes-par' : 'mes-impar'}">${g.mes}/${String(g.ano).slice(-2)}</th>`
             ).join('')}</tr>`;
 
-            let htmlTable = `<table class="matriz-table"><thead><tr><th style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => {
+            let htmlTable = `<table class="matriz-table"><thead><tr><th class="th-categoria-col"></th><th class="th-recurso-col" style="min-width: 250px;">RECURSO</th>${semsFiltradas.map(s => {
                 let { semana: wSem, ano: wAno } = extrairSemanaEAno(s, '2026');
                 return `<th><span class="th-semana">${wSem}</span><span class="th-ano">${wAno}</span></th>`;
             }).join('')}</tr>${linhaMeses}</thead><tbody>`;
 
-            chaves.forEach(cc => {
-                let m = MATRIZ_CARGA[cc]; 
-                htmlTable += `<tr><td>[${cc}] ${m.nome}</td>`;
+            chaves.forEach((cc, i) => {
+                let m = MATRIZ_CARGA[cc];
+                // Última linha do grupo de categoria: recebe um travessão grosso embaixo,
+                // atravessando a linha inteira, pra separar visualmente cada setor (igual à
+                // planilha de referência) — vale pra TODOS os setores, não só um.
+                let grupo = gruposCategoria.find(g => g.inicio === i);
+                let ultimaLinhaDoGrupo = gruposCategoria.some(g => g.fim === i);
+                let classeFimSetor = ultimaLinhaDoGrupo ? ' fim-setor' : '';
+                htmlTable += `<tr>`;
+                // Célula de categoria: só desenha no primeiro recurso do grupo, com rowspan
+                // cobrindo o bloco inteiro (mesmo esquema visual da planilha de referência).
+                if (grupo) {
+                    htmlTable += `<td class="categoria-recurso-cell${grupo.fim === i ? ' fim-setor' : ''}" rowspan="${grupo.fim - grupo.inicio + 1}"><span>${escapeHtml(grupo.categoria)}</span></td>`;
+                }
+                htmlTable += `<td class="recurso-nome-cell${classeFimSetor}">[${cc}] ${m.nome}</td>`;
                 let codRecursoNormalizado = normalizarRecurso(cc);
                 
-                for(let i = idxIni; i <= idxFim; i++) {
-                    let cap = m.capacidade[i] || 1;
+                for(let i2 = idxIni; i2 <= idxFim; i2++) {
+                    let cap = m.capacidade[i2] || 1;
 
                     // Extrai semana E ano reais desta coluna uma única vez (usado na célula)
-                    let { semana: semLimpa, ano: anoLimpa } = extrairSemanaEAno(sems[i], '2026');
+                    let { semana: semLimpa, ano: anoLimpa } = extrairSemanaEAno(sems[i2], '2026');
 
                     // CARGA (horas previstas) é calculada DINAMICAMENTE somando as operações
                     // reais da aba BASE (via INDICE_CELULA) — não lida mais do valor estático
@@ -1880,7 +2024,7 @@
                         dataAttrs = ` data-recurso-id="${codRecursoNormalizado}" data-recurso-nome="${nomeSeguro}" data-semana-num="${semLimpa}" data-ano="${anoLimpa}" data-pct="${pct}" data-cap="${cap}"`;
                     }
 
-                    htmlTable += `<td class="${cls}"${dataAttrs}>${txt}</td>`;
+                    htmlTable += `<td class="${cls}${classeFimSetor}"${dataAttrs}>${txt}</td>`;
                 }
                 htmlTable += `</tr>`;
             });
@@ -1904,7 +2048,10 @@
         // período (De/Até semana) e o gráfico de linha (Planejado x Avanço Real).
         function TabCurvaS(t) {
             if (!CURVA_S_LABELS.length) {
-                t.innerHTML = '<div class="state-empty"><p>Aba "CALCULOS (Base_Curva S)" não encontrada ou sem dados na planilha.</p></div>';
+                let listaAbas = ULTIMAS_ABAS_PLANILHA.length
+                    ? `<p style="margin-top:8px;">Abas encontradas nesta planilha: ${ULTIMAS_ABAS_PLANILHA.map(a => escapeHtml(a)).join(', ')}</p>`
+                    : '';
+                t.innerHTML = `<div class="state-empty"><p>Aba "CALCULOS (Base_Curva S)" não encontrada ou sem dados na planilha.</p>${listaAbas}</div>`;
                 return;
             }
 
@@ -1959,7 +2106,7 @@
                 return `
                     <div class="clientes-card">
                         <h3><i class="fa-solid fa-industry"></i> Avanço Físico por Cliente</h3>
-                        <div class="state-empty" style="padding:20px 0;"><p>Aba "% Concluída Clientes" não encontrada ou sem dados na planilha.</p></div>
+                        <div class="state-empty" style="padding:20px 0;"><p>Aba "% Concluída Clientes" não encontrada ou sem dados na planilha.</p>${ULTIMAS_ABAS_PLANILHA.length ? `<p style="margin-top:8px;">Abas encontradas nesta planilha: ${ULTIMAS_ABAS_PLANILHA.map(a => escapeHtml(a)).join(', ')}</p>` : ''}</div>
                     </div>`;
             }
 
@@ -1987,7 +2134,7 @@
                             <div class="clientes-kpi-valor">${aConcluir}</div>
                         </div>
                     </div>
-                    <div id="clientesChartWrap" style="position:relative;"><canvas id="clientesChart"></canvas></div>
+                    <div id="clientesChartWrap" style="position:relative; max-width:78%; margin:0 auto;"><canvas id="clientesChart"></canvas></div>
                 </div>`;
         }
 
@@ -2012,7 +2159,7 @@
 
             // Altura dinâmica: uma faixa por cliente, pra barra não ficar espremida com muitos clientes.
             wrap.innerHTML = '<canvas id="clientesChart"></canvas>';
-            wrap.style.height = `${Math.max(240, lista.length * 40 + 50)}px`;
+            wrap.style.height = `${Math.max(240, lista.length * 34 + 50)}px`;
 
             let concluida = lista.map(c => Math.round(Math.min(100, c.pct) * 10) / 10);
             let aConcluirPct = concluida.map(v => Math.round((100 - v) * 10) / 10);
@@ -2079,9 +2226,12 @@
                             label: '% Concluída',
                             data: concluida,
                             backgroundColor: '#2E86DE',
+                            hoverBackgroundColor: '#256FB8',
+                            borderRadius: 4,
+                            borderSkipped: false,
                             stack: 'total',
-                            barPercentage: 0.8,
-                            categoryPercentage: 0.9,
+                            barPercentage: 0.55,
+                            categoryPercentage: 0.8,
                             datalabels: {
                                 anchor: 'end',
                                 align: 'right',
@@ -2094,10 +2244,13 @@
                         {
                             label: '% A Concluir',
                             data: aConcluirPct,
-                            backgroundColor: '#E2E8F0',
+                            backgroundColor: '#E9EDF2',
+                            hoverBackgroundColor: '#DCE2E9',
+                            borderRadius: 4,
+                            borderSkipped: false,
                             stack: 'total',
-                            barPercentage: 0.8,
-                            categoryPercentage: 0.9,
+                            barPercentage: 0.55,
+                            categoryPercentage: 0.8,
                             datalabels: { display: false }
                         }
                     ]
@@ -2106,8 +2259,9 @@
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: { padding: { top: 4, bottom: 4 } },
                     scales: {
-                        x: { stacked: true, min: 0, max: 100, ticks: { callback: v => `${v}%` }, grid: { color: '#F0F2F5' } },
+                        x: { stacked: true, min: 0, max: 100, ticks: { callback: v => `${v}%`, font: { size: 11 } }, grid: { color: '#F2F4F7', drawTicks: false } },
                         y: { stacked: true, ticks: { color: 'transparent', font: { size: 13, weight: '700' } }, grid: { display: false } }
                     },
                     plugins: {
